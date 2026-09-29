@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://friends30a.workers.dev/sitemap.xml
