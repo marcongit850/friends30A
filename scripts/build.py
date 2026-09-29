@@ -207,9 +207,11 @@ def page_hero(kicker, title, lede, image="/images/hero.jpg"):
     """
 
 
-def photos(items):
+def photos(items, captions=True):
     figures = "\n".join(
-        f'<figure><img src="{src}" alt="{esc(alt)}"><figcaption>{esc(alt)}</figcaption></figure>'
+        f'<figure><img src="{src}" alt="{esc(alt)}">'
+        + (f"<figcaption>{esc(alt)}</figcaption>" if captions else "")
+        + "</figure>"
         for src, alt in items
     )
     return f'<div class="page-photos">{figures}</div>'
@@ -489,7 +491,7 @@ def impact():
             ("/images/gallery/06-aerial-gulf-and-lake.jpg", "Aerial view of the Gulf, beach, and a dune lake beside 30A"),
             ("/images/gallery/07-timpoochee-riders.jpg", "People riding the paved Timpoochee Trail"),
             ("/images/gallery/02-gulf-sea-oats.jpg", "Gulf shoreline and sea oats along Scenic 30A"),
-        ]) + """
+        ], captions=False) + """
         <p>Through community leadership, advocacy, partnerships, and hands-on projects, Friends has helped ensure that Scenic 30A remains much more than just a roadway.</p>
         <h2>Major Accomplishments</h2>
         <p>For more than 20 years, Friends of Scenic 30A has helped turn community ideas into action. Here are some of the milestones that have helped shape and protect the Scenic 30A corridor.</p>

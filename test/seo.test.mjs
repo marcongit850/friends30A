@@ -69,6 +69,12 @@ for (const [name, page] of [["about", about], ["work", work], ["impact", impact]
   assert.match(page, /class="page-photos"/, name);
   assert.ok((page.match(/<figure>/g) || []).length >= 1, name);
 }
+assert.doesNotMatch(impact, /<figcaption>/);
+assert.match(impact, /alt="Aerial view of the Gulf, beach, and a dune lake beside 30A"/);
+assert.match(impact, /alt="People riding the paved Timpoochee Trail"/);
+assert.match(impact, /alt="Gulf shoreline and sea oats along Scenic 30A"/);
+assert.match(about, /<figcaption>/);
+assert.match(work, /<figcaption>/);
 assert.match(memberPage, /Step 1\. Pay through Square/);
 assert.match(memberPage, /Step 2\. Submit your member details/);
 assert.match(involved, /30A’s Future Is Something We All Share[\s\S]*Become a Member[\s\S]*Donate/);
