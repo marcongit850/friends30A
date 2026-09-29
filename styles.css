@@ -761,3 +761,71 @@ textarea { min-height: 8rem; resize: vertical; }
   html { scroll-behavior: auto; }
   * { transition: none !important; animation: none !important; }
 }
+
+/* Our Work only: Source Sans 3 for headings and body.
+   Other pages keep Fraunces + Outfit.
+   Sizes sit in the current hero, two-column work blocks, and pull-quote columns
+   instead of the larger Fraunces display scale. */
+body.page-our-work {
+  --serif: "Source Sans 3", "Avenir Next", "Segoe UI", sans-serif;
+  --sans: "Source Sans 3", "Avenir Next", "Segoe UI", sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+}
+body.page-our-work h1,
+body.page-our-work h2,
+body.page-our-work h3,
+body.page-our-work h4 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+body.page-our-work .page-hero h1 {
+  font-size: clamp(2.2rem, 4.5vw, 3.45rem);
+  line-height: 1.12;
+  letter-spacing: -0.028em;
+}
+body.page-our-work .page-hero p {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  font-weight: 400;
+}
+body.page-our-work .page-hero .eyebrow {
+  letter-spacing: 0.14em;
+  font-weight: 600;
+}
+body.page-our-work .prose h2 {
+  font-size: clamp(1.65rem, 2.6vw, 2.05rem);
+  line-height: 1.22;
+  margin-top: 0;
+}
+body.page-our-work .work-block h2,
+body.page-our-work .lead-split h2 {
+  font-size: clamp(1.85rem, 2.8vw, 2.3rem);
+  line-height: 1.18;
+  letter-spacing: -0.024em;
+  margin-top: 0;
+}
+body.page-our-work .prose h2 + h3 {
+  margin-top: 0.25rem;
+}
+body.page-our-work .prose h3 {
+  font-size: 1.25rem;
+  line-height: 1.3;
+  font-weight: 600;
+}
+body.page-our-work .prose p,
+body.page-our-work .priority-list li {
+  line-height: 1.7;
+}
+body.page-our-work .quote {
+  font-size: clamp(1.6rem, 2.5vw, 2.15rem);
+  font-weight: 500;
+  line-height: 1.28;
+  letter-spacing: -0.02em;
+}
+body.page-our-work .site-footer h2 {
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1.15;
+}

@@ -106,6 +106,13 @@ assert.match(css, /\.header-inner \{[^}]*padding: 0\.35rem 1\.25rem/);
 assert.match(css, /\.page-hero \{[^}]*min-height: clamp\(22rem, 52vh, 36rem\)/);
 assert.match(css, /\.photo-mosaic/);
 assert.match(css, /\.priority-list/);
+assert.match(work, /class="page-our-work"/);
+assert.match(work, /family=Source\+Sans\+3/);
+assert.doesNotMatch(work, /Fraunces|Outfit/);
+assert.match(css, /body\.page-our-work[\s\S]*Source Sans 3/);
+assert.match(css, /body\.page-our-work \.work-block h2/);
+assert.match(css, /body\.page-our-work \.lead-split h2/);
+assert.match(css, /body\.page-our-work \.quote/);
 
 const membership = readFileSync(join(root, "membership/index.html"), "utf8");
 assert.match(header, /https:\/\/square\.link\/u\/Yzxyi16L/);
@@ -132,6 +139,19 @@ assert.match(siteJs, /strip-prev/);
 assert.match(siteJs, /strip-next/);
 assert.match(siteJs, /ArrowLeft/);
 assert.match(siteJs, /ArrowRight/);
+for (const pagePath of pages) {
+  const html = readFileSync(pagePath, "utf8");
+  const isOurWork = pagePath.endsWith(`${join("our-work", "index.html")}`);
+  if (isOurWork) {
+    assert.match(html, /class="page-our-work"/, pagePath);
+    assert.match(html, /Source\+Sans\+3/, pagePath);
+    assert.doesNotMatch(html, /Fraunces|Outfit/, pagePath);
+  } else {
+    assert.match(html, /Fraunces/, pagePath);
+    assert.match(html, /Outfit/, pagePath);
+    assert.doesNotMatch(html, /page-our-work|Source\+Sans\+3/, pagePath);
+  }
+}
 for (const phrase of [
   "Protecting Natural Resources",
   "Preserving Scenic 30A",
