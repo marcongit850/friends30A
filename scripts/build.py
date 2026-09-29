@@ -240,6 +240,8 @@ def home():
         f'<a href="/gallery/"><img src="{src}" alt="{esc(alt)}"></a>'
         for src, alt in GALLERY[:6]
     )
+    strip_prev = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M14.5 5 8 12l6.5 7"/></svg>'
+    strip_next = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="m9.5 5 6.5 7-6.5 7"/></svg>'
     resources = [
         ("30A", "https://30a.com/"),
         ("America's Byways", "https://www.byways.org/"),
@@ -325,7 +327,11 @@ def home():
       <div class="wrap">
         <p class="eyebrow">Along Scenic 30A</p>
         <h2>The corridor, up close</h2>
-        <div class="strip">{strip}</div>
+        <div class="strip-scroller">
+          <button type="button" class="strip-nav strip-prev" aria-controls="corridor-strip" aria-label="Previous photos" disabled>{strip_prev}</button>
+          <div class="strip" id="corridor-strip" tabindex="0" role="group" aria-label="Corridor photos">{strip}</div>
+          <button type="button" class="strip-nav strip-next" aria-controls="corridor-strip" aria-label="Next photos">{strip_next}</button>
+        </div>
         <p><a class="btn btn-line" href="/gallery/">Open the gallery</a></p>
       </div>
     </section>

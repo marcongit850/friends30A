@@ -103,11 +103,24 @@ assert.match(membership, /https:\/\/square\.link\/u\/KlIhQxsE/);
 assert.match(membership, /https:\/\/square\.link\/u\/Yzxyi16L/);
 
 const home = readFileSync(join(root, "index.html"), "utf8");
-const strip = home.match(/<div class="strip">[\s\S]*?<\/div>/)[0];
+const strip = home.match(/<div class="strip"[\s\S]*?<\/div>/)[0];
 assert.equal((strip.match(/<img /g) || []).length, 6);
-assert.doesNotMatch(strip, /<span>/);
+assert.doesNotMatch(strip, /<span>|<figcaption>/);
+assert.doesNotMatch(strip, /strip-nav/);
 assert.match(strip, /alt="Boardwalk through sea oats toward the Gulf"/);
 assert.match(strip, /alt="Aerial view of the Gulf, beach, and a dune lake beside 30A"/);
+assert.match(home, /class="strip-scroller"/);
+assert.match(home, /aria-label="Previous photos" disabled/);
+assert.match(home, /aria-label="Next photos"/);
+assert.match(home, /id="corridor-strip"/);
+assert.match(css, /\.strip-nav/);
+assert.match(css, /\.strip-prev \{ left:/);
+assert.match(css, /\.strip-next \{ right:/);
+const siteJs = readFileSync(join(root, "site.js"), "utf8");
+assert.match(siteJs, /strip-prev/);
+assert.match(siteJs, /strip-next/);
+assert.match(siteJs, /ArrowLeft/);
+assert.match(siteJs, /ArrowRight/);
 for (const phrase of [
   "Protecting Natural Resources",
   "Preserving Scenic 30A",
