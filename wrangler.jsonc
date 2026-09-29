@@ -1,0 +1,14 @@
+{
+  // Cloudflare Worker plus static assets. The name is friends30a.
+  // Do not attach a vanity domain in this file. DNS for a public name is deferred.
+  // An assets-only Worker cannot store variables, so main exists so
+  // CONTACT_EMAIL and RESEND_API_KEY can be set later. Do not put those values here.
+  "name": "friends30a",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-09-28",
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/message", "/api/message/"]
+  }
+}
