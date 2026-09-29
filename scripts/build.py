@@ -237,7 +237,7 @@ def home():
         for key, title, copy in pillars
     )
     strip = "\n".join(
-        f'<a href="/gallery/"><img src="{src}" alt="{esc(alt)}"><span>{esc(alt)}</span></a>'
+        f'<a href="/gallery/"><img src="{src}" alt="{esc(alt)}"></a>'
         for src, alt in GALLERY[:6]
     )
     resources = [

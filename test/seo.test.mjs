@@ -99,6 +99,11 @@ assert.match(membership, /https:\/\/square\.link\/u\/KlIhQxsE/);
 assert.match(membership, /https:\/\/square\.link\/u\/Yzxyi16L/);
 
 const home = readFileSync(join(root, "index.html"), "utf8");
+const strip = home.match(/<div class="strip">[\s\S]*?<\/div>/)[0];
+assert.equal((strip.match(/<img /g) || []).length, 6);
+assert.doesNotMatch(strip, /<span>/);
+assert.match(strip, /alt="Boardwalk through sea oats toward the Gulf"/);
+assert.match(strip, /alt="Aerial view of the Gulf, beach, and a dune lake beside 30A"/);
 for (const phrase of [
   "Protecting Natural Resources",
   "Preserving Scenic 30A",
