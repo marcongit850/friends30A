@@ -410,7 +410,7 @@ def our_work():
             ("/images/blog/trails.jpg", "Trail through the Scenic 30A corridor"),
             ("/images/gallery/07-timpoochee-riders.jpg", "People riding the paved Timpoochee Trail"),
             ("/images/gallery/11-gulf-path.jpg", "Path beside the Gulf with sea oats and pines"),
-        ]) + """
+        ], captions=False) + """
         <h2>Protecting the Landscape That Defines 30A</h2>
         <p>Scenic 30A passes through an extraordinary natural environment of coastal dune lakes, beaches, dunes, forests, native vegetation, state parks, and wildlife habitat. We support efforts that preserve these resources and maintain the natural character and beauty of the scenic corridor.</p>
         <p>Our priorities include:</p>
