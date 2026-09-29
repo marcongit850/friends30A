@@ -112,6 +112,7 @@ assert.match(css, /--serif: "Source Sans 3"/);
 assert.match(css, /--sans: "Source Sans 3"/);
 assert.doesNotMatch(css, /Fraunces|Outfit|page-our-work/);
 assert.match(css, /\.page-hero h1 \{[^}]*clamp\(2\.2rem, 4\.5vw, 3\.45rem\)/);
+assert.match(css, /\.page-hero \.eyebrow \{[^}]*font-weight: 600/);
 assert.match(css, /\.lead-split h2, \.work-block h2 \{[^}]*clamp\(1\.85rem, 2\.8vw, 2\.3rem\)/);
 assert.match(css, /\.quote \{[^}]*clamp\(1\.6rem, 2\.5vw, 2\.15rem\)/);
 assert.match(css, /h1, h2, h3, h4 \{[^}]*font-weight: 600/);

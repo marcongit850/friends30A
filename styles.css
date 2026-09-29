@@ -381,6 +381,10 @@ main { display: block; }
   font-weight: 400;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.28);
 }
+.page-hero .eyebrow {
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
 .page-hero-tall { min-height: clamp(24rem, 60vh, 42rem); }
 
 .prose { max-width: 46rem; }
