@@ -106,13 +106,16 @@ assert.match(css, /\.header-inner \{[^}]*padding: 0\.35rem 1\.25rem/);
 assert.match(css, /\.page-hero \{[^}]*min-height: clamp\(22rem, 52vh, 36rem\)/);
 assert.match(css, /\.photo-mosaic/);
 assert.match(css, /\.priority-list/);
-assert.match(work, /class="page-our-work"/);
 assert.match(work, /family=Source\+Sans\+3/);
-assert.doesNotMatch(work, /Fraunces|Outfit/);
-assert.match(css, /body\.page-our-work[\s\S]*Source Sans 3/);
-assert.match(css, /body\.page-our-work \.work-block h2/);
-assert.match(css, /body\.page-our-work \.lead-split h2/);
-assert.match(css, /body\.page-our-work \.quote/);
+assert.doesNotMatch(work, /Fraunces|Outfit|page-our-work/);
+assert.match(css, /--serif: "Source Sans 3"/);
+assert.match(css, /--sans: "Source Sans 3"/);
+assert.doesNotMatch(css, /Fraunces|Outfit|page-our-work/);
+assert.match(css, /\.page-hero h1 \{[^}]*clamp\(2\.2rem, 4\.5vw, 3\.45rem\)/);
+assert.match(css, /\.page-hero \.eyebrow \{[^}]*font-weight: 600/);
+assert.match(css, /\.lead-split h2, \.work-block h2 \{[^}]*clamp\(1\.85rem, 2\.8vw, 2\.3rem\)/);
+assert.match(css, /\.quote \{[^}]*clamp\(1\.6rem, 2\.5vw, 2\.15rem\)/);
+assert.match(css, /h1, h2, h3, h4 \{[^}]*font-weight: 600/);
 
 const membership = readFileSync(join(root, "membership/index.html"), "utf8");
 assert.match(header, /https:\/\/square\.link\/u\/Yzxyi16L/);
@@ -139,18 +142,13 @@ assert.match(siteJs, /strip-prev/);
 assert.match(siteJs, /strip-next/);
 assert.match(siteJs, /ArrowLeft/);
 assert.match(siteJs, /ArrowRight/);
+const build = readFileSync(join(root, "scripts/build.py"), "utf8");
+assert.match(build, /Source\+Sans\+3/);
+assert.doesNotMatch(build, /Fraunces|Outfit|page-our-work/);
 for (const pagePath of pages) {
   const html = readFileSync(pagePath, "utf8");
-  const isOurWork = pagePath.endsWith(`${join("our-work", "index.html")}`);
-  if (isOurWork) {
-    assert.match(html, /class="page-our-work"/, pagePath);
-    assert.match(html, /Source\+Sans\+3/, pagePath);
-    assert.doesNotMatch(html, /Fraunces|Outfit/, pagePath);
-  } else {
-    assert.match(html, /Fraunces/, pagePath);
-    assert.match(html, /Outfit/, pagePath);
-    assert.doesNotMatch(html, /page-our-work|Source\+Sans\+3/, pagePath);
-  }
+  assert.match(html, /Source\+Sans\+3/, pagePath);
+  assert.doesNotMatch(html, /Fraunces|Outfit|page-our-work/, pagePath);
 }
 for (const phrase of [
   "Protecting Natural Resources",

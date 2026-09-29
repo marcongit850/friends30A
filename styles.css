@@ -12,8 +12,8 @@
   --line: rgba(20, 40, 44, 0.12);
   --white: #fffdf9;
   --shadow: 0 16px 40px rgba(8, 40, 44, 0.1);
-  --serif: "Fraunces", "Iowan Old Style", Palatino, Georgia, serif;
-  --sans: "Outfit", "Avenir Next", "Segoe UI", sans-serif;
+  --serif: "Source Sans 3", "Avenir Next", "Segoe UI", sans-serif;
+  --sans: "Source Sans 3", "Avenir Next", "Segoe UI", sans-serif;
   --max: 1120px;
   --header: 76px;
 }
@@ -25,17 +25,17 @@ body {
   color: var(--ink);
   background: var(--sand);
   font-family: var(--sans);
-  font-size: 1.05rem;
-  line-height: 1.65;
+  font-size: 1.0625rem;
+  line-height: 1.7;
 }
 img { max-width: 100%; height: auto; display: block; }
 a { color: var(--gulf); }
 a:hover { color: var(--gulf-deep); }
 h1, h2, h3, h4 {
   font-family: var(--serif);
-  font-weight: 560;
+  font-weight: 600;
   letter-spacing: -0.02em;
-  line-height: 1.15;
+  line-height: 1.2;
   margin: 0 0 0.6rem;
 }
 p { margin: 0 0 1rem; }
@@ -152,7 +152,7 @@ main { display: block; }
   width: 100%;
 }
 .eyebrow {
-  letter-spacing: 0.18em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   font-size: 0.78rem;
   font-weight: 600;
@@ -163,13 +163,17 @@ main { display: block; }
 .section-white .eyebrow,
 .section-foam .eyebrow { color: var(--oat); }
 .hero h1 {
-  font-size: clamp(2.5rem, 6vw, 4.6rem);
+  font-size: clamp(2.15rem, 4.8vw, 3.6rem);
   max-width: 12ch;
-  font-weight: 560;
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.028em;
 }
 .hero p.lede {
   max-width: 38rem;
-  font-size: 1.15rem;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  font-weight: 400;
   color: rgba(255, 253, 249, 0.92);
 }
 .hero-actions, .button-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.3rem; }
@@ -205,7 +209,7 @@ main { display: block; }
 .section-gulf .btn-ghost,
 .section-gulf .btn-ghost:hover { color: white; }
 .wrap { max-width: var(--max); margin: 0 auto; }
-.section h2 { font-size: clamp(2rem, 4vw, 3rem); }
+.section h2 { font-size: clamp(1.85rem, 2.8vw, 2.5rem); line-height: 1.18; letter-spacing: -0.024em; }
 .subhead { color: var(--muted); max-width: 40rem; }
 
 .pillars {
@@ -363,21 +367,30 @@ main { display: block; }
 }
 .page-hero .wrap { position: relative; z-index: 1; width: 100%; padding-top: 5.5rem; }
 .page-hero h1 {
-  font-size: clamp(2.6rem, 5.6vw, 4.4rem);
+  font-size: clamp(2.2rem, 4.5vw, 3.45rem);
   max-width: 16ch;
+  line-height: 1.12;
+  letter-spacing: -0.028em;
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
 }
 .page-hero p {
   max-width: 40rem;
   color: rgba(255,253,249,0.92);
-  font-size: 1.16rem;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  font-weight: 400;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.28);
+}
+.page-hero .eyebrow {
+  font-weight: 600;
+  letter-spacing: 0.14em;
 }
 .page-hero-tall { min-height: clamp(24rem, 60vh, 42rem); }
 
 .prose { max-width: 46rem; }
-.prose h2 { font-size: clamp(1.7rem, 3vw, 2.15rem); margin-top: 0; }
-.prose h3 { font-size: 1.35rem; margin-top: 1.2rem; }
+.prose h2 { font-size: clamp(1.65rem, 2.6vw, 2.05rem); line-height: 1.22; margin-top: 0; }
+.prose h2 + h3 { margin-top: 0.25rem; }
+.prose h3 { font-size: 1.25rem; line-height: 1.3; font-weight: 600; margin-top: 1.2rem; }
 .prose ul { padding-left: 1.2rem; }
 .prose li { margin: 0.25rem 0; }
 .lede { font-size: 1.18rem; line-height: 1.6; max-width: 42rem; }
@@ -391,15 +404,16 @@ main { display: block; }
 
 .quote {
   font-family: var(--serif);
-  font-size: clamp(1.8rem, 3.4vw, 2.65rem);
+  font-size: clamp(1.6rem, 2.5vw, 2.15rem);
   font-weight: 500;
-  line-height: 1.2;
+  line-height: 1.28;
+  letter-spacing: -0.02em;
   color: var(--gulf-deep);
   margin: 0;
   max-width: 18ch;
 }
 .section-gulf .quote { color: #f3e2c0; }
-.section-gulf h2 { color: white; font-size: clamp(2rem, 4vw, 2.8rem); margin-top: 0; }
+.section-gulf h2 { color: white; font-size: clamp(1.85rem, 2.8vw, 2.35rem); line-height: 1.18; letter-spacing: -0.024em; margin-top: 0; }
 .section-gulf .prose p { color: rgba(255,253,249,0.9); }
 .mission-band, .lead-split, .work-block {
   display: grid;
@@ -407,7 +421,9 @@ main { display: block; }
   align-items: center;
 }
 .mission-band h2, .lead-split h2, .work-block h2 {
-  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-size: clamp(1.85rem, 2.8vw, 2.3rem);
+  line-height: 1.18;
+  letter-spacing: -0.024em;
   margin-top: 0;
 }
 .wrap > .page-photos:first-child { margin-top: 0; }
@@ -429,8 +445,8 @@ main { display: block; }
 .milestone p { color: var(--muted); margin: 0; }
 .year {
   font-family: var(--serif);
-  font-size: clamp(2.8rem, 5vw, 4.2rem);
-  line-height: 0.9;
+  font-size: clamp(2.35rem, 4vw, 3.3rem);
+  line-height: 1.05;
   letter-spacing: -0.03em;
   color: var(--gulf);
   margin: 0 0 0.45rem;
@@ -447,7 +463,9 @@ main { display: block; }
 .photo-bleed { margin: 0; }
 .photo-bleed img { width: 100%; height: clamp(240px, 48vw, 540px); object-fit: cover; display: block; }
 h2.display {
-  font-size: clamp(2.5rem, 5vw, 3.8rem);
+  font-size: clamp(2.15rem, 4vw, 3rem);
+  line-height: 1.12;
+  letter-spacing: -0.028em;
   max-width: 14ch;
   color: var(--gulf-deep);
   margin-top: 0;
@@ -579,7 +597,7 @@ dialog.lightbox button {
   font-family: var(--serif);
   font-size: 2rem;
   color: var(--gulf-deep);
-  font-weight: 560;
+  font-weight: 600;
 }
 
 form.form {
@@ -623,7 +641,9 @@ textarea { min-height: 8rem; resize: vertical; }
 .site-footer h2 {
   font-family: var(--sans);
   font-size: 0.78rem;
+  font-weight: 600;
   letter-spacing: 0.16em;
+  line-height: 1.15;
   text-transform: uppercase;
   color: #f0d7a8;
   margin-bottom: 0.7rem;
@@ -760,72 +780,4 @@ textarea { min-height: 8rem; resize: vertical; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   * { transition: none !important; animation: none !important; }
-}
-
-/* Our Work only: Source Sans 3 for headings and body.
-   Other pages keep Fraunces + Outfit.
-   Sizes sit in the current hero, two-column work blocks, and pull-quote columns
-   instead of the larger Fraunces display scale. */
-body.page-our-work {
-  --serif: "Source Sans 3", "Avenir Next", "Segoe UI", sans-serif;
-  --sans: "Source Sans 3", "Avenir Next", "Segoe UI", sans-serif;
-  font-size: 1.0625rem;
-  line-height: 1.7;
-}
-body.page-our-work h1,
-body.page-our-work h2,
-body.page-our-work h3,
-body.page-our-work h4 {
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-}
-body.page-our-work .page-hero h1 {
-  font-size: clamp(2.2rem, 4.5vw, 3.45rem);
-  line-height: 1.12;
-  letter-spacing: -0.028em;
-}
-body.page-our-work .page-hero p {
-  font-size: 1.125rem;
-  line-height: 1.6;
-  font-weight: 400;
-}
-body.page-our-work .page-hero .eyebrow {
-  letter-spacing: 0.14em;
-  font-weight: 600;
-}
-body.page-our-work .prose h2 {
-  font-size: clamp(1.65rem, 2.6vw, 2.05rem);
-  line-height: 1.22;
-  margin-top: 0;
-}
-body.page-our-work .work-block h2,
-body.page-our-work .lead-split h2 {
-  font-size: clamp(1.85rem, 2.8vw, 2.3rem);
-  line-height: 1.18;
-  letter-spacing: -0.024em;
-  margin-top: 0;
-}
-body.page-our-work .prose h2 + h3 {
-  margin-top: 0.25rem;
-}
-body.page-our-work .prose h3 {
-  font-size: 1.25rem;
-  line-height: 1.3;
-  font-weight: 600;
-}
-body.page-our-work .prose p,
-body.page-our-work .priority-list li {
-  line-height: 1.7;
-}
-body.page-our-work .quote {
-  font-size: clamp(1.6rem, 2.5vw, 2.15rem);
-  font-weight: 500;
-  line-height: 1.28;
-  letter-spacing: -0.02em;
-}
-body.page-our-work .site-footer h2 {
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  line-height: 1.15;
 }
