@@ -62,7 +62,16 @@ for (const [name, page] of [["about", about], ["work", work], ["impact", impact]
 assert.match(memberPage, /Step 1\. Pay through Square/);
 assert.match(memberPage, /Step 2\. Submit your member details/);
 assert.match(involved, /30A’s Future Is Something We All Share[\s\S]*Become a Member[\s\S]*Donate/);
-assert.match(readFileSync(join(root, "styles.css"), "utf8"), /images\/hero\.jpg/);
+const styles = readFileSync(join(root, "styles.css"), "utf8");
+assert.match(styles, /images\/hero\.jpg/);
+assert.match(work, /class="page-our-work"/);
+assert.match(work, /family=Source\+Sans\+3/);
+assert.doesNotMatch(work, /Fraunces|Outfit/);
+assert.match(styles, /body\.page-our-work[\s\S]*Source Sans 3/);
+assert.match(about, /Fraunces/);
+assert.doesNotMatch(about, /page-our-work/);
+assert.match(impact, /Fraunces/);
+assert.doesNotMatch(impact, /page-our-work/);
 
 const membership = readFileSync(join(root, "membership/index.html"), "utf8");
 assert.match(header, /https:\/\/square\.link\/u\/Yzxyi16L/);
@@ -71,6 +80,9 @@ assert.match(membership, /https:\/\/square\.link\/u\/KlIhQxsE/);
 assert.match(membership, /https:\/\/square\.link\/u\/Yzxyi16L/);
 
 const home = readFileSync(join(root, "index.html"), "utf8");
+assert.match(home, /Fraunces/);
+assert.match(home, /Outfit/);
+assert.doesNotMatch(home, /page-our-work|Source\+Sans\+3/);
 for (const phrase of [
   "Protecting Natural Resources",
   "Preserving Scenic 30A",

@@ -12,6 +12,8 @@ DONATE = "https://square.link/u/Yzxyi16L"
 MEMBER_INDIVIDUAL = "https://square.link/u/GUdeODzg"
 MEMBER_BUSINESS = "https://square.link/u/KlIhQxsE"
 PAGES = []
+FONT_SITE = "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Outfit:wght@400;500;600&display=swap"
+FONT_OUR_WORK = "https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap"
 
 GALLERY = [
     ("/images/gallery/01-boardwalk-sea-oats.jpg", "Boardwalk through sea oats toward the Gulf"),
@@ -146,6 +148,9 @@ def article_html(text):
 def layout(title, description, path, body, image="/images/hero.jpg"):
     canonical = ORIGIN + path
     full_title = title if title.endswith("Friends of Scenic 30A") else f"{title} | Friends of Scenic 30A"
+    # Our Work is a type preview: Source Sans 3 for headings and body. Other pages stay Fraunces + Outfit.
+    font_href = FONT_OUR_WORK if path == "/our-work/" else FONT_SITE
+    body_attr = ' class="page-our-work"' if path == "/our-work/" else ""
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -168,11 +173,11 @@ def layout(title, description, path, body, image="/images/hero.jpg"):
   <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="{font_href}" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
   <script type="application/ld+json">{{"@context":"https://schema.org","@type":"NGO","name":"Friends of Scenic 30A","url":"{ORIGIN}/","description":"Designated Byway Organization for Scenic Highway 30A.","address":{{"@type":"PostalAddress","streetAddress":"877 N County Hwy 393","addressLocality":"Santa Rosa Beach","addressRegion":"FL","postalCode":"32459","addressCountry":"US"}},"sameAs":["https://www.facebook.com/fof30a","https://nextdoor.com/page/friends-of-scenic-30a-santa-rosa-beach-fl/"]}}</script>
 </head>
-<body>
+<body{body_attr}>
   <div id="site-header"></div>
   <main id="main">
 {body}
