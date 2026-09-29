@@ -28,6 +28,56 @@
   if (document.getElementById("site-nav")) bindMenu();
   else document.addEventListener("site-header-ready", bindMenu);
 
+  function bindStrip() {
+    var scroller = document.querySelector(".strip-scroller");
+    if (!scroller || scroller.dataset.bound === "true") return;
+    var strip = scroller.querySelector(".strip");
+    var prev = scroller.querySelector(".strip-prev");
+    var next = scroller.querySelector(".strip-next");
+    if (!strip || !prev || !next) return;
+    scroller.dataset.bound = "true";
+
+    function stepSize() {
+      var item = strip.querySelector("a");
+      if (!item) return strip.clientWidth;
+      var styles = window.getComputedStyle(strip);
+      var gap = parseFloat(styles.columnGap || styles.gap) || 0;
+      return item.getBoundingClientRect().width + gap;
+    }
+
+    function update() {
+      var max = strip.scrollWidth - strip.clientWidth;
+      var overflow = max > 4;
+      prev.hidden = !overflow;
+      next.hidden = !overflow;
+      prev.disabled = strip.scrollLeft <= 4;
+      next.disabled = strip.scrollLeft >= max - 4;
+    }
+
+    function move(direction) {
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var max = Math.max(0, strip.scrollWidth - strip.clientWidth);
+      var left = Math.max(0, Math.min(max, strip.scrollLeft + direction * stepSize()));
+      strip.scrollTo({ left: left, behavior: reduce ? "auto" : "smooth" });
+    }
+
+    prev.addEventListener("click", function () { move(-1); });
+    next.addEventListener("click", function () { move(1); });
+    strip.addEventListener("scroll", update, { passive: true });
+    scroller.addEventListener("keydown", function (event) {
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      if (event.altKey || event.ctrlKey || event.metaKey) return;
+      event.preventDefault();
+      move(event.key === "ArrowLeft" ? -1 : 1);
+    });
+    if (window.ResizeObserver) new ResizeObserver(update).observe(strip);
+    else window.addEventListener("resize", update);
+    window.addEventListener("load", update);
+    update();
+  }
+
+  bindStrip();
+
   var dialog = document.getElementById("lightbox");
   document.querySelectorAll("[data-full]").forEach(function (button) {
     button.addEventListener("click", function () {

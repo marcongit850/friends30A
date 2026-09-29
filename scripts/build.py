@@ -195,9 +195,10 @@ def write_page(path, title, description, body, image="/images/hero.jpg"):
     print(path)
 
 
-def page_hero(kicker, title, lede, image="/images/hero.jpg"):
+def page_hero(kicker, title, lede, image="/images/hero.jpg", extra_class=""):
+    classes = "page-hero" + (f" {extra_class}" if extra_class else "")
     return f"""
-    <header class="page-hero" style="--hero:url('{image}')">
+    <header class="{classes}" style="--hero:url('{image}')">
       <div class="wrap">
         <p class="eyebrow">{esc(kicker)}</p>
         <h1>{title}</h1>
@@ -207,14 +208,15 @@ def page_hero(kicker, title, lede, image="/images/hero.jpg"):
     """
 
 
-def photos(items, captions=True):
+def photos(items, captions=True, extra_class=""):
     figures = "\n".join(
         f'<figure><img src="{src}" alt="{esc(alt)}">'
         + (f"<figcaption>{esc(alt)}</figcaption>" if captions else "")
         + "</figure>"
         for src, alt in items
     )
-    return f'<div class="page-photos">{figures}</div>'
+    classes = "page-photos" + (f" {extra_class}" if extra_class else "")
+    return f'<div class="{classes}">{figures}</div>'
 
 
 ICON = {
@@ -222,6 +224,7 @@ ICON = {
     "road": '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.7" d="M7 21 10 3M17 21 14 3M4 8h16M5 14h14"/></svg>',
     "trail": '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="7" cy="6" r="2" fill="currentColor"/><path fill="none" stroke="currentColor" stroke-width="1.7" d="M6 9l2 3-2 2 3 6M14 7l3 2-1 4 3 6M11 14h5"/></svg>',
     "people": '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="8" cy="8" r="2.2" fill="currentColor"/><circle cx="16" cy="9" r="1.8" fill="currentColor"/><path fill="none" stroke="currentColor" stroke-width="1.7" d="M3.5 19c.6-3 2.4-4.5 4.5-4.5S12 16 12.6 19M13 19c.3-2.2 1.6-3.4 3.2-3.4 1.7 0 3 1.2 3.4 3.4"/></svg>',
+    "book": '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.7" d="M12 6.5c-1.6-1-3.4-1.5-6-1.5v13c2.6 0 4.4.5 6 1.5 1.6-1 3.4-1.5 6-1.5v-13c-2.6 0-4.4.5-6 1.5z"/><path fill="none" stroke="currentColor" stroke-width="1.7" d="M12 6.5v13"/></svg>',
 }
 
 
@@ -240,6 +243,8 @@ def home():
         f'<a href="/gallery/"><img src="{src}" alt="{esc(alt)}"></a>'
         for src, alt in GALLERY[:6]
     )
+    strip_prev = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M14.5 5 8 12l6.5 7"/></svg>'
+    strip_next = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="m9.5 5 6.5 7-6.5 7"/></svg>'
     resources = [
         ("30A", "https://30a.com/"),
         ("America's Byways", "https://www.byways.org/"),
@@ -325,7 +330,11 @@ def home():
       <div class="wrap">
         <p class="eyebrow">Along Scenic 30A</p>
         <h2>The corridor, up close</h2>
-        <div class="strip">{strip}</div>
+        <div class="strip-scroller">
+          <button type="button" class="strip-nav strip-prev" aria-controls="corridor-strip" aria-label="Previous photos" disabled>{strip_prev}</button>
+          <div class="strip" id="corridor-strip" tabindex="0" role="group" aria-label="Corridor photos">{strip}</div>
+          <button type="button" class="strip-nav strip-next" aria-controls="corridor-strip" aria-label="Next photos">{strip_next}</button>
+        </div>
         <p><a class="btn btn-line" href="/gallery/">Open the gallery</a></p>
       </div>
     </section>
@@ -347,45 +356,74 @@ def home():
 
 
 def about():
+    topics = [
+        ("leaf", "Protecting Natural Resources", "We support the preservation of the coastal dune lakes, native vegetation, forests, dunes, beaches, and natural landscapes that are fundamental to the identity of Scenic 30A."),
+        ("road", "Preserving Scenic 30A", "We advocate for thoughtful planning, landscaping, infrastructure, and maintenance that respect the beauty and distinctive character of the scenic corridor."),
+        ("trail", "Trails, Walking &amp; Biking", "The Timpoochee Trail is an important part of the 30A experience. We support improvements to trails, pedestrian connections, crossings, signage, and transportation infrastructure that enhance safety and connectivity."),
+        ("people", "Community &amp; Heritage", "Scenic 30A is defined not only by its natural environment but also by its distinctive communities and history. We support efforts that celebrate and preserve the places, stories, and character that make the corridor unique."),
+        ("book", "Education &amp; Stewardship", "Preservation begins with understanding. We work to educate and engage residents, visitors, businesses, and community leaders about Scenic 30A's resources and the importance of protecting them."),
+    ]
+    topic_cards = "\n".join(
+        f'<article class="pillar"><div class="mark">{ICON[key]}</div><h3>{title}</h3><p>{copy}</p></article>'
+        for key, title, copy in topics
+    )
+    heritage = photos([
+        ("/images/gallery/14-dune-sea-oats.jpg", "Sea oats on the dunes"),
+    ], captions=False, extra_class="wide")
     body = page_hero(
         "About Friends of Scenic 30A",
         "Preserving What Makes 30A Special",
         "We are a community-led organization dedicated to maintaining the unique character, natural beauty, and environmental health of the Scenic Highway 30A corridor for all who live here and visit.",
-    ) + """
+        "/images/blog/story.jpg",
+        "page-hero-tall",
+    ) + f"""
+    <section class="section section-white">
+      <div class="wrap feature-row">
+        <div>
+          <h2>Our Story</h2>
+          <div class="prose">
+            <p>Friends of Scenic 30A serves as the designated Byway Organization for Scenic Highway 30A. Since Scenic 30A received its Florida Scenic Highway designation in 2008, Friends has helped carry forward a community vision centered on preserving the corridor's extraordinary natural, scenic, historic, recreational and cultural resources.</p>
+            <p>That role extends well beyond preservation. Friends works with residents, businesses, Walton County, the Tourist Development Council and other community and regional partners on transportation and trail safety, signage and wayfinding, beautification, public education, community engagement and thoughtful improvements throughout the Scenic 30A corridor.</p>
+            <p>In 2021, Scenic 30A received National Scenic Byway designation, further recognizing the national significance of the corridor and its remarkable natural resources. Today, Friends continues working to protect what makes Scenic 30A special while helping prepare the corridor for the challenges and opportunities ahead.</p>
+          </div>
+        </div>
+        <figure class="feature-photo portrait"><img src="/images/gallery/07-timpoochee-riders.jpg" alt="People riding the paved Timpoochee Trail"></figure>
+      </div>
+    </section>
     <section class="section section-sand">
-      <div class="wrap prose">
-        """ + photos([
-            ("/images/gallery/07-timpoochee-riders.jpg", "People riding the paved Timpoochee Trail"),
-            ("/images/gallery/03-dune-lake-pines.jpg", "Coastal dune lake edged by pines"),
-            ("/images/gallery/14-dune-sea-oats.jpg", "Sea oats on the dunes"),
-        ], captions=False) + """
-        <h2>Our Story</h2>
-        <p>Friends of Scenic 30A serves as the designated Byway Organization for Scenic Highway 30A. Since Scenic 30A received its Florida Scenic Highway designation in 2008, Friends has helped carry forward a community vision centered on preserving the corridor's extraordinary natural, scenic, historic, recreational and cultural resources.</p>
-        <p>That role extends well beyond preservation. Friends works with residents, businesses, Walton County, the Tourist Development Council and other community and regional partners on transportation and trail safety, signage and wayfinding, beautification, public education, community engagement and thoughtful improvements throughout the Scenic 30A corridor.</p>
-        <p>In 2021, Scenic 30A received National Scenic Byway designation, further recognizing the national significance of the corridor and its remarkable natural resources. Today, Friends continues working to protect what makes Scenic 30A special while helping prepare the corridor for the challenges and opportunities ahead.</p>
-        <h2>Our Mission</h2>
-        <p class="quote">Protect. Preserve. Enhance.</p>
-        <p>Our mission is to help preserve and enhance the natural, scenic, recreational, historic, and community resources that define Scenic Highway 30A. Our efforts focus on protecting the character of the corridor while supporting improvements that make 30A safer, more beautiful, accessible, and enjoyable for residents and visitors alike.</p>
+      <div class="wrap">
+        <p class="eyebrow">Our Mission</p>
+        <h2 class="display">Protect. Preserve. Enhance.</h2>
+        <p class="lede">Our mission is to help preserve and enhance the natural, scenic, recreational, historic, and community resources that define Scenic Highway 30A. Our efforts focus on protecting the character of the corridor while supporting improvements that make 30A safer, more beautiful, accessible, and enjoyable for residents and visitors alike.</p>
         <h2>What We Care About</h2>
-        <h3>Protecting Natural Resources</h3>
-        <p>We support the preservation of the coastal dune lakes, native vegetation, forests, dunes, beaches, and natural landscapes that are fundamental to the identity of Scenic 30A.</p>
-        <h3>Preserving Scenic 30A</h3>
-        <p>We advocate for thoughtful planning, landscaping, infrastructure, and maintenance that respect the beauty and distinctive character of the scenic corridor.</p>
-        <h3>Trails, Walking &amp; Biking</h3>
-        <p>The Timpoochee Trail is an important part of the 30A experience. We support improvements to trails, pedestrian connections, crossings, signage, and transportation infrastructure that enhance safety and connectivity.</p>
-        <h3>Community &amp; Heritage</h3>
-        <p>Scenic 30A is defined not only by its natural environment but also by its distinctive communities and history. We support efforts that celebrate and preserve the places, stories, and character that make the corridor unique.</p>
-        <h3>Education &amp; Stewardship</h3>
-        <p>Preservation begins with understanding. We work to educate and engage residents, visitors, businesses, and community leaders about Scenic 30A's resources and the importance of protecting them.</p>
-        <h2>Looking to the Future</h2>
-        <h3>Preserving 30A for Generations to Come</h3>
-        <p>Scenic 30A will continue to evolve. Our goal is not to prevent change, but to help ensure that change occurs thoughtfully. We envision a future where the scenic two-lane roadway remains distinctive, coastal dune lakes and native landscapes remain protected, walking and biking are safe and enjoyable, communities retain their individual character, and future generations can experience the qualities that make Scenic 30A unlike anywhere else. What we protect today becomes the 30A of tomorrow.</p>
+        <div class="topic-grid">{topic_cards}</div>
+      </div>
+    </section>
+    <section class="section section-white">
+      <div class="wrap feature-row">
+        <figure class="feature-photo portrait"><img src="/images/gallery/03-dune-lake-pines.jpg" alt="Coastal dune lake edged by pines"></figure>
+        <div class="prose">
+          <h2>Looking to the Future</h2>
+          <h3>Preserving 30A for Generations to Come</h3>
+          <p>Scenic 30A will continue to evolve. Our goal is not to prevent change, but to help ensure that change occurs thoughtfully. We envision a future where the scenic two-lane roadway remains distinctive, coastal dune lakes and native landscapes remain protected, walking and biking are safe and enjoyable, communities retain their individual character, and future generations can experience the qualities that make Scenic 30A unlike anywhere else. What we protect today becomes the 30A of tomorrow.</p>
+        </div>
+      </div>
+    </section>
+    <section class="section section-gulf">
+      <div class="wrap cta-band">
         <h2>Be Part of the Future of Scenic 30A</h2>
         <p>Protecting Scenic 30A is a community effort. Whether you live here, own a business, visit year after year, or simply love this special place, there is a role for you in helping preserve its future.</p>
-        <p><a class="btn btn-gulf" href="/membership/">Become a Member</a></p>
-        <h2>Preserving Scenic 30A Heritage</h2>
-        <p>Scenic 30A stretches across South Walton, connecting distinctive beach communities with coastal dune lakes, state parks, Point Washington State Forest, trails and important north-south corridors. This unique combination of natural, recreational and community resources is what Friends of Scenic 30A works to protect and enhance.</p>
-        <p><a href="/our-work/">See how that work takes shape</a></p>
+        <p><a class="btn btn-primary" href="/membership/">Become a Member</a></p>
+      </div>
+    </section>
+    <section class="section section-sand">
+      <div class="wrap">
+        <div class="prose">
+          <h2>Preserving Scenic 30A Heritage</h2>
+          <p>Scenic 30A stretches across South Walton, connecting distinctive beach communities with coastal dune lakes, state parks, Point Washington State Forest, trails and important north-south corridors. This unique combination of natural, recreational and community resources is what Friends of Scenic 30A works to protect and enhance.</p>
+          <p><a href="/our-work/">See how that work takes shape</a></p>
+        </div>
+        {heritage}
       </div>
     </section>
     """
@@ -394,27 +432,35 @@ def about():
         "About Us",
         "Friends of Scenic 30A is the designated Byway Organization for Scenic Highway 30A, protecting its natural beauty, communities, and quality of life.",
         body,
+        "/images/blog/story.jpg",
     )
 
 
 def our_work():
+    gallery = photos([
+        ("/images/blog/trails.jpg", "Trail through the Scenic 30A corridor"),
+        ("/images/gallery/07-timpoochee-riders.jpg", "People riding the paved Timpoochee Trail"),
+        ("/images/gallery/11-gulf-path.jpg", "Path beside the Gulf with sea oats and pines"),
+    ], captions=False, extra_class="photo-mosaic")
     body = page_hero(
         "Our work",
         "Protecting the Character and Future of Scenic 30A",
         "Friends of Scenic 30A works to preserve and enhance the natural, scenic, recreational, historic, and community resources that make Scenic Highway 30A extraordinary.",
         "/images/gallery/03-dune-lake-pines.jpg",
-    ) + """
+    ) + f"""
+    <section class="section section-white">
+      <div class="wrap">
+        {gallery}
+      </div>
+    </section>
     <section class="section section-sand">
-      <div class="wrap prose">
-        """ + photos([
-            ("/images/blog/trails.jpg", "Trail through the Scenic 30A corridor"),
-            ("/images/gallery/07-timpoochee-riders.jpg", "People riding the paved Timpoochee Trail"),
-            ("/images/gallery/11-gulf-path.jpg", "Path beside the Gulf with sea oats and pines"),
-        ], captions=False) + """
-        <h2>Protecting the Landscape That Defines 30A</h2>
-        <p>Scenic 30A passes through an extraordinary natural environment of coastal dune lakes, beaches, dunes, forests, native vegetation, state parks, and wildlife habitat. We support efforts that preserve these resources and maintain the natural character and beauty of the scenic corridor.</p>
-        <p>Our priorities include:</p>
-        <ul>
+      <div class="wrap work-block">
+        <div class="prose">
+          <h2>Protecting the Landscape That Defines 30A</h2>
+          <p>Scenic 30A passes through an extraordinary natural environment of coastal dune lakes, beaches, dunes, forests, native vegetation, state parks, and wildlife habitat. We support efforts that preserve these resources and maintain the natural character and beauty of the scenic corridor.</p>
+          <p>Our priorities include:</p>
+        </div>
+        <ul class="priority-list">
           <li>Native vegetation and landscape preservation</li>
           <li>Heritage trees and natural resources</li>
           <li>Coastal dune lakes</li>
@@ -422,10 +468,16 @@ def our_work():
           <li>Appropriate screening of infrastructure and utilities</li>
           <li>Clean and well-maintained roadsides and public spaces</li>
         </ul>
-        <h2>Creating a Safer, More Connected 30A</h2>
-        <p>Scenic 30A is experienced by more than motorists. Walking and bicycling are fundamental parts of the corridor. We support improvements that enhance safety and connectivity while respecting the scenic character of the highway.</p>
-        <p>Our priorities include:</p>
-        <ul>
+      </div>
+    </section>
+    <section class="section section-white">
+      <div class="wrap work-block">
+        <div class="prose">
+          <h2>Creating a Safer, More Connected 30A</h2>
+          <p>Scenic 30A is experienced by more than motorists. Walking and bicycling are fundamental parts of the corridor. We support improvements that enhance safety and connectivity while respecting the scenic character of the highway.</p>
+          <p>Our priorities include:</p>
+        </div>
+        <ul class="priority-list">
           <li>Timpoochee Trail safety and maintenance</li>
           <li>Safer pedestrian crossings</li>
           <li>Bicycle facilities and bike racks</li>
@@ -434,10 +486,16 @@ def our_work():
           <li>Additional trail connections</li>
           <li>Thoughtful transportation and parking planning</li>
         </ul>
-        <h2>Keeping Scenic 30A Scenic</h2>
-        <p>The Scenic Highway designation represents more than beautiful views. It recognizes a corridor where natural landscapes, communities, recreation, history, and transportation come together to create a distinctive sense of place. We advocate for thoughtful planning, maintenance, landscaping, signage, and infrastructure that respect and enhance that character.</p>
-        <p>Our priorities include:</p>
-        <ul>
+      </div>
+    </section>
+    <section class="section section-sand">
+      <div class="wrap work-block">
+        <div class="prose">
+          <h2>Keeping Scenic 30A Scenic</h2>
+          <p>The Scenic Highway designation represents more than beautiful views. It recognizes a corridor where natural landscapes, communities, recreation, history, and transportation come together to create a distinctive sense of place. We advocate for thoughtful planning, maintenance, landscaping, signage, and infrastructure that respect and enhance that character.</p>
+          <p>Our priorities include:</p>
+        </div>
+        <ul class="priority-list">
           <li>Scenic corridor preservation</li>
           <li>Road and trail maintenance</li>
           <li>Landscaping standards</li>
@@ -445,10 +503,16 @@ def our_work():
           <li>Public amenities</li>
           <li>Thoughtful infrastructure improvements</li>
         </ul>
-        <h2>Sharing the Story of 30A</h2>
-        <p>Understanding Scenic 30A helps people appreciate why it deserves to be protected. We support education about the corridor’s natural environment, history, communities, recreational resources, and unique sense of place.</p>
-        <p>Our priorities include:</p>
-        <ul>
+      </div>
+    </section>
+    <section class="section section-white">
+      <div class="wrap work-block">
+        <div class="prose">
+          <h2>Sharing the Story of 30A</h2>
+          <p>Understanding Scenic 30A helps people appreciate why it deserves to be protected. We support education about the corridor’s natural environment, history, communities, recreational resources, and unique sense of place.</p>
+          <p>Our priorities include:</p>
+        </div>
+        <ul class="priority-list">
           <li>Historic and interpretive markers</li>
           <li>Environmental education</li>
           <li>Native landscape education</li>
@@ -456,19 +520,35 @@ def our_work():
           <li>Interpretation of natural and cultural resources</li>
           <li>Awareness of Scenic 30A’s Florida Scenic Highway designation</li>
         </ul>
-        <h2>Working Together for 30A</h2>
-        <p>Protecting Scenic 30A requires cooperation. Friends of Scenic 30A brings together residents, businesses, property owners, community organizations, land managers, and local government to address challenges and pursue opportunities that benefit the scenic corridor.</p>
-        <p class="quote">“The future of Scenic 30A is a shared responsibility.”</p>
-        <h2>Our Vision</h2>
-        <h3>A Scenic Corridor Worth Passing On</h3>
-        <p>We envision a future where Scenic 30A retains its beautiful two-lane character, coastal dune lakes and native landscapes remain protected, walking and bicycling are safe and enjoyable, trails connect our communities, and the history and distinctive character of the corridor remain visible for generations to come.</p>
-        <p class="quote">“What we protect today becomes the 30A of tomorrow.”</p>
-        <h2>Help Protect Scenic 30A</h2>
-        <p>Friends of Scenic 30A is powered by people who care about this extraordinary place. Join us in protecting and enhancing the corridor for generations to come.</p>
-        <p class="button-row"><a class="btn btn-gulf" href="/membership/">Become a Member</a> <a class="btn btn-line" href="%s" target="_blank" rel="noopener noreferrer">Donate</a></p>
       </div>
     </section>
-    """ % DONATE
+    <section class="section section-gulf">
+      <div class="wrap lead-split">
+        <div class="prose">
+          <h2>Working Together for 30A</h2>
+          <p>Protecting Scenic 30A requires cooperation. Friends of Scenic 30A brings together residents, businesses, property owners, community organizations, land managers, and local government to address challenges and pursue opportunities that benefit the scenic corridor.</p>
+        </div>
+        <p class="quote">“The future of Scenic 30A is a shared responsibility.”</p>
+      </div>
+    </section>
+    <section class="section section-white">
+      <div class="wrap lead-split">
+        <div class="prose">
+          <h2>Our Vision</h2>
+          <h3>A Scenic Corridor Worth Passing On</h3>
+          <p>We envision a future where Scenic 30A retains its beautiful two-lane character, coastal dune lakes and native landscapes remain protected, walking and bicycling are safe and enjoyable, trails connect our communities, and the history and distinctive character of the corridor remain visible for generations to come.</p>
+        </div>
+        <p class="quote">“What we protect today becomes the 30A of tomorrow.”</p>
+      </div>
+    </section>
+    <section class="section section-foam">
+      <div class="wrap prose">
+        <h2>Help Protect Scenic 30A</h2>
+        <p>Friends of Scenic 30A is powered by people who care about this extraordinary place. Join us in protecting and enhancing the corridor for generations to come.</p>
+        <p class="button-row"><a class="btn btn-gulf" href="/membership/">Become a Member</a> <a class="btn btn-line" href="{DONATE}" target="_blank" rel="noopener noreferrer">Donate</a></p>
+      </div>
+    </section>
+    """
     write_page(
         "/our-work/",
         "Our Work",
@@ -479,30 +559,45 @@ def our_work():
 
 
 def impact():
+    gallery = photos([
+        ("/images/gallery/06-aerial-gulf-and-lake.jpg", "Aerial view of the Gulf, beach, and a dune lake beside 30A"),
+        ("/images/gallery/02-gulf-sea-oats.jpg", "Gulf shoreline and sea oats along Scenic 30A"),
+        ("/images/gallery/07-timpoochee-riders.jpg", "People riding the paved Timpoochee Trail"),
+        ("/images/gallery/04-boardwalk-beach.jpg", "Beach boardwalk opening onto the Gulf"),
+    ], captions=False, extra_class="photo-collage")
     body = page_hero(
         "Our impact",
         "Protecting and Enhancing Scenic 30A",
         "For more than two decades, Friends of Scenic 30A has worked to preserve the character, natural beauty, history, and quality of life that make the Scenic 30A corridor special.",
         "/images/gallery/06-aerial-gulf-and-lake.jpg",
-    ) + """
+        "page-hero-tall",
+    ) + f"""
+    <section class="section section-white">
+      <div class="wrap">
+        <p class="lede">Through community leadership, advocacy, partnerships, and hands-on projects, Friends has helped ensure that Scenic 30A remains much more than just a roadway.</p>
+      </div>
+    </section>
     <section class="section section-sand">
-      <div class="wrap prose">
-        """ + photos([
-            ("/images/gallery/06-aerial-gulf-and-lake.jpg", "Aerial view of the Gulf, beach, and a dune lake beside 30A"),
-            ("/images/gallery/07-timpoochee-riders.jpg", "People riding the paved Timpoochee Trail"),
-            ("/images/gallery/02-gulf-sea-oats.jpg", "Gulf shoreline and sea oats along Scenic 30A"),
-        ], captions=False) + """
-        <p>Through community leadership, advocacy, partnerships, and hands-on projects, Friends has helped ensure that Scenic 30A remains much more than just a roadway.</p>
+      <div class="wrap">
         <h2>Major Accomplishments</h2>
-        <p>For more than 20 years, Friends of Scenic 30A has helped turn community ideas into action. Here are some of the milestones that have helped shape and protect the Scenic 30A corridor.</p>
-        <h3>Florida Scenic Highway Designation</h3>
-        <p>Friends played a leading role in the effort that resulted in Scenic 30A receiving official Florida Scenic Highway designation in 2008, creating a long-term framework for protecting and enhancing the corridor's unique resources.</p>
-        <h3>National Scenic Byway Designation</h3>
-        <p>Friends helped prepare and advance the successful application that resulted in Scenic 30A receiving National Scenic Byway designation in 2021.</p>
-        <h3>Friends’ Corner at Eastern Lake</h3>
-        <p>Friends spearheaded the creation of Friends' Corner at Scenic 30A and Eastern Lake Road, transforming the site into a landscaped rest area for pedestrians and bicyclists using the Timpoochee Trail.</p>
-        <h3>Stewardship of Scenic 30A</h3>
-        <p>As the corridor's designated caretaker organization, Friends works with local, regional and state partners to protect and enhance Scenic 30A's scenic, environmental, recreational and historic resources.</p>
+        <p class="lede">For more than 20 years, Friends of Scenic 30A has helped turn community ideas into action. Here are some of the milestones that have helped shape and protect the Scenic 30A corridor.</p>
+        <div class="accomplish-split">
+          {gallery}
+          <div class="accomplish-copy">
+            <h3>Florida Scenic Highway Designation</h3>
+            <p>Friends played a leading role in the effort that resulted in Scenic 30A receiving official Florida Scenic Highway designation in 2008, creating a long-term framework for protecting and enhancing the corridor's unique resources.</p>
+            <h3>National Scenic Byway Designation</h3>
+            <p>Friends helped prepare and advance the successful application that resulted in Scenic 30A receiving National Scenic Byway designation in 2021.</p>
+            <h3>Friends’ Corner at Eastern Lake</h3>
+            <p>Friends spearheaded the creation of Friends' Corner at Scenic 30A and Eastern Lake Road, transforming the site into a landscaped rest area for pedestrians and bicyclists using the Timpoochee Trail.</p>
+            <h3>Stewardship of Scenic 30A</h3>
+            <p>As the corridor's designated caretaker organization, Friends works with local, regional and state partners to protect and enhance Scenic 30A's scenic, environmental, recreational and historic resources.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section section-white">
+      <div class="wrap section-copy">
         <h2>Transportation, Trails &amp; Safety</h2>
         <h3>Wayfinding &amp; Signage</h3>
         <p>Friends has worked to create a more cohesive and attractive signage system along Scenic 30A. Earlier efforts included a corridor signage inventory, removal of duplicate and unnecessary signs, and installation of safety and trail-etiquette signage, while ongoing efforts focus on wayfinding, safety and reducing visual clutter.</p>
@@ -510,6 +605,10 @@ def impact():
         <p>Friends has worked for years to improve bicycle and pedestrian safety throughout the Scenic 30A corridor, supporting safer crossings, trail improvements, bicycle facilities, better signage and expanded multimodal connections.</p>
         <h3>Transportation &amp; Connectivity</h3>
         <p>Transportation planning has long been part of Friends' stewardship of Scenic 30A. Friends participates in discussions involving roadway safety, trail and sidewalk connections, traffic, emergency access and regional mobility while supporting solutions that protect Scenic 30A's two-lane scenic character.</p>
+      </div>
+    </section>
+    <section class="section section-sand">
+      <div class="wrap section-copy">
         <h2>Beautification &amp; Preservation</h2>
         <h3>30A Gateway Improvements</h3>
         <p>Friends has partnered with Scenic Walton and others on landscaping and gateway improvements celebrating Scenic 30A's state and national scenic designations.</p>
@@ -517,16 +616,24 @@ def impact():
         <p>Friends advocates for the protection of coastal dune lakes, native vegetation, state parks, Point Washington State Forest and the many other natural resources that define Scenic 30A.</p>
         <h3>Preserving Scenic &amp; Historic Character</h3>
         <p>From heritage trees and historic resources to visual improvements and thoughtful infrastructure, Friends works to preserve the qualities that distinguish Scenic 30A from an ordinary roadway.</p>
+      </div>
+    </section>
+    <section class="section section-white">
+      <div class="wrap section-copy">
         <h2>Community Leadership &amp; Advocacy</h2>
         <h3>A Voice for Scenic 30A</h3>
         <p>Friends works with Walton County, FDOT, the Okaloosa-Walton TPO, community organizations, businesses and residents to ensure Scenic 30A has a strong voice when decisions are made about transportation, development, infrastructure and public improvements.</p>
-        <h3>Planning for 30A’s Future</h3>
-        <p>Friends advocates for responsible solutions to the challenges created by South Walton's growth—including traffic, infrastructure, pedestrian and bicycle safety, environmental protection and preservation of Scenic 30A's distinctive character.</p>
         <h3>Bringing Our Community Together</h3>
         <p>Friends helps connect residents, businesses, nonprofits and government around projects and initiatives that protect and enhance the Scenic 30A corridor.</p>
+        <h3>Planning for 30A’s Future</h3>
+        <p>Friends advocates for responsible solutions to the challenges created by South Walton's growth—including traffic, infrastructure, pedestrian and bicycle safety, environmental protection and preservation of Scenic 30A's distinctive character.</p>
+      </div>
+    </section>
+    <section class="section section-foam">
+      <div class="wrap">
         <h2>Protecting 30A Today. Preserving It for Generations.</h2>
-        <p>For more than 20 years, Friends of Scenic 30A has helped turn community ideas into action—from achieving state and national recognition for Scenic 30A to improving trails, public spaces, signage, transportation planning and preservation efforts.</p>
-        <p>Our mission remains the same: protect what makes Scenic 30A special while working toward thoughtful solutions that make it better for the people who live, work and visit here.</p>
+        <p class="lede">For more than 20 years, Friends of Scenic 30A has helped turn community ideas into action—from achieving state and national recognition for Scenic 30A to improving trails, public spaces, signage, transportation planning and preservation efforts.</p>
+        <p class="lede">Our mission remains the same: protect what makes Scenic 30A special while working toward thoughtful solutions that make it better for the people who live, work and visit here.</p>
         <p class="button-row"><a class="btn btn-gulf" href="/membership/">Become a Member</a> <a class="btn btn-line" href="/get-involved/">Support our work</a></p>
       </div>
     </section>
@@ -576,23 +683,30 @@ def gallery():
 
 
 def get_involved():
+    gallery = photos([
+        ("/images/gallery/04-boardwalk-beach.jpg", "Beach boardwalk opening onto the Gulf"),
+        ("/images/blog/trails.jpg", "Trail through the Scenic 30A corridor"),
+        ("/images/gallery/12-beach-chairs.jpg", "Beach chairs on sugar-white sand"),
+    ], captions=False, extra_class="photo-mosaic")
     body = page_hero(
         "Get involved",
         "Help Protect What Makes 30A Special",
         "Scenic 30A belongs to everyone who values its natural beauty, distinctive communities, trails, scenic character, and extraordinary sense of place.",
         "/images/gallery/07-timpoochee-riders.jpg",
     ) + f"""
-    <section class="section section-sand">
+    <section class="section section-white">
       <div class="wrap">
-        <p>Friends of Scenic 30A brings people together to help protect and enhance this special corridor for generations to come.</p>
+        <p class="lede">Friends of Scenic 30A brings people together to help protect and enhance this special corridor for generations to come.</p>
         <div class="involve-grid">
           <article class="involve"><h3>Become a Member</h3><p>Join the community working to preserve and enhance Scenic 30A.</p><a class="btn btn-gulf" href="/membership/">Become a Member</a></article>
           <article class="involve"><h3>Donate</h3><p>Help provide the resources needed to support preservation, education, advocacy, and community initiatives.</p><a class="btn btn-line" href="{DONATE}" target="_blank" rel="noopener noreferrer">Donate</a></article>
         </div>
-        <div class="prose">
-          <h2>There’s a Place for You in Our Mission</h2>
-          <p>Friends of Scenic 30A is a volunteer-driven community organization. Whether you live here, own a business, visit regularly, or simply love 30A, your involvement helps strengthen our voice and support our work.</p>
-        </div>
+      </div>
+    </section>
+    <section class="section section-sand">
+      <div class="wrap">
+        <h2>There’s a Place for You in Our Mission</h2>
+        <p class="lede">Friends of Scenic 30A is a volunteer-driven community organization. Whether you live here, own a business, visit regularly, or simply love 30A, your involvement helps strengthen our voice and support our work.</p>
         <div class="price-grid">
           <article class="price">
             <h3>Individual Membership</h3>
@@ -608,6 +722,15 @@ def get_involved():
           </article>
         </div>
         <p>Every member adds another voice for the thoughtful stewardship of Scenic 30A.</p>
+      </div>
+    </section>
+    <section class="section section-white">
+      <div class="wrap">
+        {gallery}
+      </div>
+    </section>
+    <section class="section section-sand">
+      <div class="wrap">
         <div class="split">
           <form class="form" data-form="volunteer">
             <h2>Volunteer</h2>
@@ -647,12 +770,16 @@ def get_involved():
               <p>Friends of Scenic 30A relies on community support to advance its mission. Your contribution helps support the organization’s preservation, education, community engagement, and corridor stewardship efforts.</p>
               <p><a class="btn btn-gulf" href="{DONATE}" target="_blank" rel="noopener noreferrer">Donate Now</a></p>
               <p>Additional contributions help support preservation projects, advocacy, education and community initiatives that protect and enhance Scenic 30A.</p>
-              <h2>30A’s Future Is Something We All Share</h2>
-              <p>Protecting the character of Scenic 30A takes a community. Become a member, lend your time, make a contribution, or simply stay informed. Every person who gets involved helps strengthen the future of this extraordinary place.</p>
-              <p class="button-row"><a class="btn btn-gulf" href="/membership/">Become a Member</a> <a class="btn btn-line" href="{DONATE}" target="_blank" rel="noopener noreferrer">Donate</a></p>
             </div>
           </div>
         </div>
+      </div>
+    </section>
+    <section class="section section-foam">
+      <div class="wrap">
+        <h2>30A’s Future Is Something We All Share</h2>
+        <p class="lede">Protecting the character of Scenic 30A takes a community. Become a member, lend your time, make a contribution, or simply stay informed. Every person who gets involved helps strengthen the future of this extraordinary place.</p>
+        <p class="button-row"><a class="btn btn-gulf" href="/membership/">Become a Member</a> <a class="btn btn-line" href="{DONATE}" target="_blank" rel="noopener noreferrer">Donate</a></p>
       </div>
     </section>
     """
@@ -672,15 +799,17 @@ def membership():
         "Membership supports Friends of Scenic 30A's work as the designated Byway Organization for Scenic Highway 30A.",
         "/images/gallery/14-dune-sea-oats.jpg",
     ) + f"""
+    <section class="section section-white">
+      <div class="wrap prose">
+        <p class="lede">Your support helps advance preservation, transportation and trail safety, community education, beautification, advocacy and other initiatives that protect and enhance the corridor.</p>
+        <h2>Why Membership Matters</h2>
+        <h3>Help Protect What Makes 30A Special</h3>
+        <p>Scenic Highway 30A is more than just a road; it is a collection of rare coastal dune lakes, sugar-white sand beaches, and historic communities that define our way of life. By becoming a member, you provide the vital resources needed to advocate for thoughtful planning and development, environmental stewardship, and the preservation of our scenic vistas.</p>
+      </div>
+    </section>
     <section class="section section-sand">
       <div class="wrap">
-        <div class="prose">
-          <p>Your support helps advance preservation, transportation and trail safety, community education, beautification, advocacy and other initiatives that protect and enhance the corridor.</p>
-          <h2>Why Membership Matters</h2>
-          <h3>Help Protect What Makes 30A Special</h3>
-          <p>Scenic Highway 30A is more than just a road; it is a collection of rare coastal dune lakes, sugar-white sand beaches, and historic communities that define our way of life. By becoming a member, you provide the vital resources needed to advocate for thoughtful planning and development, environmental stewardship, and the preservation of our scenic vistas.</p>
-          <h2>Together, We’re Working for the Future of Scenic 30A</h2>
-        </div>
+        <h2>Together, We’re Working for the Future of Scenic 30A</h2>
         <div class="pillars">
           <article class="pillar"><h3>Conservation Efforts</h3><p>Protecting our rare coastal dune lakes and preserving natural wildlife habitats.</p></article>
           <article class="pillar"><h3>Community Advocacy</h3><p>Working with local leaders to ensure development respects the character of 30A.</p></article>
@@ -692,8 +821,12 @@ def membership():
             ("/images/blog/vision.jpg", "Boardwalk and dunes along Scenic 30A"),
             ("/images/gallery/07-timpoochee-riders.jpg", "People riding the paved Timpoochee Trail"),
         ]) + f"""
+      </div>
+    </section>
+    <section class="section section-foam">
+      <div class="wrap">
         <h2>Step 1. Pay through Square</h2>
-        <p>Choose Individual or Business and complete payment on Square. Membership is not finished until you also send your details in step 2.</p>
+        <p class="lede">Choose Individual or Business and complete payment on Square. Membership is not finished until you also send your details in step 2.</p>
         <div class="price-grid">
           <article class="price">
             <h3>Individual</h3>
@@ -708,14 +841,20 @@ def membership():
             <a class="btn btn-line" href="{MEMBER_BUSINESS}" target="_blank" rel="noopener noreferrer">Join as Business</a>
           </article>
         </div>
-        <div class="prose">
-          <h2>Make an Additional Contribution</h2>
-          <p>Your additional contributions fund specific preservation projects and educational programs that membership alone cannot cover. Every dollar goes directly toward defending the 30A we all love.</p>
-          <p><a class="btn btn-gulf" href="{DONATE}" target="_blank" rel="noopener noreferrer">Donate to Friends of Scenic 30A</a></p>
-          <h2>Step 2. Submit your member details</h2>
-          <p>After you pay on Square, send your details here so Friends of Scenic 30A can confirm your membership and keep you informed. This form does not collect payment.</p>
-          <h2>What We Protect Today Becomes the 30A of Tomorrow.</h2>
-        </div>
+      </div>
+    </section>
+    <section class="section section-white">
+      <div class="wrap prose">
+        <h2>Make an Additional Contribution</h2>
+        <p>Your additional contributions fund specific preservation projects and educational programs that membership alone cannot cover. Every dollar goes directly toward defending the 30A we all love.</p>
+        <p><a class="btn btn-gulf" href="{DONATE}" target="_blank" rel="noopener noreferrer">Donate to Friends of Scenic 30A</a></p>
+      </div>
+    </section>
+    <section class="section section-sand">
+      <div class="wrap">
+        <h2>Step 2. Submit your member details</h2>
+        <p class="lede">After you pay on Square, send your details here so Friends of Scenic 30A can confirm your membership and keep you informed. This form does not collect payment.</p>
+        <p class="quote">What We Protect Today Becomes the 30A of Tomorrow.</p>
         <form class="form" data-form="membership">
           <div class="split">
             <label>First name *<input name="first" required autocomplete="given-name"></label>
