@@ -774,7 +774,6 @@ def contact():
         <div class="prose">
           <h2>Friends of Scenic 30A</h2>
           <p><a href="https://www.google.com/maps/search/?api=1&query=877+N+County+Hwy+393,+Santa+Rosa+Beach,+FL+32459">877 N County Hwy 393<br>Santa Rosa Beach, FL 32459</a></p>
-          <p>Mail is also received at P.O. Box 1931, Santa Rosa Beach, FL 32459.</p>
           <p><a href="/get-involved/">Get involved</a> or <a href="/membership/">become a member</a>.</p>
         </div>
       </div>

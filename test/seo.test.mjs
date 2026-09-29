@@ -27,6 +27,7 @@ for (const page of pages) {
   assert.match(html, /id="site-footer"/, page);
   assert.match(html, /src="\/header\.js"/, page);
   assert.match(html, /src="\/footer\.js"/, page);
+  assert.doesNotMatch(html, /Mail is also received at P\.O\. Box 1931/, page);
 }
 
 const headerJs = readFileSync(join(root, "header.js"), "utf8");
@@ -71,6 +72,11 @@ for (const [name, page] of [["about", about], ["work", work], ["impact", impact]
 assert.match(memberPage, /Step 1\. Pay through Square/);
 assert.match(memberPage, /Step 2\. Submit your member details/);
 assert.match(involved, /30A’s Future Is Something We All Share[\s\S]*Become a Member[\s\S]*Donate/);
+const contact = readFileSync(join(root, "contact/index.html"), "utf8");
+assert.match(contact, /877 N County Hwy 393/);
+assert.match(contact, /Say Hello/);
+assert.doesNotMatch(contact, /Mail is also received at P\.O\. Box 1931/);
+assert.doesNotMatch(contact, /P\.O\. Box 1931/);
 assert.match(readFileSync(join(root, "styles.css"), "utf8"), /images\/hero\.jpg/);
 
 const membership = readFileSync(join(root, "membership/index.html"), "utf8");
