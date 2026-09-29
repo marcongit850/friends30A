@@ -35,6 +35,8 @@ assert.match(headerJs, /\/includes\/header\.html/);
 assert.match(footerJs, /\/includes\/footer\.html/);
 
 const header = readFileSync(join(root, "includes/header.html"), "utf8");
+assert.match(header, /aria-label="Friends of Scenic 30A"/);
+assert.doesNotMatch(header, /brand-kicker|brand-name/);
 const footer = readFileSync(join(root, "includes/footer.html"), "utf8");
 assert.match(footer, /Friends of Scenic 30A/);
 assert.match(footer, /877 N County Hwy 393/);
