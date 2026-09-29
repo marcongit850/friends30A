@@ -49,6 +49,15 @@ assert.match(footer, /<svg[\s\S]*visually-hidden">Facebook/);
 assert.match(footer, /<svg[\s\S]*visually-hidden">Nextdoor/);
 assert.match(footer, /florida-scenic-highway\.png/);
 assert.match(footer, /alt="Florida Scenic Highway"/);
+assert.match(footer, /<h2>Explore<\/h2>/);
+assert.match(footer, /<h2>Get Involved<\/h2>/);
+assert.doesNotMatch(footer, /Scenic 30A Resources/);
+assert.doesNotMatch(footer, /https:\/\/30a\.com\//);
+assert.doesNotMatch(footer, /https:\/\/www\.byways\.org\//);
+assert.doesNotMatch(footer, /https:\/\/www\.visitsouthwalton\.com\//);
+assert.doesNotMatch(footer, /https:\/\/www\.visitflorida\.com\//);
+assert.doesNotMatch(footer, /https:\/\/www\.waltonareachamber\.com\//);
+assert.doesNotMatch(footer, /https:\/\/sowal\.com\//);
 
 const about = readFileSync(join(root, "about/index.html"), "utf8");
 const work = readFileSync(join(root, "our-work/index.html"), "utf8");
