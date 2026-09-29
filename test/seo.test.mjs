@@ -47,6 +47,22 @@ assert.match(footer, /https:\/\/www\.facebook\.com\/fof30a/);
 assert.match(footer, /https:\/\/nextdoor\.com\/page\/friends-of-scenic-30a-santa-rosa-beach-fl\//);
 assert.match(footer, /<svg[\s\S]*visually-hidden">Facebook/);
 assert.match(footer, /<svg[\s\S]*visually-hidden">Nextdoor/);
+assert.match(footer, /florida-scenic-highway\.png/);
+assert.match(footer, /alt="Florida Scenic Highway"/);
+
+const about = readFileSync(join(root, "about/index.html"), "utf8");
+const work = readFileSync(join(root, "our-work/index.html"), "utf8");
+const impact = readFileSync(join(root, "impact/index.html"), "utf8");
+const memberPage = readFileSync(join(root, "membership/index.html"), "utf8");
+const involved = readFileSync(join(root, "get-involved/index.html"), "utf8");
+for (const [name, page] of [["about", about], ["work", work], ["impact", impact], ["membership", memberPage]]) {
+  assert.match(page, /class="page-photos"/, name);
+  assert.ok((page.match(/<figure>/g) || []).length >= 1, name);
+}
+assert.match(memberPage, /Step 1\. Pay through Square/);
+assert.match(memberPage, /Step 2\. Submit your member details/);
+assert.match(involved, /30A’s Future Is Something We All Share[\s\S]*Become a Member[\s\S]*Donate/);
+assert.match(readFileSync(join(root, "styles.css"), "utf8"), /images\/hero\.jpg/);
 
 const membership = readFileSync(join(root, "membership/index.html"), "utf8");
 assert.match(header, /https:\/\/square\.link\/u\/Yzxyi16L/);

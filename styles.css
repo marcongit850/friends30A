@@ -132,7 +132,7 @@ main { display: block; }
   color: white;
   display: grid;
   align-items: end;
-  background: #083238 url("/images/hero.jpg") center 42%/cover no-repeat;
+  background: #083238 url("/images/hero.jpg") center 62%/cover no-repeat;
 }
 .hero::after {
   content: "";
@@ -461,6 +461,31 @@ textarea { min-height: 8rem; resize: vertical; }
 .site-footer ul { list-style: none; margin: 0; padding: 0; }
 .site-footer li { margin: 0.3rem 0; }
 .address { font-style: normal; line-height: 1.5; }
+.scenic-badge {
+  display: inline-block;
+  margin-top: 0.9rem;
+  background: #fff;
+  border-radius: 0.45rem;
+  padding: 0.35rem 0.45rem;
+  line-height: 0;
+}
+.scenic-badge img { width: 96px; height: auto; display: block; }
+.page-photos {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0 0 1.4rem;
+}
+.page-photos img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 0.9rem;
+}
+.page-photos figcaption {
+  color: var(--muted);
+  font-size: 0.88rem;
+  margin-top: 0.35rem;
+}
 .legal {
   max-width: 1200px;
   margin: 1.6rem auto 0;
@@ -501,6 +526,7 @@ textarea { min-height: 8rem; resize: vertical; }
   .gallery { grid-template-columns: 1fr 1fr 1fr; }
   .strip { grid-auto-columns: 32%; }
   .footer-grid { grid-template-columns: 1.3fr 1fr 1fr 1fr; }
+  .page-photos { grid-template-columns: repeat(3, 1fr); }
   .split { grid-template-columns: 1fr 1fr; }
   .post-card { grid-template-columns: 240px 1fr; }
   .post-card img { height: 100%; }

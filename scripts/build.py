@@ -207,6 +207,14 @@ def page_hero(kicker, title, lede, image="/images/hero.jpg"):
     """
 
 
+def photos(items):
+    figures = "\n".join(
+        f'<figure><img src="{src}" alt="{esc(alt)}"><figcaption>{esc(alt)}</figcaption></figure>'
+        for src, alt in items
+    )
+    return f'<div class="page-photos">{figures}</div>'
+
+
 ICON = {
     "leaf": '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M5 19s7-1 11-8 3-9 3-9-6 1-9 6-5 11-5 11z"/><path fill="none" stroke="currentColor" stroke-width="1.6" d="M8 16c2-2 5-5 8-7"/></svg>',
     "road": '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.7" d="M7 21 10 3M17 21 14 3M4 8h16M5 14h14"/></svg>',
@@ -344,6 +352,11 @@ def about():
     ) + """
     <section class="section section-sand">
       <div class="wrap prose">
+        """ + photos([
+            ("/images/gallery/07-timpoochee-riders.jpg", "People riding the paved Timpoochee Trail"),
+            ("/images/gallery/03-dune-lake-pines.jpg", "Coastal dune lake edged by pines"),
+            ("/images/gallery/14-dune-sea-oats.jpg", "Sea oats on the dunes"),
+        ]) + """
         <h2>Our Story</h2>
         <p>Friends of Scenic 30A serves as the designated Byway Organization for Scenic Highway 30A. Since Scenic 30A received its Florida Scenic Highway designation in 2008, Friends has helped carry forward a community vision centered on preserving the corridor's extraordinary natural, scenic, historic, recreational and cultural resources.</p>
         <p>That role extends well beyond preservation. Friends works with residents, businesses, Walton County, the Tourist Development Council and other community and regional partners on transportation and trail safety, signage and wayfinding, beautification, public education, community engagement and thoughtful improvements throughout the Scenic 30A corridor.</p>
@@ -391,6 +404,11 @@ def our_work():
     ) + """
     <section class="section section-sand">
       <div class="wrap prose">
+        """ + photos([
+            ("/images/blog/trails.jpg", "Trail through the Scenic 30A corridor"),
+            ("/images/gallery/07-timpoochee-riders.jpg", "People riding the paved Timpoochee Trail"),
+            ("/images/gallery/11-gulf-path.jpg", "Path beside the Gulf with sea oats and pines"),
+        ]) + """
         <h2>Protecting the Landscape That Defines 30A</h2>
         <p>Scenic 30A passes through an extraordinary natural environment of coastal dune lakes, beaches, dunes, forests, native vegetation, state parks, and wildlife habitat. We support efforts that preserve these resources and maintain the natural character and beauty of the scenic corridor.</p>
         <p>Our priorities include:</p>
@@ -467,6 +485,11 @@ def impact():
     ) + """
     <section class="section section-sand">
       <div class="wrap prose">
+        """ + photos([
+            ("/images/gallery/06-aerial-gulf-and-lake.jpg", "Aerial view of the Gulf, beach, and a dune lake beside 30A"),
+            ("/images/gallery/07-timpoochee-riders.jpg", "People riding the paved Timpoochee Trail"),
+            ("/images/gallery/02-gulf-sea-oats.jpg", "Gulf shoreline and sea oats along Scenic 30A"),
+        ]) + """
         <p>Through community leadership, advocacy, partnerships, and hands-on projects, Friends has helped ensure that Scenic 30A remains much more than just a roadway.</p>
         <h2>Major Accomplishments</h2>
         <p>For more than 20 years, Friends of Scenic 30A has helped turn community ideas into action. Here are some of the milestones that have helped shape and protect the Scenic 30A corridor.</p>
@@ -624,6 +647,7 @@ def get_involved():
               <p>Additional contributions help support preservation projects, advocacy, education and community initiatives that protect and enhance Scenic 30A.</p>
               <h2>30A’s Future Is Something We All Share</h2>
               <p>Protecting the character of Scenic 30A takes a community. Become a member, lend your time, make a contribution, or simply stay informed. Every person who gets involved helps strengthen the future of this extraordinary place.</p>
+              <p class="button-row"><a class="btn btn-gulf" href="/membership/">Become a Member</a> <a class="btn btn-line" href="{DONATE}" target="_blank" rel="noopener noreferrer">Donate</a></p>
             </div>
           </div>
         </div>
@@ -661,8 +685,13 @@ def membership():
           <article class="pillar"><h3>Trail Enhancements</h3><p>Maintaining and improving the Timpoochee Trail for safe walking and cycling.</p></article>
           <article class="pillar"><h3>Scenic Vistas</h3><p>Protecting the iconic views and architectural heritage of our beautiful corridor.</p></article>
         </div>
-        <h2>Choose Your Membership</h2>
-        <p>Support our mission at the level that is right for you.</p>
+        """ + photos([
+            ("/images/blog/trails.jpg", "Trail through the Scenic 30A corridor"),
+            ("/images/blog/vision.jpg", "Boardwalk and dunes along Scenic 30A"),
+            ("/images/gallery/07-timpoochee-riders.jpg", "People riding the paved Timpoochee Trail"),
+        ]) + f"""
+        <h2>Step 1. Pay through Square</h2>
+        <p>Choose Individual or Business and complete payment on Square. Membership is not finished until you also send your details in step 2.</p>
         <div class="price-grid">
           <article class="price">
             <h3>Individual</h3>
@@ -681,8 +710,9 @@ def membership():
           <h2>Make an Additional Contribution</h2>
           <p>Your additional contributions fund specific preservation projects and educational programs that membership alone cannot cover. Every dollar goes directly toward defending the 30A we all love.</p>
           <p><a class="btn btn-gulf" href="{DONATE}" target="_blank" rel="noopener noreferrer">Donate to Friends of Scenic 30A</a></p>
+          <h2>Step 2. Submit your member details</h2>
+          <p>After you pay on Square, send your details here so Friends of Scenic 30A can confirm your membership and keep you informed. This form does not collect payment.</p>
           <h2>What We Protect Today Becomes the 30A of Tomorrow.</h2>
-          <p>Share your details so we can confirm your membership and keep you informed. Membership payment is completed through the Square links above.</p>
         </div>
         <form class="form" data-form="membership">
           <div class="split">
