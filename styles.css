@@ -525,7 +525,7 @@ textarea { min-height: 8rem; resize: vertical; }
   .pillars, .impact-grid, .involve-grid, .matter, .price-grid, .posts { grid-template-columns: 1fr 1fr; }
   .gallery { grid-template-columns: 1fr 1fr 1fr; }
   .strip { grid-auto-columns: 32%; }
-  .footer-grid { grid-template-columns: 1.3fr 1fr 1fr 1fr; }
+  .footer-grid { grid-template-columns: 1.3fr 1fr 1fr; }
   .page-photos { grid-template-columns: repeat(3, 1fr); }
   .split { grid-template-columns: 1fr 1fr; }
   .post-card { grid-template-columns: 240px 1fr; }
