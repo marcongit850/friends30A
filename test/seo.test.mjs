@@ -6,7 +6,7 @@ const root = new URL("..", import.meta.url).pathname;
 
 function walk(dir, found = []) {
   for (const name of readdirSync(dir)) {
-    if (name === "node_modules" || name === ".git" || name === "content") continue;
+    if (name === "node_modules" || name === ".git" || name === "content" || name === "includes") continue;
     const path = join(dir, name);
     if (statSync(path).isDirectory()) walk(path, found);
     else if (name.endsWith(".html")) found.push(path);
@@ -25,14 +25,27 @@ for (const page of pages) {
   assert.match(html, /name="viewport"/, page);
   assert.match(html, /id="site-header"/, page);
   assert.match(html, /id="site-footer"/, page);
+  assert.match(html, /src="\/header\.js"/, page);
+  assert.match(html, /src="\/footer\.js"/, page);
 }
 
-const footer = readFileSync(join(root, "footer.js"), "utf8");
+const headerJs = readFileSync(join(root, "header.js"), "utf8");
+const footerJs = readFileSync(join(root, "footer.js"), "utf8");
+assert.match(headerJs, /\/includes\/header\.html/);
+assert.match(footerJs, /\/includes\/footer\.html/);
+
+const header = readFileSync(join(root, "includes/header.html"), "utf8");
+const footer = readFileSync(join(root, "includes/footer.html"), "utf8");
 assert.match(footer, /Friends of Scenic 30A/);
 assert.match(footer, /877 N County Hwy 393/);
 assert.match(footer, /Santa Rosa Beach, FL 32459/);
+assert.match(footer, /aria-label="Facebook"/);
+assert.match(footer, /aria-label="Nextdoor"/);
+assert.match(footer, /https:\/\/www\.facebook\.com\/fof30a/);
+assert.match(footer, /https:\/\/nextdoor\.com\/page\/friends-of-scenic-30a-santa-rosa-beach-fl\//);
+assert.match(footer, /<svg[\s\S]*visually-hidden">Facebook/);
+assert.match(footer, /<svg[\s\S]*visually-hidden">Nextdoor/);
 
-const header = readFileSync(join(root, "header.js"), "utf8");
 const membership = readFileSync(join(root, "membership/index.html"), "utf8");
 assert.match(header, /https:\/\/square\.link\/u\/Yzxyi16L/);
 assert.match(membership, /https:\/\/square\.link\/u\/GUdeODzg/);

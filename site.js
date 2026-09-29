@@ -1,7 +1,9 @@
 (function () {
-  var toggle = document.querySelector(".nav-toggle");
-  var nav = document.getElementById("site-nav");
-  if (toggle && nav) {
+  function bindMenu() {
+    var toggle = document.querySelector(".nav-toggle");
+    var nav = document.getElementById("site-nav");
+    if (!toggle || !nav || toggle.dataset.bound === "true") return;
+    toggle.dataset.bound = "true";
     toggle.addEventListener("click", function () {
       var open = nav.classList.toggle("is-open");
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
@@ -22,6 +24,9 @@
       }
     });
   }
+
+  if (document.getElementById("site-nav")) bindMenu();
+  else document.addEventListener("site-header-ready", bindMenu);
 
   var dialog = document.getElementById("lightbox");
   document.querySelectorAll("[data-full]").forEach(function (button) {
