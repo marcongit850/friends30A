@@ -90,7 +90,11 @@ assert.match(contact, /877 N County Hwy 393/);
 assert.match(contact, /Say Hello/);
 assert.doesNotMatch(contact, /Mail is also received at P\.O\. Box 1931/);
 assert.doesNotMatch(contact, /P\.O\. Box 1931/);
-assert.match(readFileSync(join(root, "styles.css"), "utf8"), /images\/hero\.jpg/);
+const css = readFileSync(join(root, "styles.css"), "utf8");
+assert.match(css, /images\/hero\.jpg/);
+assert.match(css, /\.brand img \{[^}]*width: 104px/);
+assert.doesNotMatch(css, /\.brand img \{[^}]*height: 104px/);
+assert.match(css, /\.header-inner \{[^}]*padding: 0\.35rem 1\.25rem/);
 
 const membership = readFileSync(join(root, "membership/index.html"), "utf8");
 assert.match(header, /https:\/\/square\.link\/u\/Yzxyi16L/);

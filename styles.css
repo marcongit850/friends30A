@@ -62,7 +62,7 @@ p { margin: 0 0 1rem; }
 .header-inner {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0.7rem 1.25rem;
+  padding: 0.35rem 1.25rem;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -70,17 +70,20 @@ p { margin: 0 0 1rem; }
 .brand {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
   text-decoration: none;
   color: var(--ink);
   min-width: 0;
+  overflow: hidden;
+  line-height: 0;
 }
 .brand img {
   width: 104px;
-  height: 104px;
+  height: auto;
+  max-width: none;
+  /* The file is wider than the mark. These margins crop its blank padding
+     without changing the 104px-wide scale of the artwork. */
+  margin: -13.61px -3.25px -18.49px -4.06px;
   object-fit: contain;
-  border-radius: 50%;
-  background: #fff;
 }
 .nav-toggle {
   margin-left: auto;
