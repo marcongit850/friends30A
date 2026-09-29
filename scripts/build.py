@@ -358,7 +358,7 @@ def about():
             ("/images/gallery/07-timpoochee-riders.jpg", "People riding the paved Timpoochee Trail"),
             ("/images/gallery/03-dune-lake-pines.jpg", "Coastal dune lake edged by pines"),
             ("/images/gallery/14-dune-sea-oats.jpg", "Sea oats on the dunes"),
-        ]) + """
+        ], captions=False) + """
         <h2>Our Story</h2>
         <p>Friends of Scenic 30A serves as the designated Byway Organization for Scenic Highway 30A. Since Scenic 30A received its Florida Scenic Highway designation in 2008, Friends has helped carry forward a community vision centered on preserving the corridor's extraordinary natural, scenic, historic, recreational and cultural resources.</p>
         <p>That role extends well beyond preservation. Friends works with residents, businesses, Walton County, the Tourist Development Council and other community and regional partners on transportation and trail safety, signage and wayfinding, beautification, public education, community engagement and thoughtful improvements throughout the Scenic 30A corridor.</p>
