@@ -2,12 +2,17 @@
 """Generate the static Friends of Scenic 30A pages."""
 
 import html
+import json
 import os
 import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-ORIGIN = os.environ.get("SITE_ORIGIN", "https://friends30a.workers.dev").rstrip("/")
+ORIGIN = os.environ.get("SITE_ORIGIN", "https://friendsofscenic30a.org").rstrip("/")
+BRAND = "Friends of Scenic 30A"
+TITLE_LIMIT = 70
+DESCRIPTION_MIN = 110
+DESCRIPTION_MAX = 165
 DONATE = "https://square.link/u/Yzxyi16L"
 MEMBER_INDIVIDUAL = "https://square.link/u/GUdeODzg"
 MEMBER_BUSINESS = "https://square.link/u/KlIhQxsE"
@@ -29,6 +34,23 @@ GALLERY = [
     ("/images/gallery/13-palm-path.jpg", "Palm-lined path in a 30A beach community"),
     ("/images/gallery/14-dune-sea-oats.jpg", "Sea oats on the dunes"),
 ]
+
+IMAGE_ALTS = {src: alt for src, alt in GALLERY}
+IMAGE_ALTS.update({
+    "/images/hero.jpg": "Beach boardwalk opening onto the Gulf",
+    "/images/blog/native-landscape.jpg": "Boardwalk through sea oats toward the Gulf of Mexico",
+    "/images/blog/corridor-beach.jpg": "Gulf shoreline and sea oats along Scenic Highway 30A",
+    "/images/blog/communities.jpg": "Palm-lined path in a Scenic 30A beach community",
+    "/images/blog/heritage.jpg": "Sandy path through coastal scrub and pines",
+    "/images/blog/dunes.jpg": "Sea oats and a wooden boardwalk on the dunes",
+    "/images/blog/story.jpg": "Beach path through sea oats and dunes toward the Gulf",
+    "/images/blog/vision.jpg": "Boardwalk through sea oats opening onto the Gulf",
+    "/images/blog/trails.jpg": "Trail through the Scenic 30A corridor",
+})
+HOME_DESCRIPTION = (
+    "Scenic Highway 30A preservation starts with community. Join us in protecting its natural beauty, "
+    "scenic character, neighborhoods, and quality of life."
+)
 
 HEADINGS = {
     "Facilities",
@@ -143,9 +165,174 @@ def article_html(text):
     return "\n".join(blocks)
 
 
-def layout(title, description, path, body, image="/images/hero.jpg"):
+def document_title(title):
+    full = title if title.endswith(BRAND) else f"{title} | {BRAND}"
+    if len(full) > TITLE_LIMIT:
+        raise SystemExit(f"title too long ({len(full)}): {full}")
+    return full
+
+
+def jpeg_size(data):
+    index = 2
+    while index < len(data) - 8:
+        if data[index] != 0xFF:
+            index += 1
+            continue
+        marker = data[index + 1]
+        if marker in (0xC0, 0xC1, 0xC2):
+            height = int.from_bytes(data[index + 5:index + 7], "big")
+            width = int.from_bytes(data[index + 7:index + 9], "big")
+            return width, height
+        if marker in (0xD8, 0xD9):
+            index += 2
+            continue
+        index += 2 + int.from_bytes(data[index + 2:index + 4], "big")
+    raise SystemExit("jpeg size not found")
+
+
+def image_info(path):
+    data = (ROOT / path.lstrip("/")).read_bytes()
+    if data.startswith(b"\x89PNG\r\n\x1a\n"):
+        return {
+            "width": int.from_bytes(data[16:20], "big"),
+            "height": int.from_bytes(data[20:24], "big"),
+            "mime": "image/png",
+        }
+    if data.startswith(b"\xff\xd8"):
+        width, height = jpeg_size(data)
+        return {"width": width, "height": height, "mime": "image/jpeg"}
+    raise SystemExit(f"unsupported image {path}")
+
+
+def organization_node():
+    return {
+        "@type": ["NGO", "Organization"],
+        "@id": f"{ORIGIN}/#organization",
+        "name": BRAND,
+        "url": f"{ORIGIN}/",
+        "description": "Designated Byway Organization for Scenic Highway 30A.",
+        "logo": {
+            "@type": "ImageObject",
+            "url": f"{ORIGIN}/images/logo.png",
+            "width": 512,
+            "height": 341,
+        },
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "877 N County Hwy 393",
+            "addressLocality": "Santa Rosa Beach",
+            "addressRegion": "FL",
+            "postalCode": "32459",
+            "addressCountry": "US",
+        },
+        "areaServed": {
+            "@type": "AdministrativeArea",
+            "name": "Scenic Highway 30A, Walton County, Florida",
+        },
+        "sameAs": [
+            "https://www.facebook.com/fof30a",
+            "https://nextdoor.com/page/friends-of-scenic-30a-santa-rosa-beach-fl/",
+        ],
+    }
+
+
+def website_node():
+    return {
+        "@type": "WebSite",
+        "@id": f"{ORIGIN}/#website",
+        "url": f"{ORIGIN}/",
+        "name": BRAND,
+        "description": HOME_DESCRIPTION,
+        "inLanguage": "en",
+        "publisher": {"@id": f"{ORIGIN}/#organization"},
+    }
+
+
+def image_node(url, info, alt):
+    return {
+        "@type": "ImageObject",
+        "url": url,
+        "width": info["width"],
+        "height": info["height"],
+        "caption": alt,
+    }
+
+
+def breadcrumb_node(url, crumbs):
+    return {
+        "@type": "BreadcrumbList",
+        "@id": url + "#breadcrumb",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": index,
+                "name": name,
+                "item": ORIGIN + path,
+            }
+            for index, (name, path) in enumerate(crumbs, start=1)
+        ],
+    }
+
+
+def json_ld(graph):
+    payload = json.dumps({"@context": "https://schema.org", "@graph": graph}, ensure_ascii=False, indent=2)
+    payload = payload.replace("<", "\\u003c")
+    indented = "\n".join("  " + line for line in payload.splitlines())
+    return f'<script type="application/ld+json">\n{indented}\n  </script>'
+
+
+def layout(title, description, path, body, image="/images/hero.jpg", image_alt=None, kind="WebPage", crumbs=None, article=None, blog_posts=None, media=None, robots=None):
     canonical = ORIGIN + path
-    full_title = title if title.endswith("Friends of Scenic 30A") else f"{title} | Friends of Scenic 30A"
+    full_title = document_title(title)
+    alt = image_alt or IMAGE_ALTS.get(image, "Scenic Highway 30A along the Gulf of Mexico")
+    info = image_info(image)
+    image_url = ORIGIN + image
+    og_type = "article" if article else "website"
+    page = {
+        "@type": "WebPage" if kind == "BlogPosting" else kind,
+        "@id": canonical + "#webpage",
+        "url": canonical,
+        "name": full_title,
+        "description": description,
+        "isPartOf": {"@id": f"{ORIGIN}/#website"},
+        "inLanguage": "en",
+        "primaryImageOfPage": image_node(image_url, info, alt),
+    }
+    graph = [organization_node(), website_node(), page]
+    if article:
+        page["mainEntity"] = {"@id": canonical + "#article"}
+        graph.append({
+            "@type": "BlogPosting",
+            "@id": canonical + "#article",
+            "headline": article["headline"],
+            "description": description,
+            "datePublished": article["published"],
+            "image": image_url,
+            "author": {"@type": "Organization", "name": BRAND, "@id": f"{ORIGIN}/#organization"},
+            "publisher": {"@id": f"{ORIGIN}/#organization"},
+            "mainEntityOfPage": {"@id": canonical + "#webpage"},
+            "url": canonical,
+            "inLanguage": "en",
+        })
+    if blog_posts is not None:
+        graph.append({
+            "@type": "Blog",
+            "@id": canonical + "#blog",
+            "url": canonical,
+            "name": full_title,
+            "description": description,
+            "publisher": {"@id": f"{ORIGIN}/#organization"},
+            "blogPost": blog_posts,
+        })
+    if media:
+        page["associatedMedia"] = media
+    if crumbs:
+        page["breadcrumb"] = {"@id": canonical + "#breadcrumb"}
+        graph.append(breadcrumb_node(canonical, crumbs))
+    robots_tag = f'\n  <meta name="robots" content="{esc(robots)}">' if robots else ""
+    article_tag = ""
+    if article:
+        article_tag = f'\n  <meta property="article:published_time" content="{esc(article["published"])}">'
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -153,24 +340,30 @@ def layout(title, description, path, body, image="/images/hero.jpg"):
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{esc(full_title)}</title>
   <meta name="description" content="{esc(description)}">
-  <link rel="canonical" href="{esc(canonical)}">
+  <link rel="canonical" href="{esc(canonical)}">{robots_tag}
   <meta property="og:title" content="{esc(full_title)}">
   <meta property="og:description" content="{esc(description)}">
   <meta property="og:url" content="{esc(canonical)}">
-  <meta property="og:site_name" content="Friends of Scenic 30A">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="{esc(ORIGIN + image)}">
+  <meta property="og:site_name" content="{BRAND}">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:type" content="{og_type}">
+  <meta property="og:image" content="{esc(image_url)}">
+  <meta property="og:image:alt" content="{esc(alt)}">
+  <meta property="og:image:width" content="{info["width"]}">
+  <meta property="og:image:height" content="{info["height"]}">
+  <meta property="og:image:type" content="{info["mime"]}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{esc(full_title)}">
   <meta name="twitter:description" content="{esc(description)}">
-  <meta name="twitter:image" content="{esc(ORIGIN + image)}">
+  <meta name="twitter:image" content="{esc(image_url)}">
+  <meta name="twitter:image:alt" content="{esc(alt)}">{article_tag}
+  {json_ld(graph)}
   <link rel="icon" href="/favicon.png" type="image/png">
   <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
-  <script type="application/ld+json">{{"@context":"https://schema.org","@type":"NGO","name":"Friends of Scenic 30A","url":"{ORIGIN}/","description":"Designated Byway Organization for Scenic Highway 30A.","address":{{"@type":"PostalAddress","streetAddress":"877 N County Hwy 393","addressLocality":"Santa Rosa Beach","addressRegion":"FL","postalCode":"32459","addressCountry":"US"}},"sameAs":["https://www.facebook.com/fof30a","https://nextdoor.com/page/friends-of-scenic-30a-santa-rosa-beach-fl/"]}}</script>
 </head>
 <body>
   <div id="site-header"></div>
@@ -187,11 +380,18 @@ def layout(title, description, path, body, image="/images/hero.jpg"):
 """
 
 
-def write_page(path, title, description, body, image="/images/hero.jpg"):
-    PAGES.append((path, title))
+def write_page(path, title, description, body, image="/images/hero.jpg", image_alt=None, kind="WebPage", crumbs=None, article=None, blog_posts=None, media=None, robots=None):
+    if robots != "noindex" and not DESCRIPTION_MIN <= len(description) <= DESCRIPTION_MAX:
+        raise SystemExit(f"description length {len(description)} for {path}: {description}")
+    full_title = document_title(title)
+    PAGES.append({"path": path, "title": full_title, "description": description, "kind": kind})
     target = ROOT / "index.html" if path == "/" else ROOT / path.strip("/") / "index.html"
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(layout(title, description, path, body, image))
+    target.write_text(layout(
+        title, description, path, body, image,
+        image_alt=image_alt, kind=kind, crumbs=crumbs, article=article,
+        blog_posts=blog_posts, media=media, robots=robots,
+    ))
     print(path)
 
 
@@ -350,7 +550,7 @@ def home():
     write_page(
         "/",
         "Scenic Highway 30A Preservation | Friends of Scenic 30A",
-        "Scenic Highway 30A preservation starts with community. Join us in protecting its natural beauty, scenic character, neighborhoods, and quality of life.",
+        HOME_DESCRIPTION,
         body,
     )
 
@@ -429,10 +629,12 @@ def about():
     """
     write_page(
         "/about/",
-        "About Us",
+        "About the Scenic 30A Byway Organization",
         "Friends of Scenic 30A is the designated Byway Organization for Scenic Highway 30A, protecting its natural beauty, communities, and quality of life.",
         body,
         "/images/blog/story.jpg",
+        kind="AboutPage",
+        crumbs=[("Home", "/"), ("About", "/about/")],
     )
 
 
@@ -551,10 +753,11 @@ def our_work():
     """
     write_page(
         "/our-work/",
-        "Our Work",
-        "Friends of Scenic 30A protects the landscape, trails, scenic character, and story of Scenic Highway 30A.",
+        "Our Work Along Scenic Highway 30A",
+        "Friends of Scenic 30A protects the landscape, trails, scenic character, and story of Scenic Highway 30A in South Walton, Florida.",
         body,
         "/images/gallery/03-dune-lake-pines.jpg",
+        crumbs=[("Home", "/"), ("Our Work", "/our-work/")],
     )
 
 
@@ -640,10 +843,11 @@ def impact():
     """
     write_page(
         "/impact/",
-        "Our Impact",
+        "Our Impact on Scenic Highway 30A",
         "For more than 20 years Friends of Scenic 30A has helped secure scenic designations, Friends' Corner, trail safety, and corridor stewardship.",
         body,
         "/images/gallery/06-aerial-gulf-and-lake.jpg",
+        crumbs=[("Home", "/"), ("Our Impact", "/impact/")],
     )
 
 
@@ -675,10 +879,20 @@ def gallery():
     """
     write_page(
         "/gallery/",
-        "Gallery",
-        "Photographs of beaches, coastal dune lakes, trails, and communities along Scenic Highway 30A.",
+        "Scenic 30A Photo Gallery",
+        "Photographs of beaches, coastal dune lakes, the Timpoochee Trail, and beach communities along Scenic Highway 30A in South Walton.",
         body,
         "/images/gallery/08-gulf-sunset.jpg",
+        kind="ImageGallery",
+        crumbs=[("Home", "/"), ("Gallery", "/gallery/")],
+        media=[
+            {
+                "@type": "ImageObject",
+                "contentUrl": ORIGIN + src,
+                "caption": alt,
+            }
+            for src, alt in GALLERY
+        ],
     )
 
 
@@ -785,10 +999,11 @@ def get_involved():
     """
     write_page(
         "/get-involved/",
-        "Get Involved",
-        "Become a member, donate, volunteer, or stay informed with Friends of Scenic 30A.",
+        "Get Involved with Scenic 30A",
+        "Become a member, donate, volunteer, or stay informed. Friends of Scenic 30A welcomes people working to protect Scenic Highway 30A.",
         body,
         "/images/gallery/07-timpoochee-riders.jpg",
+        crumbs=[("Home", "/"), ("Get Involved", "/get-involved/")],
     )
 
 
@@ -884,10 +1099,11 @@ def membership():
     """
     write_page(
         "/membership/",
-        "Membership",
-        "Join Friends of Scenic 30A. Individual membership is $25 a year and business membership is $100 a year.",
+        "Scenic 30A Membership",
+        "Join Friends of Scenic 30A. Individual membership is $25 a year and business membership is $100 a year, paid securely through Square.",
         body,
         "/images/gallery/14-dune-sea-oats.jpg",
+        crumbs=[("Home", "/"), ("Membership", "/membership/")],
     )
 
 
@@ -922,10 +1138,12 @@ def contact():
     """
     write_page(
         "/contact/",
-        "Say Hello",
-        "Contact Friends of Scenic 30A at 877 N County Hwy 393, Santa Rosa Beach, FL 32459.",
+        "Contact Friends of Scenic 30A",
+        "Contact Friends of Scenic 30A with questions, ideas, or partnership notes. The office is at 877 N County Hwy 393, Santa Rosa Beach, FL 32459.",
         body,
         "/images/gallery/10-sandy-scrub-path.jpg",
+        kind="ContactPage",
+        crumbs=[("Home", "/"), ("Contact", "/contact/")],
     )
 
 
@@ -978,7 +1196,13 @@ def privacy():
       <p>Friends of Scenic 30A<br>P.O. Box 1931<br>Santa Rosa Beach, FL 32459</p>
     </div></section>
     """
-    write_page("/privacy-policy/", "Privacy Policy", "How Friends of Scenic 30A collects, uses, and protects personal information.", body)
+    write_page(
+        "/privacy-policy/",
+        "Privacy Policy",
+        "How Friends of Scenic 30A collects, uses, and protects personal information shared on this website, through membership, volunteering, and donations.",
+        body,
+        crumbs=[("Home", "/"), ("Privacy Policy", "/privacy-policy/")],
+    )
 
 
 def accessibility():
@@ -993,7 +1217,13 @@ def accessibility():
       <p>If you find an accessibility issue on the site, or if you require further assistance, contact Friends of Scenic 30A through the <a href="/contact/">contact form</a> or by mail at 877 N County Hwy 393, Santa Rosa Beach, FL 32459.</p>
     </div></section>
     """
-    write_page("/accessibility/", "Accessibility Statement", "Friends of Scenic 30A is working to make this website accessible to people with disabilities.", body)
+    write_page(
+        "/accessibility/",
+        "Accessibility Statement",
+        "Friends of Scenic 30A is working to make this website accessible to people with disabilities, with a goal of WCAG 2.2 Level AA.",
+        body,
+        crumbs=[("Home", "/"), ("Accessibility", "/accessibility/")],
+    )
 
 
 def terms():
@@ -1012,7 +1242,13 @@ def terms():
       <p>Questions about these terms can be sent through the <a href="/contact/">contact form</a> or by mail to Friends of Scenic 30A, 877 N County Hwy 393, Santa Rosa Beach, FL 32459.</p>
     </div></section>
     """
-    write_page("/terms/", "Terms & Conditions", "Terms for using the Friends of Scenic 30A website, including membership and donation payments.", body)
+    write_page(
+        "/terms/",
+        "Terms & Conditions",
+        "Terms for using the Friends of Scenic 30A website, including Square membership payments, donations, messages, and how site content may be shared.",
+        body,
+        crumbs=[("Home", "/"), ("Terms", "/terms/")],
+    )
 
 
 POSTS = [
@@ -1023,7 +1259,10 @@ POSTS = [
         "display": "September 12, 2026",
         "minutes": "3 min read",
         "image": "/images/blog/native-landscape.jpg",
+        "image_alt": "Boardwalk through sea oats toward the Gulf of Mexico",
+        "seo_title": "Natural Character of Scenic 30A",
         "excerpt": "The natural landscape surrounding Scenic Highway 30A is one of the defining features of the corridor.",
+        "description": "The natural landscape around Scenic Highway 30A, from dune lakes and dunes to native vegetation, defines the corridor Friends works to protect.",
         "file": "protecting-the-natural-character-of-scenic-30a.txt",
     },
     {
@@ -1033,7 +1272,10 @@ POSTS = [
         "display": "September 12, 2026",
         "minutes": "2 min read",
         "image": "/images/blog/corridor-beach.jpg",
+        "image_alt": "Gulf shoreline and sea oats along Scenic Highway 30A",
+        "seo_title": "Transportation on Scenic Highway 30A",
         "excerpt": "Scenic 30A is both a treasured scenic corridor and a working transportation network.",
+        "description": "Scenic Highway 30A is a treasured scenic corridor and a working transportation network. Friends of Scenic 30A has treated both as part of its mission.",
         "file": "transportation-has-always-been-part-of-friends-of-scenic-30a-s-mission.txt",
     },
     {
@@ -1043,7 +1285,9 @@ POSTS = [
         "display": "September 12, 2026",
         "minutes": "2 min read",
         "image": "/images/hero.jpg",
+        "image_alt": "Beach boardwalk opening onto the Gulf",
         "excerpt": "Scenic Highway 30A is a corridor shaped by natural beauty, communities, state lands, trails, and coastal dune lakes.",
+        "description": "Scenic Highway 30A is shaped by natural beauty, beach communities, state lands, trails, and rare coastal dune lakes in Walton County, Florida.",
         "file": "what-makes-scenic-30a-special.txt",
     },
     {
@@ -1053,7 +1297,9 @@ POSTS = [
         "display": "September 5, 2026",
         "minutes": "1 min read",
         "image": "/images/gallery/06-aerial-gulf-and-lake.jpg",
+        "image_alt": "Aerial view of the Gulf, beach, and a dune lake beside 30A",
         "excerpt": "Check out this 360° drive down 30A and explore the scenery in every direction.",
+        "description": "Take a 360-degree drive along Scenic Highway 30A and see the beaches, dune lakes, and beach communities in every direction.",
         "file": "30a-in-360-degrees.txt",
         "video": "https://www.youtube-nocookie.com/embed/55EsjB_V_L8",
     },
@@ -1064,7 +1310,9 @@ POSTS = [
         "display": "September 3, 2026",
         "minutes": "7 min read",
         "image": "/images/blog/communities.jpg",
+        "image_alt": "Palm-lined path in a Scenic 30A beach community",
         "excerpt": "The Scenic 30-A corridor includes 12 distinct beach communities, each with its own history and character.",
+        "description": "Scenic Highway 30A includes twelve distinct beach communities in South Walton, each with its own history, character, and sense of place.",
         "file": "the-communities-of-scenic-30a.txt",
     },
     {
@@ -1074,7 +1322,9 @@ POSTS = [
         "display": "September 3, 2026",
         "minutes": "6 min read",
         "image": "/images/blog/heritage.jpg",
+        "image_alt": "Sandy path through coastal scrub and pines",
         "excerpt": "From Grayton Beach cottages to Point Washington’s logging settlement, the corridor has a long story.",
+        "description": "From Grayton Beach cottages to Point Washington's logging settlement, the history and heritage of Scenic Highway 30A still shape the corridor.",
         "file": "history-heritage-of-scenic-30a.txt",
     },
     {
@@ -1084,7 +1334,9 @@ POSTS = [
         "display": "September 3, 2026",
         "minutes": "6 min read",
         "image": "/images/blog/dunes.jpg",
+        "image_alt": "Sea oats and a wooden boardwalk on the dunes",
         "excerpt": "Beaches, state parks, trails, and coastal dune lakes give everyone a way to experience Scenic 30-A.",
+        "description": "Beaches, state parks, the Timpoochee Trail, and coastal dune lakes give residents and visitors a way to experience Scenic Highway 30A.",
         "file": "explore-scenic-30a.txt",
     },
     {
@@ -1094,7 +1346,10 @@ POSTS = [
         "display": "September 3, 2026",
         "minutes": "2 min read",
         "image": "/images/blog/story.jpg",
+        "image_alt": "Beach path through sea oats and dunes toward the Gulf",
+        "seo_title": "The Story of Scenic Highway 30A",
         "excerpt": "Twelve beach communities grew from summer cottages into the corridor Friends of Scenic 30A works to protect.",
+        "description": "Twelve beach communities grew from summer cottages into the Scenic Highway 30A corridor that Friends of Scenic 30A works to protect.",
         "file": "the-story-of-30a.txt",
     },
     {
@@ -1104,7 +1359,9 @@ POSTS = [
         "display": "September 3, 2026",
         "minutes": "3 min read",
         "image": "/images/blog/vision.jpg",
+        "image_alt": "Boardwalk through sea oats opening onto the Gulf",
         "excerpt": "A picture of the two-lane scenic drive, the Timpoochee Trail, and the landscapes the Friends set out to protect.",
+        "description": "A vision for Scenic Highway 30A's two-lane drive, the Timpoochee Trail, and the landscapes Friends of Scenic 30A set out to protect.",
         "file": "vision.txt",
     },
 ]
@@ -1112,10 +1369,11 @@ POSTS = [
 
 def blog():
     cards = []
+    blog_posts = []
     for post in POSTS:
         cards.append(
             f"""<a class="post-card" href="/blog/{post['slug']}/">
-              <img src="{post['image']}" alt="">
+              <img src="{post['image']}" alt="{esc(post['image_alt'])}">
               <div>
                 <time datetime="{post['date']}">{post['display']}</time>
                 <span class="meta"> · {post['minutes']}</span>
@@ -1124,22 +1382,39 @@ def blog():
               </div>
             </a>"""
         )
+        blog_posts.append({
+            "@type": "BlogPosting",
+            "headline": post["title"],
+            "url": f"{ORIGIN}/blog/{post['slug']}/",
+            "datePublished": post["date"],
+            "image": ORIGIN + post["image"],
+            "description": post["description"],
+        })
     body = page_hero("Blog", "All Posts", "Stories about the landscape, communities, history, and transportation of Scenic 30A.") + f"""
     <section class="section section-sand"><div class="wrap"><div class="posts">{''.join(cards)}</div></div></section>
     """
-    write_page("/blog/", "Blog", "Stories from Friends of Scenic 30A about the corridor’s landscape, communities, history, and trails.", body)
+    write_page(
+        "/blog/",
+        "Scenic 30A Stories",
+        "Stories from Friends of Scenic 30A about Scenic Highway 30A: its landscape, beach communities, history, trails, and transportation.",
+        body,
+        kind="CollectionPage",
+        crumbs=[("Home", "/"), ("Blog", "/blog/")],
+        blog_posts=blog_posts,
+    )
 
     for post in POSTS:
         text = (ROOT / "content" / "posts" / post["file"]).read_text()
         extra = ""
         if post.get("video"):
             extra = f'<div class="video"><iframe src="{post["video"]}" title="360 degree drive on Scenic 30A" allow="fullscreen; picture-in-picture" allowfullscreen></iframe></div>'
+        path = f"/blog/{post['slug']}/"
         body = f"""
         <article class="section section-sand">
           <div class="wrap prose article-hero">
             <p class="eyebrow">Friends · <time datetime="{post['date']}">{post['display']}</time> · {post['minutes']}</p>
             <h1>{esc(post['title'])}</h1>
-            <img src="{post['image']}" alt="">
+            <img src="{post['image']}" alt="{esc(post['image_alt'])}">
             {extra}
             {article_html(text)}
             <p><a href="/blog/">All posts</a></p>
@@ -1147,11 +1422,15 @@ def blog():
         </article>
         """
         write_page(
-            f"/blog/{post['slug']}/",
-            post["title"],
-            post["excerpt"],
+            path,
+            post.get("seo_title", post["title"]),
+            post["description"],
             body,
             post["image"],
+            image_alt=post["image_alt"],
+            kind="BlogPosting",
+            crumbs=[("Home", "/"), ("Blog", "/blog/"), (post["title"], path)],
+            article={"headline": post["title"], "published": post["date"]},
         )
 
 
@@ -1161,26 +1440,98 @@ def missing():
     """
     html_doc = layout(
         "Page not found",
-        "That page is not on the Friends of Scenic 30A website.",
+        "That address is not a page on the Friends of Scenic 30A website.",
         "/404.html",
         body,
+        robots="noindex",
     )
     (ROOT / "404.html").write_text(html_doc)
 
 
+def page_lines():
+    lines = []
+    for page in PAGES:
+        lines.append(f"- [{page['title']}]({ORIGIN}{page['path']}): {page['description']}")
+    return "\n".join(lines)
+
+
+def llms_documents():
+    pages = page_lines()
+    intro = (
+        f"# {BRAND}\n\n"
+        "> Designated Byway Organization for Scenic Highway 30A in Santa Rosa Beach, Walton County, Florida.\n\n"
+        "Friends of Scenic 30A protects and enhances the natural beauty, scenic character, distinctive communities, "
+        "and quality of life of Scenic Highway 30A. The corridor is a Florida Scenic Highway and a National Scenic Byway. "
+        "Friends serves as its designated Byway Organization.\n"
+    )
+    full_intro = (
+        f"# {BRAND}\n\n"
+        "> Designated Byway Organization for Scenic Highway 30A in Santa Rosa Beach, Walton County, Florida.\n\n"
+        "Friends of Scenic 30A protects and enhances the natural beauty, scenic character, distinctive communities, "
+        "and quality of life of Scenic Highway 30A. Scenic 30A received Florida Scenic Highway designation in 2008 and "
+        "National Scenic Byway designation in 2021. Friends helped carry both designations forward and remains the "
+        "designated Byway Organization.\n\n"
+        "The work covers coastal dune lakes, native vegetation, beaches, and forests; the two-lane scenic character of "
+        "the highway; the Timpoochee Trail and walking and biking safety; and education for residents, businesses, and "
+        "visitors. Friends works with residents, businesses, Walton County, and other community partners.\n\n"
+        "Mail: Friends of Scenic 30A, 877 N County Hwy 393, Santa Rosa Beach, FL 32459. "
+        "Individual membership is $25 a year and business membership is $100 a year. "
+        "Membership payments and donations are completed on Square. This website does not collect card numbers.\n"
+    )
+    optional_short = (
+        "\n## Optional\n\n"
+        f"- [Extended guide for language models]({ORIGIN}/llms-full.txt): The same page list, with a longer introduction.\n"
+        f"- [Sitemap]({ORIGIN}/sitemap.xml): Every public page on this site.\n"
+    )
+    optional_full = (
+        "\n## Optional\n\n"
+        f"- [Short guide for language models]({ORIGIN}/llms.txt): The same page list, with a shorter introduction.\n"
+        f"- [Sitemap]({ORIGIN}/sitemap.xml): Every public page on this site.\n"
+    )
+    pages_block = "\n## Pages\n\n" + pages + "\n"
+    (ROOT / "llms.txt").write_text(intro + pages_block + optional_short)
+    (ROOT / "llms-full.txt").write_text(full_intro + pages_block + optional_full)
+
+
 def sitemap():
-    urls = []
-    for path, _title in PAGES:
-        urls.append(f"  <url><loc>{ORIGIN}{path}</loc></url>")
+    urls = [f"  <url><loc>{ORIGIN}{page['path']}</loc></url>" for page in PAGES]
     (ROOT / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + "\n".join(urls)
         + "\n</urlset>\n"
     )
+    agents = [
+        "Googlebot",
+        "Bingbot",
+        "GPTBot",
+        "ChatGPT-User",
+        "Google-Extended",
+        "ClaudeBot",
+        "anthropic-ai",
+        "PerplexityBot",
+        "Applebot-Extended",
+        "Bytespider",
+        "CCBot",
+        "meta-externalagent",
+        "FacebookBot",
+    ]
+    groups = ["User-agent: *\nAllow: /\n"]
+    groups.extend(f"User-agent: {agent}\nAllow: /\n" for agent in agents)
     (ROOT / "robots.txt").write_text(
-        "User-agent: *\nAllow: /\n\nSitemap: " + ORIGIN + "/sitemap.xml\n"
+        "# Search and AI crawlers may read this site.\n"
+        f"# {ORIGIN}/llms.txt\n"
+        f"# {ORIGIN}/llms-full.txt\n\n"
+        + "\n".join(groups)
+        + f"\nSitemap: {ORIGIN}/sitemap.xml\n"
     )
+    llms_documents()
+    titles = [page["title"] for page in PAGES]
+    descriptions = [page["description"] for page in PAGES]
+    if len(titles) != len(set(titles)):
+        raise SystemExit("duplicate title")
+    if len(descriptions) != len(set(descriptions)):
+        raise SystemExit("duplicate description")
 
 
 def main():

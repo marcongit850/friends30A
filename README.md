@@ -20,7 +20,7 @@ Open `http://localhost:8080/`. That server only shows the static pages. Form del
 npm test
 ```
 
-`scripts/build.py` regenerates the HTML, `sitemap.xml`, and `robots.txt` from `content/posts/`. Set `SITE_ORIGIN` when the public preview host changes, then run `python3 scripts/build.py`.
+`scripts/build.py` regenerates the HTML, `sitemap.xml`, `robots.txt`, `llms.txt`, and `llms-full.txt` from `content/posts/`. Canonical URLs, Open Graph, Twitter, JSON-LD, the sitemap, and `llms.txt` use `https://friendsofscenic30a.org`. A preview on workers.dev may still exist; do not point those SEO URLs at it. Do not add a custom domain or route in `wrangler.jsonc`.
 
 ## Deploy
 
