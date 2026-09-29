@@ -27,6 +27,7 @@ for (const page of pages) {
   assert.match(html, /id="site-footer"/, page);
   assert.match(html, /src="\/header\.js"/, page);
   assert.match(html, /src="\/footer\.js"/, page);
+  assert.doesNotMatch(html, /Mail is also received at P\.O\. Box 1931/, page);
 }
 
 const headerJs = readFileSync(join(root, "header.js"), "utf8");
@@ -49,6 +50,15 @@ assert.match(footer, /<svg[\s\S]*visually-hidden">Facebook/);
 assert.match(footer, /<svg[\s\S]*visually-hidden">Nextdoor/);
 assert.match(footer, /florida-scenic-highway\.png/);
 assert.match(footer, /alt="Florida Scenic Highway"/);
+assert.match(footer, /<h2>Explore<\/h2>/);
+assert.match(footer, /<h2>Get Involved<\/h2>/);
+assert.doesNotMatch(footer, /Scenic 30A Resources/);
+assert.doesNotMatch(footer, /https:\/\/30a\.com\//);
+assert.doesNotMatch(footer, /https:\/\/www\.byways\.org\//);
+assert.doesNotMatch(footer, /https:\/\/www\.visitsouthwalton\.com\//);
+assert.doesNotMatch(footer, /https:\/\/www\.visitflorida\.com\//);
+assert.doesNotMatch(footer, /https:\/\/www\.waltonareachamber\.com\//);
+assert.doesNotMatch(footer, /https:\/\/sowal\.com\//);
 
 const about = readFileSync(join(root, "about/index.html"), "utf8");
 const work = readFileSync(join(root, "our-work/index.html"), "utf8");
@@ -59,10 +69,32 @@ for (const [name, page] of [["about", about], ["work", work], ["impact", impact]
   assert.match(page, /class="page-photos"/, name);
   assert.ok((page.match(/<figure>/g) || []).length >= 1, name);
 }
+assert.doesNotMatch(impact, /<figcaption>/);
+assert.match(impact, /alt="Aerial view of the Gulf, beach, and a dune lake beside 30A"/);
+assert.match(impact, /alt="People riding the paved Timpoochee Trail"/);
+assert.match(impact, /alt="Gulf shoreline and sea oats along Scenic 30A"/);
+assert.doesNotMatch(work, /<figcaption>/);
+assert.match(work, /alt="Trail through the Scenic 30A corridor"/);
+assert.match(work, /alt="People riding the paved Timpoochee Trail"/);
+assert.match(work, /alt="Path beside the Gulf with sea oats and pines"/);
+assert.doesNotMatch(about, /<figcaption>/);
+assert.match(about, /alt="People riding the paved Timpoochee Trail"/);
+assert.match(about, /alt="Coastal dune lake edged by pines"/);
+assert.match(about, /alt="Sea oats on the dunes"/);
+assert.match(memberPage, /<figcaption>/);
 assert.match(memberPage, /Step 1\. Pay through Square/);
 assert.match(memberPage, /Step 2\. Submit your member details/);
 assert.match(involved, /30A’s Future Is Something We All Share[\s\S]*Become a Member[\s\S]*Donate/);
-assert.match(readFileSync(join(root, "styles.css"), "utf8"), /images\/hero\.jpg/);
+const contact = readFileSync(join(root, "contact/index.html"), "utf8");
+assert.match(contact, /877 N County Hwy 393/);
+assert.match(contact, /Say Hello/);
+assert.doesNotMatch(contact, /Mail is also received at P\.O\. Box 1931/);
+assert.doesNotMatch(contact, /P\.O\. Box 1931/);
+const css = readFileSync(join(root, "styles.css"), "utf8");
+assert.match(css, /images\/hero\.jpg/);
+assert.match(css, /\.brand img \{[^}]*width: 125px/);
+assert.doesNotMatch(css, /\.brand img \{[^}]*height: 104px/);
+assert.match(css, /\.header-inner \{[^}]*padding: 0\.35rem 1\.25rem/);
 
 const membership = readFileSync(join(root, "membership/index.html"), "utf8");
 assert.match(header, /https:\/\/square\.link\/u\/Yzxyi16L/);
@@ -71,6 +103,11 @@ assert.match(membership, /https:\/\/square\.link\/u\/KlIhQxsE/);
 assert.match(membership, /https:\/\/square\.link\/u\/Yzxyi16L/);
 
 const home = readFileSync(join(root, "index.html"), "utf8");
+const strip = home.match(/<div class="strip">[\s\S]*?<\/div>/)[0];
+assert.equal((strip.match(/<img /g) || []).length, 6);
+assert.doesNotMatch(strip, /<span>/);
+assert.match(strip, /alt="Boardwalk through sea oats toward the Gulf"/);
+assert.match(strip, /alt="Aerial view of the Gulf, beach, and a dune lake beside 30A"/);
 for (const phrase of [
   "Protecting Natural Resources",
   "Preserving Scenic 30A",

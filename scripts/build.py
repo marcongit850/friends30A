@@ -207,9 +207,11 @@ def page_hero(kicker, title, lede, image="/images/hero.jpg"):
     """
 
 
-def photos(items):
+def photos(items, captions=True):
     figures = "\n".join(
-        f'<figure><img src="{src}" alt="{esc(alt)}"><figcaption>{esc(alt)}</figcaption></figure>'
+        f'<figure><img src="{src}" alt="{esc(alt)}">'
+        + (f"<figcaption>{esc(alt)}</figcaption>" if captions else "")
+        + "</figure>"
         for src, alt in items
     )
     return f'<div class="page-photos">{figures}</div>'
@@ -235,7 +237,7 @@ def home():
         for key, title, copy in pillars
     )
     strip = "\n".join(
-        f'<a href="/gallery/"><img src="{src}" alt="{esc(alt)}"><span>{esc(alt)}</span></a>'
+        f'<a href="/gallery/"><img src="{src}" alt="{esc(alt)}"></a>'
         for src, alt in GALLERY[:6]
     )
     resources = [
@@ -356,7 +358,7 @@ def about():
             ("/images/gallery/07-timpoochee-riders.jpg", "People riding the paved Timpoochee Trail"),
             ("/images/gallery/03-dune-lake-pines.jpg", "Coastal dune lake edged by pines"),
             ("/images/gallery/14-dune-sea-oats.jpg", "Sea oats on the dunes"),
-        ]) + """
+        ], captions=False) + """
         <h2>Our Story</h2>
         <p>Friends of Scenic 30A serves as the designated Byway Organization for Scenic Highway 30A. Since Scenic 30A received its Florida Scenic Highway designation in 2008, Friends has helped carry forward a community vision centered on preserving the corridor's extraordinary natural, scenic, historic, recreational and cultural resources.</p>
         <p>That role extends well beyond preservation. Friends works with residents, businesses, Walton County, the Tourist Development Council and other community and regional partners on transportation and trail safety, signage and wayfinding, beautification, public education, community engagement and thoughtful improvements throughout the Scenic 30A corridor.</p>
@@ -408,7 +410,7 @@ def our_work():
             ("/images/blog/trails.jpg", "Trail through the Scenic 30A corridor"),
             ("/images/gallery/07-timpoochee-riders.jpg", "People riding the paved Timpoochee Trail"),
             ("/images/gallery/11-gulf-path.jpg", "Path beside the Gulf with sea oats and pines"),
-        ]) + """
+        ], captions=False) + """
         <h2>Protecting the Landscape That Defines 30A</h2>
         <p>Scenic 30A passes through an extraordinary natural environment of coastal dune lakes, beaches, dunes, forests, native vegetation, state parks, and wildlife habitat. We support efforts that preserve these resources and maintain the natural character and beauty of the scenic corridor.</p>
         <p>Our priorities include:</p>
@@ -489,7 +491,7 @@ def impact():
             ("/images/gallery/06-aerial-gulf-and-lake.jpg", "Aerial view of the Gulf, beach, and a dune lake beside 30A"),
             ("/images/gallery/07-timpoochee-riders.jpg", "People riding the paved Timpoochee Trail"),
             ("/images/gallery/02-gulf-sea-oats.jpg", "Gulf shoreline and sea oats along Scenic 30A"),
-        ]) + """
+        ], captions=False) + """
         <p>Through community leadership, advocacy, partnerships, and hands-on projects, Friends has helped ensure that Scenic 30A remains much more than just a roadway.</p>
         <h2>Major Accomplishments</h2>
         <p>For more than 20 years, Friends of Scenic 30A has helped turn community ideas into action. Here are some of the milestones that have helped shape and protect the Scenic 30A corridor.</p>
@@ -774,7 +776,6 @@ def contact():
         <div class="prose">
           <h2>Friends of Scenic 30A</h2>
           <p><a href="https://www.google.com/maps/search/?api=1&query=877+N+County+Hwy+393,+Santa+Rosa+Beach,+FL+32459">877 N County Hwy 393<br>Santa Rosa Beach, FL 32459</a></p>
-          <p>Mail is also received at P.O. Box 1931, Santa Rosa Beach, FL 32459.</p>
           <p><a href="/get-involved/">Get involved</a> or <a href="/membership/">become a member</a>.</p>
         </div>
       </div>
