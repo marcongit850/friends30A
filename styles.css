@@ -77,12 +77,11 @@ p { margin: 0 0 1rem; }
   line-height: 0;
 }
 .brand img {
-  width: 104px;
+  width: 125px;
   height: auto;
   max-width: none;
-  /* The file is wider than the mark. These margins crop its blank padding
-     without changing the 104px-wide scale of the artwork. */
-  margin: -13.61px -3.25px -18.49px -4.06px;
+  /* About 20% larger than the 104px scale. Margins crop the file's blank padding. */
+  margin: -16.36px -3.91px -22.22px -4.88px;
   object-fit: contain;
 }
 .nav-toggle {
