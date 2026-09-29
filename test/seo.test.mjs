@@ -66,7 +66,7 @@ const impact = readFileSync(join(root, "impact/index.html"), "utf8");
 const memberPage = readFileSync(join(root, "membership/index.html"), "utf8");
 const involved = readFileSync(join(root, "get-involved/index.html"), "utf8");
 for (const [name, page] of [["about", about], ["work", work], ["impact", impact], ["membership", memberPage]]) {
-  assert.match(page, /class="page-photos"/, name);
+  assert.match(page, /class="page-photos[\s"]/, name);
   assert.ok((page.match(/<figure>/g) || []).length >= 1, name);
 }
 assert.doesNotMatch(impact, /<figcaption>/);
@@ -78,6 +78,9 @@ assert.match(work, /alt="Trail through the Scenic 30A corridor"/);
 assert.match(work, /alt="People riding the paved Timpoochee Trail"/);
 assert.match(work, /alt="Path beside the Gulf with sea oats and pines"/);
 assert.doesNotMatch(about, /<figcaption>/);
+assert.match(about, /photo-mosaic/);
+assert.match(about, /topic-grid/);
+assert.match(about, /Protect\. Preserve\. Enhance\./);
 assert.match(about, /alt="People riding the paved Timpoochee Trail"/);
 assert.match(about, /alt="Coastal dune lake edged by pines"/);
 assert.match(about, /alt="Sea oats on the dunes"/);
@@ -95,6 +98,9 @@ assert.match(css, /images\/hero\.jpg/);
 assert.match(css, /\.brand img \{[^}]*width: 125px/);
 assert.doesNotMatch(css, /\.brand img \{[^}]*height: 104px/);
 assert.match(css, /\.header-inner \{[^}]*padding: 0\.35rem 1\.25rem/);
+assert.match(css, /\.page-hero \{[^}]*min-height: clamp\(22rem, 52vh, 36rem\)/);
+assert.match(css, /\.photo-mosaic/);
+assert.match(css, /\.priority-list/);
 
 const membership = readFileSync(join(root, "membership/index.html"), "utf8");
 assert.match(header, /https:\/\/square\.link\/u\/Yzxyi16L/);
