@@ -44,9 +44,14 @@ for (const page of pages) {
 const headerJs = readFileSync(join(root, "header.js"), "utf8");
 const footerJs = readFileSync(join(root, "footer.js"), "utf8");
 assert.match(headerJs, /\/includes\/header\.html/);
+assert.match(headerJs, /https:\/\/shop\.friendsofscenic30a\.org\//);
+assert.match(headerJs, /path === "\/shop\/"/);
 assert.match(footerJs, /\/includes\/footer\.html/);
 
 const header = readFileSync(join(root, "includes/header.html"), "utf8");
+assert.match(header, /<a class="brand" href="\/"/);
+assert.match(header, /<a href="\/shop\/">Shop<\/a>/);
+assert.doesNotMatch(header, /<a class="brand" href="https:\/\/shop\.friendsofscenic30a\.org\//);
 assert.match(header, /aria-label="Friends of Scenic 30A"/);
 assert.match(header, /alt="Friends of Scenic 30A"/);
 assert.doesNotMatch(header, /brand-kicker|brand-name/);
@@ -220,7 +225,7 @@ const robots = readFileSync(join(root, "robots.txt"), "utf8");
 const sitemap = readFileSync(join(root, "sitemap.xml"), "utf8");
 assert.match(robots, /^User-agent: \*/m);
 assert.match(robots, /Sitemap: https?:\/\/\S+\/sitemap\.xml/);
-for (const path of ["/", "/about/", "/our-work/", "/gallery/", "/get-involved/", "/membership/", "/contact/", "/blog/", "/privacy-policy/", "/accessibility/", "/terms/"]) {
+for (const path of ["/", "/about/", "/our-work/", "/gallery/", "/get-involved/", "/shop/", "/membership/", "/contact/", "/blog/", "/privacy-policy/", "/accessibility/", "/terms/"]) {
   assert.match(sitemap, new RegExp(path.replaceAll("/", "\\/") ));
 }
 
@@ -235,6 +240,7 @@ const publicPaths = [
   "/our-work/",
   "/gallery/",
   "/get-involved/",
+  "/shop/",
   "/membership/",
   "/contact/",
   "/blog/",

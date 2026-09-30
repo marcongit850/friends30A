@@ -43,6 +43,7 @@ Until those values are set, `POST /api/message` returns HTTP 503 and the form ex
 - `/gallery/`
 - `/blog/` and the posts from the Wix site
 - `/get-involved/` for membership, volunteering, updates, and donations
+- `/shop/` for Friends of Scenic 30A merchandise. On this page the header logo links to the storefront; on every other page it still links home
 - `/membership/` with the live Square payment links
 - `/contact/`
 - `/privacy-policy/`, `/accessibility/`, and `/terms/`
