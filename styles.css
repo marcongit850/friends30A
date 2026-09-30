@@ -569,15 +569,37 @@ h2.display {
 .status {
   display: inline-block;
   margin: 0 0 0.5rem;
-  padding: 0.18rem 0.6rem;
+  padding: 0.2rem 0.65rem;
   border-radius: 999px;
   background: var(--foam);
   color: var(--gulf-deep);
   font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
+  line-height: 1.35;
   text-transform: uppercase;
 }
+.card-label {
+  margin: 0.35rem 0 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--oat);
+}
+.project-timeline {
+  margin: 0 0 0.85rem;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.75rem;
+}
+.project-timeline li {
+  margin: 0;
+  padding-left: 0.85rem;
+  border-left: 3px solid var(--dune);
+}
+.card-source { font-size: 0.95rem; }
 .accomplish-list {
   list-style: none;
   margin: 1.5rem 0 0;
@@ -853,7 +875,7 @@ textarea { min-height: 8rem; resize: vertical; }
   .page-photos.photo-collage figure:first-child { grid-column: 1 / -1; }
   .page-photos.photo-collage figure:first-child img { height: 320px; }
   .year-grid, .feature-row, .accomplish-split { grid-template-columns: 1.05fr 0.95fr; }
-  .priority-grid, .project-grid { grid-template-columns: 1fr 1fr; }
+  .priority-grid { grid-template-columns: 1fr 1fr; }
   .accomplish-card.has-photo { grid-template-columns: minmax(200px, 280px) 1fr; }
   .accomplish-card.has-photo img { height: 100%; min-height: 180px; }
   .project-card:has(img) { grid-template-columns: minmax(180px, 240px) 1fr; }

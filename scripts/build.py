@@ -642,12 +642,58 @@ def about():
     )
 
 
-# Confirmed current initiatives only. Leave this empty when the site does not
-# document a discrete active project. Append a dict to publish a card.
-# status must be one of: Active, In Planning, Ongoing, Community Discussion.
-# Optional keys: why, doing, image, image_alt, href (Learn more).
-CURRENT_PROJECTS = []
-PROJECT_STATUSES = {"Active", "In Planning", "Ongoing", "Community Discussion"}
+# Confirmed current initiatives only. Append a dict to publish a card.
+# Do not add a project that has not been confirmed.
+# Optional keys: why, doing, partners, timeline, sources, image, image_alt, href.
+# timeline items: when, text, href, source. sources: href, label.
+# Photos only when an existing image shows that project.
+TDC_MINUTES = "https://walton.civicweb.net/document/529193/"
+SCENIC_WALTON_JULY = "https://www.scenic.org/2026/07/10/scenic-walton-celebrates-progress-in-walton-county/"
+CURRENT_PROJECTS = [
+    {
+        "name": "West 30A Gateway Landscaping",
+        "status": "Active — Planning & Funding",
+        "summary": "Friends of Scenic 30A is partnering with Scenic Walton on a gateway improvement at the western entrance to Scenic Highway 30A. The concept includes landscaping, pedestrian paths, lighting enhancements, and gateway signage for a more welcoming entrance to the nationally recognized scenic corridor.",
+        "why": "The western entrance is an important first impression. Thoughtful landscaping, lighting, pedestrian improvements, and signage reinforce Scenic 30A’s identity and improve the gateway experience.",
+        "partners": "Friends of Scenic 30A, Scenic Walton, Walton County Tourism and the Tourist Development Council, and other public partners as the project advances.",
+        "timeline": [
+            {
+                "when": "April 2026",
+                "text": "Friends of Scenic 30A joined Scenic Walton before the Walton County Tourist Development Council seeking inclusion in the FY27 tourism budget. The council’s consensus was to move the proposal into its budget workshop process.",
+                "href": TDC_MINUTES,
+                "source": "Walton County TDC minutes, April 7, 2026",
+            },
+            {
+                "when": "July 2026",
+                "text": "Scenic Walton reported that the 30A West Gateway Landscape Project had advanced into the proposed Tourist Development Council budget and was the only capital improvement project in that proposed budget. The same report says additional steps remain before construction begins.",
+                "href": SCENIC_WALTON_JULY,
+                "source": "Scenic Walton, via Scenic America, July 10, 2026",
+            },
+        ],
+    },
+    {
+        "name": "Scenic 30A Entry Signage",
+        "status": "Active — In Development",
+        "summary": "Friends of Scenic 30A and Scenic Walton are working to improve how visitors are welcomed to Scenic Highway 30A. The initiative includes new entry signage at both the western and eastern entrances to 30A from U.S. Highway 98, recognizing Scenic 30A as a Florida Scenic Highway and a National Scenic Byway.",
+        "why": "Scenic 30A is more than a local road. Gateway signage helps residents and visitors understand they are entering a nationally recognized scenic corridor with special natural, historic, recreational, and community resources.",
+        "doing": "Friends of Scenic 30A is working with Scenic Walton on entry signs for both ends of the corridor.",
+        "partners": "Friends of Scenic 30A and Scenic Walton.",
+        "sources": [
+            {
+                "href": SCENIC_WALTON_JULY,
+                "label": "Scenic Walton, via Scenic America, July 10, 2026",
+            },
+        ],
+    },
+]
+PROJECT_STATUSES = {
+    "Active",
+    "In Planning",
+    "Ongoing",
+    "Community Discussion",
+    "Active — Planning & Funding",
+    "Active — In Development",
+}
 
 # Years, roles, and results are taken from the existing Our Work and Impact pages.
 # Year is omitted when the site does not state one. Photos are included only when
@@ -687,6 +733,21 @@ ACCOMPLISHMENTS = [
 ]
 
 
+def render_project_links(items, empty_label):
+    links = []
+    for item in items or []:
+        href = item.get("href", "")
+        label = item.get("source") or item.get("label") or ""
+        if not href or not label:
+            raise SystemExit(f"a {empty_label} needs an href and a label")
+        if "utm_" in href:
+            raise SystemExit(f"strip tracking parameters from {href}")
+        links.append(
+            f'<a href="{esc(href)}" target="_blank" rel="noopener noreferrer">{esc(label)}</a>'
+        )
+    return links
+
+
 def render_current_projects(projects):
     if not projects:
         return """
@@ -707,6 +768,24 @@ def render_current_projects(projects):
             image = f'<img src="{esc(project["image"])}" alt="{esc(alt)}">'
         why = f'<p><strong>Why it matters.</strong> {esc(project["why"])}</p>' if project.get("why") else ""
         doing = f'<p><strong>What Friends is doing.</strong> {esc(project["doing"])}</p>' if project.get("doing") else ""
+        partners = f'<p><strong>Partners.</strong> {esc(project["partners"])}</p>' if project.get("partners") else ""
+        timeline = ""
+        if project.get("timeline"):
+            rows = []
+            for item in project["timeline"]:
+                if not item.get("when") or not item.get("text"):
+                    raise SystemExit(f"timeline item needs a date and text: {project['name']}")
+                source = ""
+                if item.get("href"):
+                    source = " " + render_project_links([item], "timeline source")[0]
+                rows.append(
+                    f"<li><strong>{esc(item['when'])}.</strong> {esc(item['text'])}{source}</li>"
+                )
+            timeline = f'<p class="card-label">Timeline</p><ul class="project-timeline">{"".join(rows)}</ul>'
+        sources = ""
+        if project.get("sources"):
+            linked = " ".join(render_project_links(project["sources"], "source"))
+            sources = f'<p class="card-source"><strong>Source.</strong> {linked}</p>'
         more = ""
         if project.get("href"):
             more = f'<p class="card-more"><a href="{esc(project["href"])}">Learn more</a></p>'
@@ -715,9 +794,9 @@ def render_current_projects(projects):
             f'<p class="status">{esc(status)}</p>'
             f"<h3>{esc(project['name'])}</h3>"
             f"<p>{esc(project['summary'])}</p>"
-            f"{why}{doing}{more}</div></article>"
+            f"{why}{doing}{partners}{timeline}{sources}{more}</div></article>\n"
         )
-    return f'<div class="project-grid">{"".join(cards)}</div>'
+    return f'<div class="project-grid">\n{"".join(cards)}</div>'
 
 
 def render_accomplishments(items):
