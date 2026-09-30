@@ -454,6 +454,8 @@ def home():
         ("Visit Florida", "https://www.visitflorida.com/"),
         ("Walton Area Chamber of Commerce", "https://www.waltonareachamber.com/"),
         ("South Walton", "https://sowal.com/"),
+        ("Scenic Walton", "https://www.scenic.org/scenic-walton/"),
+        ("Scenic America", "https://www.scenic.org/"),
     ]
     resource_html = "\n".join(
         f'<a href="{url}" target="_blank" rel="noopener noreferrer">{esc(name)} <span>Visit</span></a>'
