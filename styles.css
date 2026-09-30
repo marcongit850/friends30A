@@ -615,6 +615,43 @@ h2.display {
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
+.corner-feature {
+  display: grid;
+  gap: 0;
+  margin: 1.6rem 0 2rem;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 1.2rem;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.corner-feature figure {
+  margin: 0;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  background: var(--gulf-deep);
+  min-height: 100%;
+}
+.corner-feature img {
+  width: 100%;
+  height: clamp(240px, 62vw, 460px);
+  object-fit: cover;
+  display: block;
+}
+.corner-feature figcaption {
+  margin: 0;
+  padding: 0.55rem 0.9rem 0.65rem;
+  color: rgba(255, 253, 249, 0.92);
+  font-size: 0.85rem;
+}
+.corner-feature .card-body { padding: 1.35rem 1.35rem 1.5rem; }
+.corner-feature h3 {
+  font-size: clamp(1.85rem, 3vw, 2.55rem);
+  line-height: 1.15;
+  max-width: 16ch;
+}
+.corner-feature .priority-list { margin: 0 0 1rem; }
+.corner-feature .accomplish-year { font-size: 0.9rem; }
 
 .partner-logos {
   list-style: none;
@@ -876,6 +913,8 @@ textarea { min-height: 8rem; resize: vertical; }
   .page-photos.photo-collage figure:first-child img { height: 320px; }
   .year-grid, .feature-row, .accomplish-split { grid-template-columns: 1.05fr 0.95fr; }
   .priority-grid { grid-template-columns: 1fr 1fr; }
+  .corner-feature { grid-template-columns: 1.15fr 0.85fr; align-items: stretch; }
+  .corner-feature img { height: 100%; min-height: 420px; }
   .accomplish-card.has-photo { grid-template-columns: minmax(200px, 280px) 1fr; }
   .accomplish-card.has-photo img { height: 100%; min-height: 180px; }
   .project-card:has(img) { grid-template-columns: minmax(180px, 240px) 1fr; }

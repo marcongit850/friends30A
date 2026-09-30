@@ -716,11 +716,6 @@ ACCOMPLISHMENTS = [
         "image_alt": "Gulf shoreline and sea oats along Scenic 30A",
     },
     {
-        "name": "Friends’ Corner at Eastern Lake",
-        "role": "Friends spearheaded its creation.",
-        "result": "The site at Scenic 30A and Eastern Lake Road became a landscaped rest area for pedestrians and bicyclists using the Timpoochee Trail.",
-    },
-    {
         "name": "Wayfinding & Signage Improvements",
         "role": "Friends worked to create a more cohesive and attractive signage system along Scenic 30A.",
         "result": "A corridor signage inventory, removal of duplicate and unnecessary signs, and installation of safety and trail-etiquette signage.",
@@ -799,6 +794,63 @@ def render_current_projects(projects):
     return f'<div class="project-grid">\n{"".join(cards)}</div>'
 
 
+FRIENDS_CORNER = {
+    "name": "Friends’ Corner at Eastern Lake",
+    "completed": "Completed May 2024",
+    "summary": "Friends of Scenic 30A spearheaded this project from concept to completion, transforming a previously unused roadside parcel at Scenic Highway 30A and Eastern Lake Road into a landscaped pedestrian and bicycle rest area along the multi-use path. Walton County officials described the former site as suffering from haphazard parking and from visibility and aesthetic problems. A ribbon cutting in May 2024 marked the opening.",
+    "amenities": [
+        "Rest bench",
+        "Bicycle repair and maintenance station",
+        "Drinking fountain",
+        "Dog-watering station",
+        "Low-impact lighting",
+        "Landscaping",
+        "Irrigation",
+        "Bike racks, repair tools, and an air pump",
+    ],
+    "funding": "Walton County awarded Friends $50,000. The Florida Department of Transportation funded design and planning through Kimley-Horn. Dewberry Engineering donated the survey work. Walton County Beach Operations provided construction labor and additional funding.",
+    "image": "/images/friends-corner-eastern-lake.jpg",
+    "image_alt": "Landscaped Friends’ Corner rest area with a bench and green bicycle repair station beside the road",
+    "photo_credit": "Photo: Walton County Tourism",
+    "sources": [
+        {
+            "href": "https://www.waltoncountyfltourism.com/press/ribbon-cutting-marks-completion-pedestrian-rest-area-on-30a/",
+            "label": "Walton County Tourism ribbon cutting, May 2024",
+        },
+        {
+            "href": "https://www.waltoncountyfltourism.com/walton-county-line/new-pedestrian-and-bike-rest-area-enhances-scenic-highway-30a/",
+            "label": "Walton County Line",
+        },
+        {
+            "href": "https://www.wjhg.com/2024/05/21/new-rest-area-pedestrians-cyclists-open-30a/",
+            "label": "WJHG/WECP, May 21, 2024",
+        },
+    ],
+}
+
+
+def render_friends_corner(feature):
+    amenities = "".join(f"<li>{esc(item)}</li>" for item in feature["amenities"])
+    sources = " ".join(render_project_links(feature["sources"], "Friends’ Corner source"))
+    return f"""
+        <article class="corner-feature">
+          <figure>
+            <img src="{esc(feature["image"])}" alt="{esc(feature["image_alt"])}">
+            <figcaption>{esc(feature["photo_credit"])}</figcaption>
+          </figure>
+          <div class="card-body">
+            <p class="accomplish-year">{esc(feature["completed"])}</p>
+            <h3>{esc(feature["name"])}</h3>
+            <p>{esc(feature["summary"])}</p>
+            <p class="card-label">Completed amenities</p>
+            <ul class="priority-list">{amenities}</ul>
+            <p><strong>Funding and partners.</strong> {esc(feature["funding"])}</p>
+            <p class="card-source"><strong>Sources.</strong> {sources}</p>
+          </div>
+        </article>
+    """
+
+
 def render_accomplishments(items):
     cards = []
     for item in items:
@@ -825,6 +877,7 @@ def render_accomplishments(items):
 
 def our_work():
     projects_html = render_current_projects(CURRENT_PROJECTS)
+    corner_html = render_friends_corner(FRIENDS_CORNER)
     accomplishments_html = render_accomplishments(ACCOMPLISHMENTS)
     body = f"""
     <header class="page-hero" style="--hero:url('/images/gallery/03-dune-lake-pines.jpg')">
@@ -893,7 +946,8 @@ def our_work():
     <section class="section section-white" id="past-accomplishments">
       <div class="wrap">
         <h2>Past Projects &amp; Accomplishments</h2>
-        <p class="lede">Specific results already recorded for Scenic 30A. A year is shown only when this site states one.</p>
+        <p class="lede">Specific results recorded for Scenic 30A. A year is shown when a source states one.</p>
+        {corner_html}
         {accomplishments_html}
       </div>
     </section>
