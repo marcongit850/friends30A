@@ -15,7 +15,7 @@
   --serif: "Source Sans 3", "Avenir Next", "Segoe UI", sans-serif;
   --sans: "Source Sans 3", "Avenir Next", "Segoe UI", sans-serif;
   --max: 1120px;
-  --header: 76px;
+  --header: 88px;
 }
 
 * { box-sizing: border-box; }
@@ -73,15 +73,14 @@ p { margin: 0 0 1rem; }
   text-decoration: none;
   color: var(--ink);
   min-width: 0;
-  overflow: hidden;
+  flex: 0 1 auto;
+  max-width: calc(100% - 5.75rem);
   line-height: 0;
 }
 .brand img {
-  width: 125px;
+  width: 196px;
+  max-width: 100%;
   height: auto;
-  max-width: none;
-  /* About 20% larger than the 104px scale. Margins crop the file's blank padding. */
-  margin: -16.36px -3.91px -22.22px -4.88px;
   object-fit: contain;
 }
 .nav-toggle {
@@ -807,6 +806,28 @@ textarea { min-height: 8rem; resize: vertical; }
   padding: 3rem 1.25rem 1.4rem;
 }
 .footer-grid { display: grid; gap: 1.6rem; max-width: 1200px; margin: 0 auto; }
+.footer-brand {
+  display: inline-block;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 1rem;
+  padding: 0.5rem 0.6rem 0.45rem;
+  background: var(--white);
+  border-radius: 0.7rem;
+  line-height: 0;
+  text-decoration: none;
+}
+.site-footer .footer-brand:hover,
+.site-footer .footer-brand:focus-visible { text-decoration: none; }
+.footer-brand:focus-visible {
+  outline: 2px solid #f0d7a8;
+  outline-offset: 3px;
+}
+.footer-brand img {
+  width: 240px;
+  max-width: 100%;
+  height: auto;
+}
 .site-footer h2 {
   font-family: var(--sans);
   font-size: 0.78rem;
@@ -931,6 +952,8 @@ textarea { min-height: 8rem; resize: vertical; }
 }
 
 @media (min-width: 980px) {
+  .brand { max-width: none; }
+  .brand img { width: 228px; }
   .nav-toggle { display: none; }
   .site-nav {
     display: flex;
