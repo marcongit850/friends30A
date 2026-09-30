@@ -49,6 +49,8 @@ Until those values are set, `POST /api/message` returns HTTP 503 and the form ex
 
 Donate: https://square.link/u/Yzxyi16L
 
+Shop: https://friends-of-scenic-30a-shop.fourthwall.com/
+
 Individual membership ($25/year): https://square.link/u/GUdeODzg
 
 Business membership ($100/year): https://square.link/u/KlIhQxsE
