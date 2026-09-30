@@ -447,19 +447,20 @@ def home():
     strip_prev = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M14.5 5 8 12l6.5 7"/></svg>'
     strip_next = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="m9.5 5 6.5 7-6.5 7"/></svg>'
     resources = [
-        ("30A", "https://30a.com/"),
-        ("America's Byways", "https://www.byways.org/"),
-        ("Beaches of South Walton", "https://www.visitsouthwalton.com/"),
-        ("Florida Scenic Highways Program", "https://floridascenichighways.com/"),
-        ("Visit Florida", "https://www.visitflorida.com/"),
-        ("Walton Area Chamber of Commerce", "https://www.waltonareachamber.com/"),
-        ("South Walton", "https://sowal.com/"),
-        ("Scenic Walton", "https://www.scenic.org/scenic-walton/"),
-        ("Scenic America", "https://www.scenic.org/"),
+        ("30A", "https://30a.com/", "/images/partners/30a.png", 512, 512),
+        ("America's Byways", "https://www.byways.org/", "/images/partners/americas-byways.png", 454, 111),
+        ("Beaches of South Walton", "https://www.visitsouthwalton.com/", "/images/partners/beaches-of-south-walton.svg", 459, 244),
+        ("Florida Scenic Highways Program", "https://floridascenichighways.com/", "/images/partners/florida-scenic-highways.svg", 171, 110),
+        ("Visit Florida", "https://www.visitflorida.com/", "/images/partners/visit-florida.svg", 178, 27),
+        ("Walton Area Chamber of Commerce", "https://www.waltonareachamber.com/", "/images/partners/walton-area-chamber.png", 250, 79),
+        ("South Walton", "https://sowal.com/", "/images/partners/south-walton.png", 177, 81),
+        ("Scenic Walton", "https://www.scenic.org/scenic-walton/", "/images/partners/scenic-walton.png", 535, 215),
+        ("Scenic America", "https://www.scenic.org/", "/images/partners/scenic-america.svg", 672, 262),
     ]
     resource_html = "\n".join(
-        f'<a href="{url}" target="_blank" rel="noopener noreferrer">{esc(name)} <span>Visit</span></a>'
-        for name, url in resources
+        f'<li><a href="{url}" target="_blank" rel="noopener noreferrer">'
+        f'<img src="{src}" alt="{esc(name)}" width="{width}" height="{height}"></a></li>'
+        for name, url, src, width, height in resources
     )
     body = f"""
     <section class="hero">
@@ -546,7 +547,7 @@ def home():
         <p class="eyebrow">Scenic 30A resources</p>
         <h2>Organizations connected to the corridor</h2>
         <p class="subhead">Explore organizations and resources connected to Scenic 30A, South Walton and Florida's scenic highway community.</p>
-        <div class="resources">{resource_html}</div>
+        <ul class="partner-logos">{resource_html}</ul>
       </div>
     </section>
     """
