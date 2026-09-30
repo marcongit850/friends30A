@@ -17,8 +17,19 @@ function walk(dir, found = []) {
 const pages = walk(root);
 assert.ok(pages.length >= 15, `expected the rebuilt site, found ${pages.length} html files`);
 
+function isImpactRedirect(html) {
+  return /http-equiv="refresh"/.test(html) && /\/our-work\/#past-accomplishments/.test(html);
+}
+
 for (const page of pages) {
   const html = readFileSync(page, "utf8");
+  if (isImpactRedirect(html)) {
+    assert.match(html, /<title>[^<]+<\/title>/, page);
+    assert.match(html, /name="robots" content="noindex"/, page);
+    assert.match(html, /canonical" href="https:\/\/friendsofscenic30a.org\/our-work\/"/, page);
+    assert.match(html, /location\.replace\("\/our-work\/#past-accomplishments"\)/, page);
+    continue;
+  }
   assert.match(html, /<title>[^<]+<\/title>/, page);
   assert.match(html, /<meta name="description" content="[^"]+"/, page);
   assert.match(html, /<link rel="canonical" href="https?:\/\/[^"]+"/, page);
@@ -63,27 +74,62 @@ assert.doesNotMatch(footer, /https:\/\/sowal\.com\//);
 const about = readFileSync(join(root, "about/index.html"), "utf8");
 const work = readFileSync(join(root, "our-work/index.html"), "utf8");
 const impact = readFileSync(join(root, "impact/index.html"), "utf8");
+const impactHtml = readFileSync(join(root, "impact.html"), "utf8");
 const memberPage = readFileSync(join(root, "membership/index.html"), "utf8");
 const involved = readFileSync(join(root, "get-involved/index.html"), "utf8");
-for (const [name, page] of [["about", about], ["work", work], ["impact", impact], ["membership", memberPage]]) {
+for (const [name, page] of [["about", about], ["membership", memberPage]]) {
   assert.match(page, /class="page-photos[\s"]/, name);
   assert.ok((page.match(/<figure>/g) || []).length >= 1, name);
 }
-assert.doesNotMatch(impact, /<figcaption>/);
-assert.match(impact, /alt="Aerial view of the Gulf, beach, and a dune lake beside 30A"/);
-assert.match(impact, /alt="People riding the paved Timpoochee Trail"/);
-assert.match(impact, /alt="Gulf shoreline and sea oats along Scenic 30A"/);
-assert.doesNotMatch(work, /<figcaption>/);
-assert.match(work, /alt="Trail through the Scenic 30A corridor"/);
-assert.match(work, /alt="People riding the paved Timpoochee Trail"/);
-assert.match(work, /alt="Path beside the Gulf with sea oats and pines"/);
+assert.equal(isImpactRedirect(impact), true);
+assert.equal(isImpactRedirect(impactHtml), true);
+assert.doesNotMatch(header, /href="\/impact\/"/);
+assert.doesNotMatch(footer, /href="\/impact\/"/);
+assert.match(header, /href="\/our-work\/">Our Work</);
+assert.match(work, /<figcaption>Photo: Walton County Tourism<\/figcaption>/);
+assert.match(work, /id="current-projects"/);
+assert.match(work, /id="our-priorities"/);
+assert.match(work, /id="past-accomplishments"/);
+assert.match(work, /href="#current-projects">Current Projects</);
+assert.match(work, /href="#our-priorities">Our Priorities</);
+assert.match(work, /href="#past-accomplishments">Past Accomplishments</);
+assert.match(work, /West 30A Gateway Landscaping/);
+assert.match(work, /Scenic 30A Entry Signage/);
+assert.match(work, /Active — Planning &amp; Funding/);
+assert.match(work, /Active — In Development/);
+assert.match(work, /https:\/\/walton\.civicweb\.net\/document\/529193\//);
+assert.match(work, /https:\/\/www\.scenic\.org\/2026\/07\/10\/scenic-walton-celebrates-progress-in-walton-county\//);
+assert.doesNotMatch(work, /utm_/);
+assert.doesNotMatch(work, /under construction|construction has started|construction is underway/i);
+assert.match(work, /additional steps remain before construction begins/);
+assert.match(work, /Protecting Our Natural Landscape/);
+assert.match(work, /Safer Walking, Biking &amp; Connectivity/);
+assert.match(work, /Keeping Scenic 30A Scenic/);
+assert.match(work, /Education &amp; Community Stewardship/);
+assert.match(work, /Florida Scenic Highway Designation/);
+assert.match(work, /class="accomplish-year">2008</);
+assert.match(work, /National Scenic Byway Designation/);
+assert.match(work, /class="accomplish-year">2021</);
+assert.match(work, /class="corner-feature"/);
+assert.match(work, /Friends’ Corner at Eastern Lake/);
+assert.match(work, /Completed May 2024/);
+assert.match(work, /\$50,000/);
+assert.match(work, /Kimley-Horn/);
+assert.match(work, /Dewberry Engineering/);
+assert.match(work, /Irrigation/);
+assert.match(work, /images\/friends-corner-eastern-lake\.jpg/);
+assert.match(work, /https:\/\/www\.waltoncountyfltourism\.com\/press\/ribbon-cutting-marks-completion-pedestrian-rest-area-on-30a\//);
+assert.match(work, /https:\/\/www\.waltoncountyfltourism\.com\/walton-county-line\/new-pedestrian-and-bike-rest-area-enhances-scenic-highway-30a\//);
+assert.match(work, /class="accomplish-card"/);
+assert.equal((work.match(/class="accomplish-card/g) || []).length, 4);
+assert.match(work, /Wayfinding &amp; Signage Improvements/);
+assert.match(work, /30A Gateway Improvements/);
+assert.match(work, /alt="Aerial view of the Gulf, beach, and a dune lake beside 30A"/);
+assert.match(work, /alt="Gulf shoreline and sea oats along Scenic 30A"/);
+assert.doesNotMatch(work, /A Voice for Scenic 30A|Bringing Our Community Together|Planning for 30A/);
 assert.doesNotMatch(about, /<figcaption>/);
 assert.match(about, /page-hero-tall/);
 assert.match(about, /feature-row/);
-assert.match(impact, /page-hero-tall/);
-assert.match(impact, /photo-collage/);
-assert.match(impact, /accomplish-split/);
-assert.doesNotMatch(impact, /<figcaption>/);
 assert.match(about, /topic-grid/);
 assert.match(about, /Protect\. Preserve\. Enhance\./);
 assert.match(about, /alt="People riding the paved Timpoochee Trail"/);
@@ -147,6 +193,7 @@ assert.match(build, /Source\+Sans\+3/);
 assert.doesNotMatch(build, /Fraunces|Outfit|page-our-work/);
 for (const pagePath of pages) {
   const html = readFileSync(pagePath, "utf8");
+  if (isImpactRedirect(html)) continue;
   assert.match(html, /Source\+Sans\+3/, pagePath);
   assert.doesNotMatch(html, /Fraunces|Outfit|page-our-work/, pagePath);
 }
@@ -167,7 +214,7 @@ const robots = readFileSync(join(root, "robots.txt"), "utf8");
 const sitemap = readFileSync(join(root, "sitemap.xml"), "utf8");
 assert.match(robots, /^User-agent: \*/m);
 assert.match(robots, /Sitemap: https?:\/\/\S+\/sitemap\.xml/);
-for (const path of ["/", "/about/", "/our-work/", "/impact/", "/gallery/", "/get-involved/", "/membership/", "/contact/", "/blog/", "/privacy-policy/", "/accessibility/", "/terms/"]) {
+for (const path of ["/", "/about/", "/our-work/", "/gallery/", "/get-involved/", "/membership/", "/contact/", "/blog/", "/privacy-policy/", "/accessibility/", "/terms/"]) {
   assert.match(sitemap, new RegExp(path.replaceAll("/", "\\/") ));
 }
 
@@ -180,7 +227,6 @@ const publicPaths = [
   "/",
   "/about/",
   "/our-work/",
-  "/impact/",
   "/gallery/",
   "/get-involved/",
   "/membership/",
@@ -356,6 +402,23 @@ assert.ok(llmsFull.includes(`${ORIGIN}/llms.txt`));
 assert.match(llmsFull, /Florida Scenic Highway designation in 2008/);
 assert.match(llmsFull, /National Scenic Byway designation in 2021/);
 assert.match(llmsFull, /877 N County Hwy 393/);
+assert.equal(sitemap.includes("/impact/"), false);
+assert.equal(llms.includes("/impact/"), false);
+
+const redirects = readFileSync(join(root, "_redirects"), "utf8");
+for (const path of ["/impact", "/impact/", "/impact/index.html", "/impact.html"]) {
+  assert.match(redirects, new RegExp(`${path.replaceAll("/", "\\/")} /our-work/#past-accomplishments 301`));
+}
+assert.match(wrangler, /\/impact\/index\.html/);
+
+const worker = await import("../src/worker.js");
+for (const path of ["/impact", "/impact/", "/impact/index.html", "/impact.html"]) {
+  const response = await worker.default.fetch(new Request(`https://friendsofscenic30a.org${path}`), {});
+  assert.equal(response.status, 301, path);
+  assert.match(response.headers.get("location") || "", /\/our-work\/#past-accomplishments$/, path);
+}
+const homeResponse = await worker.default.fetch(new Request("https://friendsofscenic30a.org/"), {});
+assert.equal(homeResponse.status, 404);
 
 const ignore = readFileSync(join(root, ".assetsignore"), "utf8");
 for (const name of ["robots.txt", "sitemap.xml", "llms.txt", "llms-full.txt"]) {

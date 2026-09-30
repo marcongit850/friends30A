@@ -28,7 +28,7 @@ Cloudflare Workers Builds deploys this repository with `npx wrangler deploy`, us
 
 - `"name"` must stay `friends30a`.
 - `assets.directory` is `.`, so `index.html` at the repository root is the site home page.
-- `main` is `src/worker.js`. `assets.run_worker_first` is only `/api/message` and `/api/message/`. Every other path is a static asset.
+- `main` is `src/worker.js`. `assets.run_worker_first` includes `/api/message`, `/api/message/`, and the old Impact paths (`/impact`, `/impact/`, `/impact/index.html`, `/impact.html`). Those Impact paths redirect to `/our-work/#past-accomplishments`. Every other path is a static asset.
 - Do not add a custom domain, route pattern, or vanity DNS record for this Worker.
 
 `CONTACT_EMAIL` and `RESEND_API_KEY` are Worker variables or secrets. Do not commit them. Mail goes out through the Resend HTTP API. The From address is Resend's free onboarding sender, `Friends of Scenic 30A <onboarding@resend.dev>`, which can deliver only to the email address on the Resend account until a domain is verified. Keep `CONTACT_EMAIL` set to that same address. After a domain is verified, change `FROM` in `src/message.js`.
@@ -38,8 +38,8 @@ Until those values are set, `POST /api/message` returns HTTP 503 and the form ex
 ## Pages
 
 - `/` is the mission, four pillars, impact, why 30A matters, and ways to give or join
-- `/about/` and `/our-work/`
-- `/impact/`
+- `/about/` and `/our-work/` (current projects, priorities, and past accomplishments)
+- `/impact/` redirects to `/our-work/#past-accomplishments`
 - `/gallery/`
 - `/blog/` and the posts from the Wix site
 - `/get-involved/` for membership, volunteering, updates, and donations
