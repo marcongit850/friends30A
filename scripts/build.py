@@ -21,6 +21,7 @@ MEMBERSHIP_DESCRIPTION = (
     "Join Friends of Scenic 30A. Individual membership is $25 a year, business is $100, "
     "and corporate is $1,000, paid securely through Square."
 )
+SHOP_STOREFRONT = "https://shop.friendsofscenic30a.org/"
 PAGES = []
 FONT = "https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap"
 
@@ -1010,17 +1011,43 @@ IMPACT_REDIRECT_DOC = f"""<!DOCTYPE html>
 """
 
 
+SHOP_REDIRECT_DOC = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shop | Friends of Scenic 30A</title>
+  <meta name="description" content="Find Friends of Scenic 30A merchandise in the official shop.">
+  <link rel="canonical" href="{SHOP_STOREFRONT}">
+  <meta name="robots" content="noindex">
+  <meta http-equiv="refresh" content="0; url={SHOP_STOREFRONT}">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <script>location.replace("{SHOP_STOREFRONT}");</script>
+</head>
+<body>
+  <p><a href="{SHOP_STOREFRONT}">Shop</a></p>
+</body>
+</html>
+"""
+
+
 def write_impact_redirect():
     (ROOT / "impact").mkdir(parents=True, exist_ok=True)
     (ROOT / "impact" / "index.html").write_text(IMPACT_REDIRECT_DOC)
     (ROOT / "impact.html").write_text(IMPACT_REDIRECT_DOC)
+    (ROOT / "shop").mkdir(parents=True, exist_ok=True)
+    (ROOT / "shop" / "index.html").write_text(SHOP_REDIRECT_DOC)
     (ROOT / "_redirects").write_text(
         "/impact /our-work/#past-accomplishments 301\n"
         "/impact/ /our-work/#past-accomplishments 301\n"
         "/impact/index.html /our-work/#past-accomplishments 301\n"
         "/impact.html /our-work/#past-accomplishments 301\n"
+        "/shop https://shop.friendsofscenic30a.org/ 301\n"
+        "/shop/ https://shop.friendsofscenic30a.org/ 301\n"
+        "/shop/index.html https://shop.friendsofscenic30a.org/ 301\n"
     )
     print("/impact/ -> /our-work/#past-accomplishments")
+    print("/shop/ -> https://shop.friendsofscenic30a.org/")
 
 
 def gallery():

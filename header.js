@@ -11,19 +11,6 @@
     return path;
   }
 
-  var SHOP_STOREFRONT = "https://shop.friendsofscenic30a.org/";
-
-  function isShopPage(path) {
-    return path === "/shop/" || path.indexOf("/shop/") === 0;
-  }
-
-  function applyLogo() {
-    if (!isShopPage(here())) return;
-    var brand = mount.querySelector("a.brand");
-    if (!brand) return;
-    brand.setAttribute("href", SHOP_STOREFRONT);
-  }
-
   function markCurrent() {
     var path = here();
     var links = mount.querySelectorAll("a[href]");
@@ -42,7 +29,6 @@
     })
     .then(function (html) {
       mount.innerHTML = html;
-      applyLogo();
       markCurrent();
       document.dispatchEvent(new Event("site-header-ready"));
     });

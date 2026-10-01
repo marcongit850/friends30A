@@ -28,7 +28,7 @@ Cloudflare Workers Builds deploys this repository with `npx wrangler deploy`, us
 
 - `"name"` must stay `friends30a`.
 - `assets.directory` is `.`, so `index.html` at the repository root is the site home page.
-- `main` is `src/worker.js`. `assets.run_worker_first` includes `/api/message`, `/api/message/`, and the old Impact paths (`/impact`, `/impact/`, `/impact/index.html`, `/impact.html`). Those Impact paths redirect to `/our-work/#past-accomplishments`. Every other path is a static asset.
+- `main` is `src/worker.js`. `assets.run_worker_first` includes `/api/message`, `/api/message/`, the old Impact paths (`/impact`, `/impact/`, `/impact/index.html`, `/impact.html`), and the shop paths (`/shop`, `/shop/`, `/shop/index.html`). Impact paths redirect to `/our-work/#past-accomplishments`. Shop paths redirect to https://shop.friendsofscenic30a.org/. Every other path is a static asset.
 - Do not add a custom domain, route pattern, or vanity DNS record for this Worker.
 
 `CONTACT_EMAIL` and `RESEND_API_KEY` are Worker variables or secrets. Do not commit them. Mail goes out through the Resend HTTP API. The From address is Resend's free onboarding sender, `Friends of Scenic 30A <onboarding@resend.dev>`, which can deliver only to the email address on the Resend account until a domain is verified. Keep `CONTACT_EMAIL` set to that same address. After a domain is verified, change `FROM` in `src/message.js`.
@@ -43,7 +43,7 @@ Until those values are set, `POST /api/message` returns HTTP 503 and the form ex
 - `/gallery/`
 - `/blog/` and the posts from the Wix site
 - `/get-involved/` for membership, volunteering, updates, and donations
-- `/shop/` for Friends of Scenic 30A merchandise. On this page the header logo links to the storefront; on every other page it still links home
+- `/shop/` redirects to the official shop. The header and footer Shop links go there directly
 - `/membership/` with the live Square payment links
 - `/contact/`
 - `/privacy-policy/`, `/accessibility/`, and `/terms/`
