@@ -16,6 +16,11 @@ DESCRIPTION_MAX = 165
 DONATE = "https://square.link/u/Yzxyi16L"
 MEMBER_INDIVIDUAL = "https://square.link/u/GUdeODzg"
 MEMBER_BUSINESS = "https://square.link/u/KlIhQxsE"
+MEMBER_CORPORATE = "https://checkout.square.site/merchant/MLC659T9BQY4F/checkout/Y6NHRE2EMR2YOKJIDEGOB3I7"
+MEMBERSHIP_DESCRIPTION = (
+    "Join Friends of Scenic 30A. Individual membership is $25 a year, business is $100, "
+    "and corporate is $1,000, paid securely through Square."
+)
 PAGES = []
 FONT = "https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap"
 
@@ -1101,6 +1106,12 @@ def get_involved():
             <p>Join as a Business.</p>
             <a class="btn btn-line" href="{MEMBER_BUSINESS}" target="_blank" rel="noopener noreferrer">Join as a Business</a>
           </article>
+          <article class="price">
+            <h3>Corporate Membership</h3>
+            <strong>$1,000 annually</strong>
+            <p>Join as Corporate.</p>
+            <a class="btn btn-line" href="{MEMBER_CORPORATE}" target="_blank" rel="noopener noreferrer">Join as Corporate</a>
+          </article>
         </div>
         <p>Every member adds another voice for the thoughtful stewardship of Scenic 30A.</p>
       </div>
@@ -1208,7 +1219,7 @@ def membership():
     <section class="section section-foam">
       <div class="wrap">
         <h2>Step 1. Pay through Square</h2>
-        <p class="lede">Choose Individual or Business and complete payment on Square. Membership is not finished until you also send your details in step 2.</p>
+        <p class="lede">Choose Individual, Business, or Corporate and complete payment on Square. Membership is not finished until you also send your details in step 2.</p>
         <div class="price-grid">
           <article class="price">
             <h3>Individual</h3>
@@ -1221,6 +1232,12 @@ def membership():
             <strong>$100 / year</strong>
             <p>Ideal for local businesses that want to support the preservation, enhancement, and long-term future of Scenic 30A and the community it serves.</p>
             <a class="btn btn-line" href="{MEMBER_BUSINESS}" target="_blank" rel="noopener noreferrer">Join as Business</a>
+          </article>
+          <article class="price">
+            <h3>Corporate</h3>
+            <strong>$1,000 / year</strong>
+            <p>Ideal for companies that want to support the preservation, enhancement, and long-term future of Scenic 30A and the community it serves.</p>
+            <a class="btn btn-line" href="{MEMBER_CORPORATE}" target="_blank" rel="noopener noreferrer">Join as Corporate</a>
           </article>
         </div>
       </div>
@@ -1255,6 +1272,7 @@ def membership():
               <option value="">Select</option>
               <option>Individual Membership – $25/year</option>
               <option>Business Membership – $100/year</option>
+              <option>Corporate Membership – $1,000/year</option>
             </select>
           </label>
           <label class="hp">Company<input name="company" tabindex="-1" autocomplete="off"></label>
@@ -1267,7 +1285,7 @@ def membership():
     write_page(
         "/membership/",
         "Scenic 30A Membership",
-        "Join Friends of Scenic 30A. Individual membership is $25 a year and business membership is $100 a year, paid securely through Square.",
+        MEMBERSHIP_DESCRIPTION,
         body,
         "/images/gallery/14-dune-sea-oats.jpg",
         crumbs=[("Home", "/"), ("Membership", "/membership/")],
@@ -1400,7 +1418,7 @@ def terms():
       <h2>Information on this site</h2>
       <p>Articles, photographs, and project descriptions are provided for general information. They are not legal, engineering, or professional advice. Scenic corridor conditions, park rules, and public projects can change.</p>
       <h2>Membership and donations</h2>
-      <p>Individual membership, business membership, and donations are completed on Square payment pages linked from this site. Those payments are governed by Square’s terms and by the membership description on this website. Submitting the membership details form tells Friends of Scenic 30A how to confirm and record a membership. It does not, by itself, collect payment.</p>
+      <p>Individual membership, business membership, corporate membership, and donations are completed on Square payment pages linked from this site. Those payments are governed by Square’s terms and by the membership description on this website. Submitting the membership details form tells Friends of Scenic 30A how to confirm and record a membership. It does not, by itself, collect payment.</p>
       <h2>Your messages</h2>
       <p>Do not send sensitive payment card numbers through the forms on this site. Messages you submit may be retained so the organization can respond and keep membership or volunteer records.</p>
       <h2>Content and links</h2>
@@ -1642,7 +1660,7 @@ def llms_documents():
         "the highway; the Timpoochee Trail and walking and biking safety; and education for residents, businesses, and "
         "visitors. Friends works with residents, businesses, Walton County, and other community partners.\n\n"
         "Mail: Friends of Scenic 30A, 877 N County Hwy 393, Santa Rosa Beach, FL 32459. "
-        "Individual membership is $25 a year and business membership is $100 a year. "
+        "Individual membership is $25 a year, business membership is $100 a year, and corporate membership is $1,000 a year. "
         "Membership payments and donations are completed on Square. This website does not collect card numbers.\n"
     )
     optional_short = (
