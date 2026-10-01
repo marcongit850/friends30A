@@ -929,6 +929,7 @@ textarea { min-height: 8rem; resize: vertical; }
 
 @media (min-width: 720px) {
   .pillars, .impact-grid, .involve-grid, .matter, .price-grid, .posts, .topic-grid, .milestone-grid { grid-template-columns: 1fr 1fr; }
+  .price-grid > :last-child:nth-child(odd) { grid-column: 1 / -1; }
   .gallery { grid-template-columns: 1fr 1fr 1fr; }
   .partner-logos {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -990,6 +991,7 @@ textarea { min-height: 8rem; resize: vertical; }
   .milestone-grid.thirds { grid-template-columns: repeat(3, 1fr); }
   .mission-band, .lead-split, .work-block { grid-template-columns: 1.15fr 0.85fr; }
   .impact-grid, .involve-grid, .price-grid { grid-template-columns: repeat(3, 1fr); }
+  .price-grid > :last-child:nth-child(odd) { grid-column: auto; }
   .hero { min-height: 86vh; }
 }
 
