@@ -21,6 +21,10 @@ function isImpactRedirect(html) {
   return /http-equiv="refresh"/.test(html) && /\/our-work\/#past-accomplishments/.test(html);
 }
 
+function isShopRedirect(html) {
+  return /http-equiv="refresh"/.test(html) && /https:\/\/shop\.friendsofscenic30a\.org\//.test(html);
+}
+
 for (const page of pages) {
   const html = readFileSync(page, "utf8");
   if (isImpactRedirect(html)) {
@@ -28,6 +32,13 @@ for (const page of pages) {
     assert.match(html, /name="robots" content="noindex"/, page);
     assert.match(html, /canonical" href="https:\/\/friendsofscenic30a.org\/our-work\/"/, page);
     assert.match(html, /location\.replace\("\/our-work\/#past-accomplishments"\)/, page);
+    continue;
+  }
+  if (isShopRedirect(html)) {
+    assert.match(html, /<title>[^<]+<\/title>/, page);
+    assert.match(html, /name="robots" content="noindex"/, page);
+    assert.match(html, /canonical" href="https:\/\/shop\.friendsofscenic30a\.org\/"/, page);
+    assert.match(html, /location\.replace\("https:\/\/shop\.friendsofscenic30a\.org\/"\)/, page);
     continue;
   }
   assert.match(html, /<title>[^<]+<\/title>/, page);
@@ -44,13 +55,14 @@ for (const page of pages) {
 const headerJs = readFileSync(join(root, "header.js"), "utf8");
 const footerJs = readFileSync(join(root, "footer.js"), "utf8");
 assert.match(headerJs, /\/includes\/header\.html/);
-assert.match(headerJs, /https:\/\/shop\.friendsofscenic30a\.org\//);
-assert.match(headerJs, /path === "\/shop\/"/);
+assert.doesNotMatch(headerJs, /shop\.friendsofscenic30a\.org/);
+assert.doesNotMatch(headerJs, /\/shop\//);
 assert.match(footerJs, /\/includes\/footer\.html/);
 
 const header = readFileSync(join(root, "includes/header.html"), "utf8");
 assert.match(header, /<a class="brand" href="\/"/);
-assert.match(header, /<a href="\/shop\/">Shop<\/a>/);
+assert.match(header, /<a href="https:\/\/shop\.friendsofscenic30a\.org\/" target="_blank" rel="noopener noreferrer">Shop<\/a>/);
+assert.doesNotMatch(header, /href="\/shop\/"/);
 assert.doesNotMatch(header, /<a class="brand" href="https:\/\/shop\.friendsofscenic30a\.org\//);
 assert.match(header, /aria-label="Friends of Scenic 30A"/);
 assert.match(header, /alt="Friends of Scenic 30A"/);
@@ -71,6 +83,8 @@ assert.match(footer, /florida-scenic-highway\.png/);
 assert.match(footer, /alt="Florida Scenic Highway"/);
 assert.match(footer, /<h2>Explore<\/h2>/);
 assert.match(footer, /<h2>Get Involved<\/h2>/);
+assert.match(footer, /<a href="https:\/\/shop\.friendsofscenic30a\.org\/" target="_blank" rel="noopener noreferrer">Shop<\/a>/);
+assert.doesNotMatch(footer, /href="\/shop\/"/);
 assert.doesNotMatch(footer, /Scenic 30A Resources/);
 assert.doesNotMatch(footer, /https:\/\/30a\.com\//);
 assert.doesNotMatch(footer, /https:\/\/www\.byways\.org\//);
@@ -216,7 +230,7 @@ assert.match(build, /Source\+Sans\+3/);
 assert.doesNotMatch(build, /Fraunces|Outfit|page-our-work/);
 for (const pagePath of pages) {
   const html = readFileSync(pagePath, "utf8");
-  if (isImpactRedirect(html)) continue;
+  if (isImpactRedirect(html) || isShopRedirect(html)) continue;
   assert.match(html, /Source\+Sans\+3/, pagePath);
   assert.doesNotMatch(html, /Fraunces|Outfit|page-our-work/, pagePath);
 }
@@ -237,7 +251,7 @@ const robots = readFileSync(join(root, "robots.txt"), "utf8");
 const sitemap = readFileSync(join(root, "sitemap.xml"), "utf8");
 assert.match(robots, /^User-agent: \*/m);
 assert.match(robots, /Sitemap: https?:\/\/\S+\/sitemap\.xml/);
-for (const path of ["/", "/about/", "/our-work/", "/gallery/", "/get-involved/", "/shop/", "/membership/", "/contact/", "/blog/", "/privacy-policy/", "/accessibility/", "/terms/"]) {
+for (const path of ["/", "/about/", "/our-work/", "/gallery/", "/get-involved/", "/membership/", "/contact/", "/blog/", "/privacy-policy/", "/accessibility/", "/terms/"]) {
   assert.match(sitemap, new RegExp(path.replaceAll("/", "\\/") ));
 }
 
@@ -252,7 +266,6 @@ const publicPaths = [
   "/our-work/",
   "/gallery/",
   "/get-involved/",
-  "/shop/",
   "/membership/",
   "/contact/",
   "/blog/",
@@ -428,18 +441,37 @@ assert.match(llmsFull, /National Scenic Byway designation in 2021/);
 assert.match(llmsFull, /877 N County Hwy 393/);
 assert.equal(sitemap.includes("/impact/"), false);
 assert.equal(llms.includes("/impact/"), false);
+assert.equal(sitemap.includes("/shop/"), false);
+assert.equal(llms.includes("/shop/"), false);
+assert.equal(llmsFull.includes("/shop/"), false);
+
+const shopPage = readFileSync(join(root, "shop/index.html"), "utf8");
+assert.equal(isShopRedirect(shopPage), true);
+assert.match(home, /href="https:\/\/shop\.friendsofscenic30a\.org\/" target="_blank" rel="noopener noreferrer">Shop/);
+assert.match(involved, /href="https:\/\/shop\.friendsofscenic30a\.org\/" target="_blank" rel="noopener noreferrer">Shop/);
+assert.doesNotMatch(home, /href="\/shop\/"/);
+assert.doesNotMatch(involved, /href="\/shop\/"/);
 
 const redirects = readFileSync(join(root, "_redirects"), "utf8");
 for (const path of ["/impact", "/impact/", "/impact/index.html", "/impact.html"]) {
   assert.match(redirects, new RegExp(`${path.replaceAll("/", "\\/")} /our-work/#past-accomplishments 301`));
 }
+for (const path of ["/shop", "/shop/", "/shop/index.html"]) {
+  assert.match(redirects, new RegExp(`${path.replaceAll("/", "\\/")} https://shop\\.friendsofscenic30a\\.org/ 301`));
+}
 assert.match(wrangler, /\/impact\/index\.html/);
+assert.match(wrangler, /\/shop\/index\.html/);
 
 const worker = await import("../src/worker.js");
 for (const path of ["/impact", "/impact/", "/impact/index.html", "/impact.html"]) {
   const response = await worker.default.fetch(new Request(`https://friendsofscenic30a.org${path}`), {});
   assert.equal(response.status, 301, path);
   assert.match(response.headers.get("location") || "", /\/our-work\/#past-accomplishments$/, path);
+}
+for (const path of ["/shop", "/shop/", "/shop/index.html"]) {
+  const response = await worker.default.fetch(new Request(`https://friendsofscenic30a.org${path}`), {});
+  assert.equal(response.status, 301, path);
+  assert.equal(response.headers.get("location"), "https://shop.friendsofscenic30a.org/", path);
 }
 const homeResponse = await worker.default.fetch(new Request("https://friendsofscenic30a.org/"), {});
 assert.equal(homeResponse.status, 404);

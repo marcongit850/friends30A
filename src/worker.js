@@ -11,10 +11,25 @@ const IMPACT_PATHS = new Set([
   "/impact.html",
 ]);
 
+const SHOP_STOREFRONT = "https://shop.friendsofscenic30a.org/";
+
+const SHOP_PATHS = new Set([
+  "/shop",
+  "/shop/",
+  "/shop/index.html",
+]);
+
 function impactRedirect() {
   return new Response(null, {
     status: 301,
     headers: { Location: "/our-work/#past-accomplishments" },
+  });
+}
+
+function shopRedirect() {
+  return new Response(null, {
+    status: 301,
+    headers: { Location: SHOP_STOREFRONT },
   });
 }
 
@@ -26,6 +41,9 @@ export default {
     }
     if (IMPACT_PATHS.has(url.pathname)) {
       return impactRedirect();
+    }
+    if (SHOP_PATHS.has(url.pathname)) {
+      return shopRedirect();
     }
 
     if (!env || !env.ASSETS || typeof env.ASSETS.fetch !== "function") {
