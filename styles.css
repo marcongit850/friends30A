@@ -690,6 +690,17 @@ h2.display {
   outline: 2px solid var(--gulf);
   outline-offset: 3px;
 }
+.partner-logos.sponsor-logos li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.partner-logos.sponsor-logos img {
+  width: 100%;
+  height: auto;
+  filter: none;
+  opacity: 1;
+}
 
 .gallery {
   display: grid;
