@@ -56,6 +56,8 @@ Individual membership ($25/year): https://square.link/u/GUdeODzg
 
 Business membership ($100/year): https://square.link/u/KlIhQxsE
 
+Corporate membership ($1,000/year): https://checkout.square.site/merchant/MLC659T9BQY4F/checkout/Y6NHRE2EMR2YOKJIDEGOB3I7
+
 The Wix terms page was an unfilled template about how to write terms. `/terms/` is a short terms page for this site instead. The privacy page keeps the September 3, 2026 policy and names Square, which hosts the live donation and membership payments.
 
 Shared chrome lives in `includes/header.html` and `includes/footer.html`. Every page mounts those partials with `header.js` and `footer.js`, and `site.js` binds the menu after the header loads. The footer address is Friends of Scenic 30A, 877 N County Hwy 393, Santa Rosa Beach, FL 32459.

@@ -178,7 +178,11 @@ const membership = readFileSync(join(root, "membership/index.html"), "utf8");
 assert.match(header, /https:\/\/square\.link\/u\/Yzxyi16L/);
 assert.match(membership, /https:\/\/square\.link\/u\/GUdeODzg/);
 assert.match(membership, /https:\/\/square\.link\/u\/KlIhQxsE/);
+assert.match(membership, /https:\/\/checkout\.square\.site\/merchant\/MLC659T9BQY4F\/checkout\/Y6NHRE2EMR2YOKJIDEGOB3I7/);
+assert.match(membership, /<h3>Corporate<\/h3>[\s\S]*\$1,000 \/ year/);
+assert.match(membership, /Corporate Membership – \$1,000\/year/);
 assert.match(membership, /https:\/\/square\.link\/u\/Yzxyi16L/);
+assert.match(involved, /https:\/\/checkout\.square\.site\/merchant\/MLC659T9BQY4F\/checkout\/Y6NHRE2EMR2YOKJIDEGOB3I7/);
 
 const home = readFileSync(join(root, "index.html"), "utf8");
 const strip = home.match(/<div class="strip"[\s\S]*?<\/div>/)[0];
