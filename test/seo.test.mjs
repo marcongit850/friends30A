@@ -447,5 +447,16 @@ for (const name of ["robots.txt", "sitemap.xml", "llms.txt", "llms-full.txt"]) {
 const headers = readFileSync(join(root, "_headers"), "utf8");
 assert.match(headers, /\/llms\.txt\n {2}Content-Type: text\/plain; charset=utf-8/);
 assert.match(headers, /\/llms-full\.txt\n {2}Content-Type: text\/plain; charset=utf-8/);
+assert.match(headers, /X-Content-Type-Options: nosniff/);
+assert.match(headers, /Referrer-Policy: strict-origin-when-cross-origin/);
+assert.match(headers, /X-Frame-Options: SAMEORIGIN/);
+assert.match(headers, /Permissions-Policy: camera=\(\), microphone=\(\), geolocation=\(\)/);
+assert.match(headers, /Strict-Transport-Security: max-age=31536000; includeSubDomains/);
+assert.match(headers, /Content-Security-Policy:.*default-src 'self'/);
+assert.match(headers, /script-src 'self'/);
+assert.match(headers, /style-src 'self' 'unsafe-inline' https:\/\/fonts\.googleapis\.com/);
+assert.match(headers, /font-src 'self' https:\/\/fonts\.gstatic\.com/);
+assert.match(headers, /frame-src https:\/\/www\.youtube-nocookie\.com https:\/\/www\.youtube\.com/);
+assert.match(headers, /connect-src 'self' https:\/\/fonts\.googleapis\.com https:\/\/fonts\.gstatic\.com/);
 
 console.log(`seo ok (${pages.length} pages)`);

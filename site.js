@@ -94,14 +94,16 @@
       event.preventDefault();
       var status = form.querySelector(".form-status");
       var button = form.querySelector("button[type=submit]");
-      var data = { kind: form.getAttribute("data-form") };
+      var data = {};
       new FormData(form).forEach(function (value, key) {
+        if (key === "kind") return;
         if (data[key]) {
           data[key] = [].concat(data[key], value);
         } else {
           data[key] = value;
         }
       });
+      data.kind = form.getAttribute("data-form");
       if (form.getAttribute("data-form") === "volunteer" && !form.querySelector("input[name=interests]:checked")) {
         if (status) status.textContent = "Choose at least one area of interest.";
         return;
