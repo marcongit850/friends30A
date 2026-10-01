@@ -1,4 +1,9 @@
 const FROM = "Friends of Scenic 30A <onboarding@resend.dev>";
+const WINDOW_MS = 60 * 1000;
+const MAX_PER_WINDOW = 5;
+const recentHits = new Map();
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const FORM_KINDS = new Set(["contact", "membership", "volunteer", "updates"]);
 
 function json(body, status) {
   return new Response(JSON.stringify(body), {
@@ -15,9 +20,47 @@ function textValue(value) {
   return String(value || "").trim();
 }
 
+function clientIp(request) {
+  return request.headers.get("cf-connecting-ip") || "unknown";
+}
+
+function rateLimited(ip) {
+  const now = Date.now();
+  const stamps = (recentHits.get(ip) || []).filter((time) => now - time < WINDOW_MS);
+  if (stamps.length >= MAX_PER_WINDOW) {
+    recentHits.set(ip, stamps);
+    return true;
+  }
+  stamps.push(now);
+  recentHits.set(ip, stamps);
+  if (recentHits.size > 1000) {
+    for (const [key, times] of recentHits) {
+      const fresh = times.filter((time) => now - time < WINDOW_MS);
+      if (fresh.length) recentHits.set(key, fresh);
+      else recentHits.delete(key);
+    }
+  }
+  return false;
+}
+
+function validEmail(value) {
+  const email = textValue(value);
+  if (!email || email.length > 254 || !EMAIL_RE.test(email)) return "";
+  return email;
+}
+
+function formKind(value) {
+  const kind = textValue(value).replace(/[\r\n\t]+/g, " ").replace(/\s+/g, " ").trim();
+  return FORM_KINDS.has(kind) ? kind : "message";
+}
+
 export async function handleMessage(request, env) {
   if (request.method !== "POST") {
     return json({ error: "Method not allowed" }, 405);
+  }
+
+  if (rateLimited(clientIp(request))) {
+    return json({ error: "Please wait a minute and try again." }, 429);
   }
 
   let data;
@@ -31,10 +74,10 @@ export async function handleMessage(request, env) {
     return json({ ok: true }, 200);
   }
 
-  const kind = textValue(data.kind) || "message";
-  const email = textValue(data.email);
+  const kind = formKind(data.kind);
+  const email = validEmail(data.email);
   const name = [textValue(data.first), textValue(data.last)].filter(Boolean).join(" ");
-  if (!email || !email.includes("@")) {
+  if (!email) {
     return json({ error: "Enter an email address." }, 400);
   }
 
