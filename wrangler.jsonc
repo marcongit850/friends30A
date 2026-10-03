@@ -9,6 +9,6 @@
   "assets": {
     "directory": ".",
     "binding": "ASSETS",
-    "run_worker_first": ["/api/message", "/api/message/", "/impact", "/impact/", "/impact/index.html", "/impact.html", "/shop", "/shop/", "/shop/index.html"]
+    "run_worker_first": ["/api/message", "/api/message/", "/impact", "/impact/", "/impact/index.html", "/impact.html", "/shop", "/shop/", "/shop/index.html", "/get-involved", "/get-involved/", "/get-involved/index.html"]
   }
 }
