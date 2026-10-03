@@ -780,6 +780,32 @@ dialog.lightbox button {
   color: var(--gulf-deep);
   font-weight: 600;
 }
+.wrap > .feature-row:first-child { margin-top: 0; }
+.funding-grid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.6rem;
+}
+.funding-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 1.2rem;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+}
+.funding-card img {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+}
+.funding-card div { padding: 1.15rem 1.25rem 1.3rem; }
+.funding-card h2 {
+  font-size: clamp(1.35rem, 2vw, 1.7rem);
+  line-height: 1.22;
+}
+.funding-card p:last-child { margin-bottom: 0; }
 
 form.form {
   display: grid;
@@ -966,7 +992,7 @@ textarea { min-height: 8rem; resize: vertical; }
 }
 
 @media (min-width: 720px) {
-  .pillars, .impact-grid, .involve-grid, .matter, .price-grid, .posts, .topic-grid, .milestone-grid { grid-template-columns: 1fr 1fr; }
+  .pillars, .impact-grid, .involve-grid, .matter, .price-grid, .posts, .topic-grid, .milestone-grid, .funding-grid { grid-template-columns: 1fr 1fr; }
   .price-grid > :last-child:nth-child(odd) { grid-column: 1 / -1; }
   .gallery { grid-template-columns: 1fr 1fr 1fr; }
   .partner-logos {
@@ -1001,6 +1027,18 @@ textarea { min-height: 8rem; resize: vertical; }
   .post-card img { height: 100%; }
 }
 
+@media (min-width: 980px) and (max-width: 1240px) {
+  .header-inner {
+    flex-wrap: wrap;
+    row-gap: 0.1rem;
+    padding-bottom: 0.45rem;
+  }
+  .site-nav {
+    flex: 1 0 100%;
+    margin-left: 0;
+    justify-content: flex-end;
+  }
+}
 @media (min-width: 980px) {
   .brand { max-width: none; }
   .brand img { width: 228px; }
@@ -1018,8 +1056,9 @@ textarea { min-height: 8rem; resize: vertical; }
   }
   .site-nav a {
     border: 0;
-    padding: 0.45rem 0.65rem;
-    font-size: 0.98rem;
+    padding: 0.45rem 0.55rem;
+    font-size: 0.94rem;
+    white-space: nowrap;
   }
   .nav-member, .nav-donate { margin-top: 0; margin-left: 0.25rem; }
   .pillars { grid-template-columns: repeat(4, 1fr); }
@@ -1028,6 +1067,7 @@ textarea { min-height: 8rem; resize: vertical; }
   .topic-grid .pillar:nth-child(n+4) { grid-column: span 3; }
   .milestone-grid.thirds { grid-template-columns: repeat(3, 1fr); }
   .mission-band, .lead-split, .work-block { grid-template-columns: 1.15fr 0.85fr; }
+  .funding-grid { grid-template-columns: 1fr 1fr; }
   .impact-grid, .involve-grid, .price-grid { grid-template-columns: repeat(3, 1fr); }
   .price-grid > :last-child:nth-child(odd) { grid-column: auto; }
   .hero { min-height: 86vh; }

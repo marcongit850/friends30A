@@ -217,12 +217,51 @@ assert.match(css, /\.quote \{[^}]*clamp\(1\.6rem, 2\.5vw, 2\.15rem\)/);
 assert.match(css, /h1, h2, h3, h4 \{[^}]*font-weight: 600/);
 
 const membership = readFileSync(join(root, "membership/index.html"), "utf8");
+assert.match(header, /href="\/our-work\/">Our Work<\/a>\s*<a href="\/how-projects-get-funded\/">How Projects Get Funded<\/a>\s*<a href="\/gallery\/">Gallery<\/a>/);
+assert.match(header, /<a href="\/how-projects-get-funded\/">How Projects Get Funded<\/a>/);
 assert.match(header, /https:\/\/square\.link\/u\/Yzxyi16L/);
 assert.match(membership, /https:\/\/square\.link\/u\/GUdeODzg/);
 assert.match(membership, /https:\/\/square\.link\/u\/KlIhQxsE/);
 assert.match(membership, /https:\/\/checkout\.square\.site\/merchant\/MLC659T9BQY4F\/checkout\/Y6NHRE2EMR2YOKJIDEGOB3I7/);
 assert.match(membership, /<h3>Corporate<\/h3>[\s\S]*\$1,000 \/ year/);
 assert.match(membership, /Corporate Membership – \$1,000\/year/);
+const funded = readFileSync(join(root, "how-projects-get-funded/index.html"), "utf8");
+assert.match(funded, /<h1>How Projects Get Funded<\/h1>/);
+assert.match(funded, /<title>How Projects Get Funded \| Friends of Scenic 30A<\/title>/);
+for (const sentence of [
+  "Improving and protecting Scenic Highway 30A takes more than good ideas. It takes community involvement, partnerships, and the right funding sources.",
+  "Friends of Scenic 30A works to identify projects that can improve, preserve, or enhance the Scenic 30A corridor. Depending on the size and type of the project, funding may come from several different sources.",
+  "Friends of Scenic 30A is led by a 100% volunteer board. We have no paid staff and no administrative or operating expenses, allowing our efforts to remain focused on projects and initiatives that benefit Scenic Highway 30A and the surrounding community.",
+  "Individuals and businesses can help support Friends of Scenic 30A and the projects we pursue. Smaller improvements may be funded directly through donations, while larger projects may use community contributions to help with planning, design, matching funds, or other project-related expenses.",
+  "We believe in transparency and want donors to understand how funds are being used and what they are helping accomplish.",
+  "Many community, environmental, beautification, transportation, and preservation projects may qualify for grants from foundations, government agencies, and other organizations.",
+  "Friends of Scenic 30A can help identify grant opportunities and work with community partners to pursue funding for projects along the corridor.",
+  "Many improvements along Scenic 30A involve public property, transportation infrastructure, landscaping, pedestrian facilities, or other community assets.",
+  "For these projects, Friends of Scenic 30A can work with Walton County, the Walton County Tourism Department, and other public agencies to advocate for projects and help identify potential funding.",
+  "Larger transportation, environmental, safety, and infrastructure projects may qualify for state or federal funding.",
+  "Friends of Scenic 30A can help bring attention to these opportunities and work with local officials and community partners to move worthy projects forward.",
+  "Local businesses, property owners, civic organizations, homeowners associations, and other community groups can also play an important role.",
+  "A project might include private sponsorships, donated materials or services, volunteer participation, or partnerships between several organizations.",
+  "There is no single funding source for every project.",
+  "A small landscaping project may be funded by community donations and local sponsors. A pedestrian improvement could involve Walton County or the Tourism Department. An environmental project might qualify for a grant. A major infrastructure improvement could involve county, state, and federal funding.",
+  "Our role is to help bring the right people, organizations, and funding sources together, while keeping Friends of Scenic 30A volunteer-driven and focused on improving and preserving the Scenic 30A corridor.",
+]) {
+  assert.ok(funded.includes(sentence), sentence);
+}
+assert.doesNotMatch(funded, /[—–]/);
+const priceGrid = (html) => {
+  const match = html.match(/<div class="price-grid">[\s\S]*?<\/div>/);
+  assert.ok(match, "price grid");
+  return match[0];
+};
+assert.equal(priceGrid(funded), priceGrid(membership));
+const fundedOrder = funded.indexOf("Community Donations");
+assert.ok(fundedOrder < funded.indexOf(">Grants<"));
+assert.ok(funded.indexOf(">Grants<") < funded.indexOf("Walton County and TDC Partnerships"));
+assert.ok(funded.indexOf("Walton County and TDC Partnerships") < funded.indexOf("State and Federal Funding"));
+assert.ok(funded.indexOf("State and Federal Funding") < funded.indexOf("Business and Community Partnerships"));
+assert.ok(funded.indexOf("Business and Community Partnerships") < funded.indexOf("A Project-by-Project Approach"));
+assert.ok(funded.indexOf("A Project-by-Project Approach") < funded.indexOf("Become a Member"));
 assert.match(membership, /https:\/\/square\.link\/u\/Yzxyi16L/);
 assert.match(membership, /href="https:\/\/shop\.friendsofscenic30a\.org\/" target="_blank" rel="noopener noreferrer">Shop/);
 
@@ -287,7 +326,7 @@ const robots = readFileSync(join(root, "robots.txt"), "utf8");
 const sitemap = readFileSync(join(root, "sitemap.xml"), "utf8");
 assert.match(robots, /^User-agent: \*/m);
 assert.match(robots, /Sitemap: https?:\/\/\S+\/sitemap\.xml/);
-for (const path of ["/", "/about/", "/our-work/", "/gallery/", "/membership/", "/contact/", "/blog/", "/privacy-policy/", "/accessibility/", "/terms/"]) {
+for (const path of ["/", "/about/", "/our-work/", "/how-projects-get-funded/", "/gallery/", "/membership/", "/contact/", "/blog/", "/privacy-policy/", "/accessibility/", "/terms/"]) {
   assert.match(sitemap, new RegExp(path.replaceAll("/", "\\/") ));
 }
 
@@ -300,6 +339,7 @@ const publicPaths = [
   "/",
   "/about/",
   "/our-work/",
+  "/how-projects-get-funded/",
   "/gallery/",
   "/membership/",
   "/contact/",

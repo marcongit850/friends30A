@@ -1112,6 +1112,119 @@ def gallery():
     )
 
 
+def membership_price_grid():
+    return f"""        <div class="price-grid">
+          <article class="price">
+            <h3>Individual</h3>
+            <strong>$25 / year</strong>
+            <p>Ideal for residents and frequent visitors who want to protect, preserve, and enhance the special character of Scenic 30A for generations to come.</p>
+            <a class="btn btn-gulf" href="{MEMBER_INDIVIDUAL}" target="_blank" rel="noopener noreferrer">Join as Individual</a>
+          </article>
+          <article class="price">
+            <h3>Business</h3>
+            <strong>$100 / year</strong>
+            <p>Ideal for local businesses that want to support the preservation, enhancement, and long-term future of Scenic 30A and the community it serves.</p>
+            <a class="btn btn-line" href="{MEMBER_BUSINESS}" target="_blank" rel="noopener noreferrer">Join as Business</a>
+          </article>
+          <article class="price">
+            <h3>Corporate</h3>
+            <strong>$1,000 / year</strong>
+            <p>Ideal for companies that want to support the preservation, enhancement, and long-term future of Scenic 30A and the community it serves.</p>
+            <a class="btn btn-line" href="{MEMBER_CORPORATE}" target="_blank" rel="noopener noreferrer">Join as Corporate</a>
+          </article>
+        </div>"""
+
+
+def how_projects_get_funded():
+    body = page_hero(
+        "Funding",
+        "How Projects Get Funded",
+        "Improving and protecting Scenic Highway 30A takes more than good ideas. It takes community involvement, partnerships, and the right funding sources.",
+        "/images/gallery/06-aerial-gulf-and-lake.jpg",
+    ) + f"""
+    <section class="section section-white">
+      <div class="wrap feature-row">
+        <div class="prose">
+          <p>Friends of Scenic 30A works to identify projects that can improve, preserve, or enhance the Scenic 30A corridor. Depending on the size and type of the project, funding may come from several different sources.</p>
+          <p>Friends of Scenic 30A is led by a 100% volunteer board. We have no paid staff and no administrative or operating expenses, allowing our efforts to remain focused on projects and initiatives that benefit Scenic Highway 30A and the surrounding community.</p>
+        </div>
+        <figure class="feature-photo"><img src="/images/gallery/11-gulf-path.jpg" alt="Path beside the Gulf with sea oats and pines"></figure>
+      </div>
+    </section>
+    <section class="section section-sand">
+      <div class="wrap">
+        <div class="feature-row">
+          <div>
+            <h2>Community Donations</h2>
+            <p>Individuals and businesses can help support Friends of Scenic 30A and the projects we pursue. Smaller improvements may be funded directly through donations, while larger projects may use community contributions to help with planning, design, matching funds, or other project-related expenses.</p>
+            <p>We believe in transparency and want donors to understand how funds are being used and what they are helping accomplish.</p>
+          </div>
+          <figure class="feature-photo"><img src="/images/blog/native-landscape.jpg" alt="Boardwalk through sea oats toward the Gulf of Mexico"></figure>
+        </div>
+        <div class="funding-grid">
+          <article class="funding-card">
+            <img src="/images/gallery/03-dune-lake-pines.jpg" alt="Coastal dune lake edged by pines">
+            <div>
+              <h2>Grants</h2>
+              <p>Many community, environmental, beautification, transportation, and preservation projects may qualify for grants from foundations, government agencies, and other organizations.</p>
+              <p>Friends of Scenic 30A can help identify grant opportunities and work with community partners to pursue funding for projects along the corridor.</p>
+            </div>
+          </article>
+          <article class="funding-card">
+            <img src="/images/gallery/07-timpoochee-riders.jpg" alt="People riding the paved Timpoochee Trail">
+            <div>
+              <h2>Walton County and TDC Partnerships</h2>
+              <p>Many improvements along Scenic 30A involve public property, transportation infrastructure, landscaping, pedestrian facilities, or other community assets.</p>
+              <p>For these projects, Friends of Scenic 30A can work with Walton County, the Walton County Tourism Department, and other public agencies to advocate for projects and help identify potential funding.</p>
+            </div>
+          </article>
+          <article class="funding-card">
+            <img src="/images/gallery/09-aerial-lake-beach.jpg" alt="Aerial view of beach, dunes, and a coastal dune lake">
+            <div>
+              <h2>State and Federal Funding</h2>
+              <p>Larger transportation, environmental, safety, and infrastructure projects may qualify for state or federal funding.</p>
+              <p>Friends of Scenic 30A can help bring attention to these opportunities and work with local officials and community partners to move worthy projects forward.</p>
+            </div>
+          </article>
+          <article class="funding-card">
+            <img src="/images/gallery/13-palm-path.jpg" alt="Palm-lined path in a 30A beach community">
+            <div>
+              <h2>Business and Community Partnerships</h2>
+              <p>Local businesses, property owners, civic organizations, homeowners associations, and other community groups can also play an important role.</p>
+              <p>A project might include private sponsorships, donated materials or services, volunteer participation, or partnerships between several organizations.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+    <section class="section section-white">
+      <div class="wrap feature-row">
+        <figure class="feature-photo"><img src="/images/gallery/04-boardwalk-beach.jpg" alt="Beach boardwalk opening onto the Gulf"></figure>
+        <div>
+          <h2>A Project-by-Project Approach</h2>
+          <p>There is no single funding source for every project.</p>
+          <p>A small landscaping project may be funded by community donations and local sponsors. A pedestrian improvement could involve Walton County or the Tourism Department. An environmental project might qualify for a grant. A major infrastructure improvement could involve county, state, and federal funding.</p>
+          <p>Our role is to help bring the right people, organizations, and funding sources together, while keeping Friends of Scenic 30A volunteer-driven and focused on improving and preserving the Scenic 30A corridor.</p>
+        </div>
+      </div>
+    </section>
+    <section class="section section-foam">
+      <div class="wrap">
+        <h2>Become a Member</h2>
+{membership_price_grid()}
+      </div>
+    </section>
+    """
+    write_page(
+        "/how-projects-get-funded/",
+        "How Projects Get Funded",
+        "How Friends of Scenic 30A funds corridor projects with donations, grants, Walton County partnerships, and state or federal sources.",
+        body,
+        "/images/gallery/06-aerial-gulf-and-lake.jpg",
+        crumbs=[("Home", "/"), ("How Projects Get Funded", "/how-projects-get-funded/")],
+    )
+
+
 def membership():
     body = page_hero(
         "Membership",
@@ -1147,26 +1260,7 @@ def membership():
       <div class="wrap">
         <h2>Step 1. Pay through Square</h2>
         <p class="lede">Choose Individual, Business, or Corporate and complete payment on Square. Membership is not finished until you also send your details in step 2.</p>
-        <div class="price-grid">
-          <article class="price">
-            <h3>Individual</h3>
-            <strong>$25 / year</strong>
-            <p>Ideal for residents and frequent visitors who want to protect, preserve, and enhance the special character of Scenic 30A for generations to come.</p>
-            <a class="btn btn-gulf" href="{MEMBER_INDIVIDUAL}" target="_blank" rel="noopener noreferrer">Join as Individual</a>
-          </article>
-          <article class="price">
-            <h3>Business</h3>
-            <strong>$100 / year</strong>
-            <p>Ideal for local businesses that want to support the preservation, enhancement, and long-term future of Scenic 30A and the community it serves.</p>
-            <a class="btn btn-line" href="{MEMBER_BUSINESS}" target="_blank" rel="noopener noreferrer">Join as Business</a>
-          </article>
-          <article class="price">
-            <h3>Corporate</h3>
-            <strong>$1,000 / year</strong>
-            <p>Ideal for companies that want to support the preservation, enhancement, and long-term future of Scenic 30A and the community it serves.</p>
-            <a class="btn btn-line" href="{MEMBER_CORPORATE}" target="_blank" rel="noopener noreferrer">Join as Corporate</a>
-          </article>
-        </div>
+{membership_price_grid()}
       </div>
     </section>
     <section class="section section-white">
@@ -1697,6 +1791,7 @@ def main():
     home()
     about()
     our_work()
+    how_projects_get_funded()
     write_impact_redirect()
     gallery()
     membership()

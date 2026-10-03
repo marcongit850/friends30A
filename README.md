@@ -39,6 +39,7 @@ Until those values are set, `POST /api/message` returns HTTP 503 and the form ex
 
 - `/` is the mission, four pillars, impact, why 30A matters, and ways to give or join
 - `/about/` and `/our-work/` (current projects, priorities, and past accomplishments)
+- `/how-projects-get-funded/` explains donations, grants, public partnerships, and state or federal funding
 - `/impact/` redirects to `/our-work/#past-accomplishments`
 - `/gallery/`
 - `/blog/` and the posts from the Wix site
