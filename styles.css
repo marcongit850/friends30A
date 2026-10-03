@@ -507,7 +507,9 @@ h2.display {
 
 #current-projects,
 #our-priorities,
-#past-accomplishments { scroll-margin-top: calc(var(--header) + 0.75rem); }
+#past-accomplishments,
+#volunteer,
+#stay-informed { scroll-margin-top: calc(var(--header) + 0.75rem); }
 
 .jump-links {
   display: flex;
