@@ -1031,6 +1031,27 @@ SHOP_REDIRECT_DOC = f"""<!DOCTYPE html>
 """
 
 
+GET_INVOLVED_REDIRECT_TARGET = "/membership/"
+GET_INVOLVED_REDIRECT_DOC = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Membership | Friends of Scenic 30A</title>
+  <meta name="description" content="Membership, volunteering, and updates for Friends of Scenic 30A now live on the Membership page.">
+  <link rel="canonical" href="{ORIGIN}/membership/">
+  <meta name="robots" content="noindex">
+  <meta http-equiv="refresh" content="0; url={GET_INVOLVED_REDIRECT_TARGET}">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <script>location.replace("{GET_INVOLVED_REDIRECT_TARGET}");</script>
+</head>
+<body>
+  <p><a href="{GET_INVOLVED_REDIRECT_TARGET}">Membership</a></p>
+</body>
+</html>
+"""
+
+
 def write_impact_redirect():
     (ROOT / "impact").mkdir(parents=True, exist_ok=True)
     (ROOT / "impact" / "index.html").write_text(IMPACT_REDIRECT_DOC)
@@ -1045,9 +1066,15 @@ def write_impact_redirect():
         "/shop https://shop.friendsofscenic30a.org/ 301\n"
         "/shop/ https://shop.friendsofscenic30a.org/ 301\n"
         "/shop/index.html https://shop.friendsofscenic30a.org/ 301\n"
+        "/get-involved /membership/ 301\n"
+        "/get-involved/ /membership/ 301\n"
+        "/get-involved/index.html /membership/ 301\n"
     )
+    (ROOT / "get-involved").mkdir(parents=True, exist_ok=True)
+    (ROOT / "get-involved" / "index.html").write_text(GET_INVOLVED_REDIRECT_DOC)
     print("/impact/ -> /our-work/#past-accomplishments")
     print("/shop/ -> https://shop.friendsofscenic30a.org/")
+    print("/get-involved/ -> /membership/")
 
 
 def gallery():
@@ -1071,7 +1098,7 @@ def gallery():
         <div class="prose">
           <h2>Protect What You See</h2>
           <p>Friends of Scenic 30A helps protect the natural beauty and coastal ecosystems you've just explored. Join us in preserving this extraordinary corridor for generations to come.</p>
-          <p class="button-row"><a class="btn btn-gulf" href="/membership/">Become a Member</a> <a class="btn btn-line" href="/get-involved/">Support our work</a></p>
+          <p class="button-row"><a class="btn btn-gulf" href="/membership/">Become a Member</a> <a class="btn btn-line" href="/membership/#volunteer">Support our work</a></p>
         </div>
       </div>
     </section>
@@ -1092,123 +1119,6 @@ def gallery():
             }
             for src, alt in GALLERY
         ],
-    )
-
-
-def get_involved():
-    gallery = photos([
-        ("/images/gallery/04-boardwalk-beach.jpg", "Beach boardwalk opening onto the Gulf"),
-        ("/images/blog/trails.jpg", "Trail through the Scenic 30A corridor"),
-        ("/images/gallery/12-beach-chairs.jpg", "Beach chairs on sugar-white sand"),
-    ], captions=False, extra_class="photo-mosaic")
-    body = page_hero(
-        "Get involved",
-        "Help Protect What Makes 30A Special",
-        "Scenic 30A belongs to everyone who values its natural beauty, distinctive communities, trails, scenic character, and extraordinary sense of place.",
-        "/images/gallery/07-timpoochee-riders.jpg",
-    ) + f"""
-    <section class="section section-white">
-      <div class="wrap">
-        <p class="lede">Friends of Scenic 30A brings people together to help protect and enhance this special corridor for generations to come.</p>
-        <div class="involve-grid">
-          <article class="involve"><h3>Become a Member</h3><p>Join the community working to preserve and enhance Scenic 30A.</p><a class="btn btn-gulf" href="/membership/">Become a Member</a></article>
-          <article class="involve"><h3>Donate</h3><p>Help provide the resources needed to support preservation, education, advocacy, and community initiatives.</p><a class="btn btn-line" href="{DONATE}" target="_blank" rel="noopener noreferrer">Donate</a></article>
-        </div>
-      </div>
-    </section>
-    <section class="section section-sand">
-      <div class="wrap">
-        <h2>There’s a Place for You in Our Mission</h2>
-        <p class="lede">Friends of Scenic 30A is a volunteer-driven community organization. Whether you live here, own a business, visit regularly, or simply love 30A, your involvement helps strengthen our voice and support our work.</p>
-        <div class="price-grid">
-          <article class="price">
-            <h3>Individual Membership</h3>
-            <strong>$25 annually</strong>
-            <p>Join as an Individual.</p>
-            <a class="btn btn-gulf" href="{MEMBER_INDIVIDUAL}" target="_blank" rel="noopener noreferrer">Join as an Individual</a>
-          </article>
-          <article class="price">
-            <h3>Business Membership</h3>
-            <strong>$100 annually</strong>
-            <p>Join as a Business.</p>
-            <a class="btn btn-line" href="{MEMBER_BUSINESS}" target="_blank" rel="noopener noreferrer">Join as a Business</a>
-          </article>
-          <article class="price">
-            <h3>Corporate Membership</h3>
-            <strong>$1,000 annually</strong>
-            <p>Join as Corporate.</p>
-            <a class="btn btn-line" href="{MEMBER_CORPORATE}" target="_blank" rel="noopener noreferrer">Join as Corporate</a>
-          </article>
-        </div>
-        <p>Every member adds another voice for the thoughtful stewardship of Scenic 30A.</p>
-      </div>
-    </section>
-    <section class="section section-white">
-      <div class="wrap">
-        {gallery}
-      </div>
-    </section>
-    <section class="section section-sand">
-      <div class="wrap">
-        <div class="split">
-          <form class="form" data-form="volunteer">
-            <h2>Volunteer</h2>
-            <p>Put your passion for 30A to work. Tell us how you would like to help, and we’ll keep you informed about opportunities to participate.</p>
-            <div class="split">
-              <label>First name *<input name="first" required autocomplete="given-name"></label>
-              <label>Last name *<input name="last" required autocomplete="family-name"></label>
-            </div>
-            <label>Email *<input type="email" name="email" required autocomplete="email"></label>
-            <label>Phone number<input type="tel" name="phone" autocomplete="tel"></label>
-            <fieldset class="checks">
-              <legend>Areas of interest *</legend>
-              <label><input type="checkbox" name="interests" value="Natural Resources"> Natural Resources</label>
-              <label><input type="checkbox" name="interests" value="Trails"> Trails</label>
-              <label><input type="checkbox" name="interests" value="Community Outreach"> Community Outreach</label>
-              <label><input type="checkbox" name="interests" value="Events"> Events</label>
-              <label><input type="checkbox" name="interests" value="Communications"> Communications</label>
-              <label><input type="checkbox" name="interests" value="Photography"> Photography</label>
-              <label><input type="checkbox" name="interests" value="Other"> Other</label>
-            </fieldset>
-            <label>Message<textarea name="message"></textarea></label>
-            <label class="hp">Company<input name="company" tabindex="-1" autocomplete="off"></label>
-            <button class="btn btn-gulf" type="submit">I'd Like to Help</button>
-            <p class="form-status" role="status"></p>
-          </form>
-          <div>
-            <form class="form" data-form="updates">
-              <h2>Stay Informed</h2>
-              <p>Know what’s happening along Scenic 30A. Stay informed about Friends projects, community issues, upcoming meetings and opportunities to help protect and enhance Scenic 30A.</p>
-              <label>Email address *<input type="email" name="email" required autocomplete="email"></label>
-              <label class="hp">Company<input name="company" tabindex="-1" autocomplete="off"></label>
-              <button class="btn btn-gulf" type="submit">Stay Informed</button>
-              <p class="form-status" role="status"></p>
-            </form>
-            <div class="prose">
-              <h2>Your Support Helps Protect Scenic 30A</h2>
-              <p>Friends of Scenic 30A relies on community support to advance its mission. Your contribution helps support the organization’s preservation, education, community engagement, and corridor stewardship efforts.</p>
-              <p><a class="btn btn-gulf" href="{DONATE}" target="_blank" rel="noopener noreferrer">Donate Now</a></p>
-              <p>Additional contributions help support preservation projects, advocacy, education and community initiatives that protect and enhance Scenic 30A.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section class="section section-foam">
-      <div class="wrap">
-        <h2>30A’s Future Is Something We All Share</h2>
-        <p class="lede">Protecting the character of Scenic 30A takes a community. Become a member, lend your time, make a contribution, or simply stay informed. Every person who gets involved helps strengthen the future of this extraordinary place.</p>
-        <p class="button-row"><a class="btn btn-gulf" href="/membership/">Become a Member</a> <a class="btn btn-line" href="{DONATE}" target="_blank" rel="noopener noreferrer">Donate</a></p>
-      </div>
-    </section>
-    """
-    write_page(
-        "/get-involved/",
-        "Get Involved with Scenic 30A",
-        "Become a member, donate, volunteer, or stay informed. Friends of Scenic 30A welcomes people working to protect Scenic Highway 30A.",
-        body,
-        "/images/gallery/07-timpoochee-riders.jpg",
-        crumbs=[("Home", "/"), ("Get Involved", "/get-involved/")],
     )
 
 
@@ -1308,6 +1218,53 @@ def membership():
         </form>
       </div>
     </section>
+    <section class="section section-white" id="volunteer">
+      <div class="wrap">
+        <h2>There’s a Place for You in Our Mission</h2>
+        <p class="lede">Friends of Scenic 30A is a volunteer-driven community organization. Whether you live here, own a business, visit regularly, or simply love 30A, your involvement helps strengthen our voice and support our work.</p>
+        <div class="split">
+          <form class="form" data-form="volunteer">
+            <h2>Volunteer</h2>
+            <p>Put your passion for 30A to work. Tell us how you would like to help, and we’ll keep you informed about opportunities to participate.</p>
+            <div class="split">
+              <label>First name *<input name="first" required autocomplete="given-name"></label>
+              <label>Last name *<input name="last" required autocomplete="family-name"></label>
+            </div>
+            <label>Email *<input type="email" name="email" required autocomplete="email"></label>
+            <label>Phone number<input type="tel" name="phone" autocomplete="tel"></label>
+            <fieldset class="checks">
+              <legend>Areas of interest *</legend>
+              <label><input type="checkbox" name="interests" value="Natural Resources"> Natural Resources</label>
+              <label><input type="checkbox" name="interests" value="Trails"> Trails</label>
+              <label><input type="checkbox" name="interests" value="Community Outreach"> Community Outreach</label>
+              <label><input type="checkbox" name="interests" value="Events"> Events</label>
+              <label><input type="checkbox" name="interests" value="Communications"> Communications</label>
+              <label><input type="checkbox" name="interests" value="Photography"> Photography</label>
+              <label><input type="checkbox" name="interests" value="Other"> Other</label>
+            </fieldset>
+            <label>Message<textarea name="message"></textarea></label>
+            <label class="hp">Company<input name="company" tabindex="-1" autocomplete="off"></label>
+            <button class="btn btn-gulf" type="submit">I'd Like to Help</button>
+            <p class="form-status" role="status"></p>
+          </form>
+          <div>
+            <form class="form" id="stay-informed" data-form="updates">
+              <h2>Stay Informed</h2>
+              <p>Know what’s happening along Scenic 30A. Stay informed about Friends projects, community issues, upcoming meetings and opportunities to help protect and enhance Scenic 30A.</p>
+              <label>Email address *<input type="email" name="email" required autocomplete="email"></label>
+              <label class="hp">Company<input name="company" tabindex="-1" autocomplete="off"></label>
+              <button class="btn btn-gulf" type="submit">Stay Informed</button>
+              <p class="form-status" role="status"></p>
+            </form>
+            <div class="prose">
+              <h2>Shop</h2>
+              <p>Find Friends of Scenic 30A merchandise in the official shop.</p>
+              <p><a class="btn btn-line" href="{SHOP_STOREFRONT}" target="_blank" rel="noopener noreferrer">Shop</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
     """
     write_page(
         "/membership/",
@@ -1343,7 +1300,7 @@ def contact():
         <div class="prose">
           <h2>Friends of Scenic 30A</h2>
           <p><a href="https://www.google.com/maps/search/?api=1&query=877+N+County+Hwy+393,+Santa+Rosa+Beach,+FL+32459">877 N County Hwy 393<br>Santa Rosa Beach, FL 32459</a></p>
-          <p><a href="/get-involved/">Get involved</a> or <a href="/membership/">become a member</a>.</p>
+          <p><a href="/membership/#volunteer">Get involved</a> or <a href="/membership/">become a member</a>.</p>
         </div>
       </div>
     </section>
@@ -1752,7 +1709,6 @@ def main():
     our_work()
     write_impact_redirect()
     gallery()
-    get_involved()
     membership()
     contact()
     blog()
