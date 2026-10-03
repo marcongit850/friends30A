@@ -2,7 +2,7 @@
 
 Preview hosting is the Cloudflare Worker named `friends30a`. This workspace has no Cloudflare API token, so the workers.dev address is created when Workers Builds runs `npx wrangler deploy`. Do not attach a custom domain. Vanity DNS stays deferred.
 
-A static rebuild of the Friends of Scenic 30A website. The pages follow the public copy and structure of [the previous Wix site](https://marc12345678.wixsite.com/friends30a): home, about, our work, impact, gallery, blog, get involved, membership, and contact, plus privacy, accessibility, and terms.
+A static rebuild of the Friends of Scenic 30A website. The pages follow the public copy and structure of [the previous Wix site](https://marc12345678.wixsite.com/friends30a): home, about, our work, impact, gallery, blog, membership, and contact, plus privacy, accessibility, and terms. Get Involved now lives on the Membership page.
 
 The Worker name is **`friends30a`**. Leave that name in `wrangler.jsonc`. Do not attach a custom domain. A public vanity name and its DNS are deferred until someone chooses a domain later.
 
@@ -28,7 +28,7 @@ Cloudflare Workers Builds deploys this repository with `npx wrangler deploy`, us
 
 - `"name"` must stay `friends30a`.
 - `assets.directory` is `.`, so `index.html` at the repository root is the site home page.
-- `main` is `src/worker.js`. `assets.run_worker_first` includes `/api/message`, `/api/message/`, the old Impact paths (`/impact`, `/impact/`, `/impact/index.html`, `/impact.html`), and the shop paths (`/shop`, `/shop/`, `/shop/index.html`). Impact paths redirect to `/our-work/#past-accomplishments`. Shop paths redirect to https://shop.friendsofscenic30a.org/. Every other path is a static asset.
+- `main` is `src/worker.js`. `assets.run_worker_first` includes `/api/message`, `/api/message/`, the old Impact paths (`/impact`, `/impact/`, `/impact/index.html`, `/impact.html`), the shop paths (`/shop`, `/shop/`, `/shop/index.html`), and the old Get Involved paths (`/get-involved`, `/get-involved/`, `/get-involved/index.html`). Impact paths redirect to `/our-work/#past-accomplishments`. Shop paths redirect to https://shop.friendsofscenic30a.org/. Get Involved paths redirect to `/membership/`. Every other path is a static asset.
 - Do not add a custom domain, route pattern, or vanity DNS record for this Worker.
 
 `CONTACT_EMAIL` and `RESEND_API_KEY` are Worker variables or secrets. Do not commit them. Mail goes out through the Resend HTTP API. The From address is Resend's free onboarding sender, `Friends of Scenic 30A <onboarding@resend.dev>`, which can deliver only to the email address on the Resend account until a domain is verified. Keep `CONTACT_EMAIL` set to that same address. After a domain is verified, change `FROM` in `src/message.js`.
@@ -43,9 +43,9 @@ Until those values are set, `POST /api/message` returns HTTP 503 and the form ex
 - `/impact/` redirects to `/our-work/#past-accomplishments`
 - `/gallery/`
 - `/blog/` and the posts from the Wix site
-- `/get-involved/` for membership, volunteering, updates, and donations
+- `/get-involved/` redirects to `/membership/`
 - `/shop/` redirects to the official shop. The header and footer Shop links go there directly
-- `/membership/` with the live Square payment links
+- `/membership/` with the live Square payment links, plus volunteering, email updates, and the shop
 - `/contact/`
 - `/privacy-policy/`, `/accessibility/`, and `/terms/`
 

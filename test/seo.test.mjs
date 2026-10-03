@@ -25,6 +25,10 @@ function isShopRedirect(html) {
   return /http-equiv="refresh"/.test(html) && /https:\/\/shop\.friendsofscenic30a\.org\//.test(html);
 }
 
+function isGetInvolvedRedirect(html) {
+  return /http-equiv="refresh"/.test(html) && /url=\/membership\//.test(html);
+}
+
 for (const page of pages) {
   const html = readFileSync(page, "utf8");
   if (isImpactRedirect(html)) {
@@ -39,6 +43,13 @@ for (const page of pages) {
     assert.match(html, /name="robots" content="noindex"/, page);
     assert.match(html, /canonical" href="https:\/\/shop\.friendsofscenic30a\.org\/"/, page);
     assert.match(html, /location\.replace\("https:\/\/shop\.friendsofscenic30a\.org\/"\)/, page);
+    continue;
+  }
+  if (isGetInvolvedRedirect(html)) {
+    assert.match(html, /<title>[^<]+<\/title>/, page);
+    assert.match(html, /name="robots" content="noindex"/, page);
+    assert.match(html, /canonical" href="https:\/\/friendsofscenic30a\.org\/membership\/"/, page);
+    assert.match(html, /location\.replace\("\/membership\/"\)/, page);
     continue;
   }
   assert.match(html, /<title>[^<]+<\/title>/, page);
@@ -87,6 +98,8 @@ assert.match(footer, /logo-walton-dune-lakes\.png/);
 assert.match(footer, /alt="Walton Dune Lakes"/);
 assert.match(footer, /<h2>Explore<\/h2>/);
 assert.match(footer, /<h2>Get Involved<\/h2>/);
+assert.match(footer, /href="\/membership\/#volunteer">Volunteer</);
+assert.doesNotMatch(footer, /href="\/get-involved\/"/);
 assert.match(footer, /<a href="https:\/\/shop\.friendsofscenic30a\.org\/" target="_blank" rel="noopener noreferrer">Shop<\/a>/);
 assert.doesNotMatch(footer, /href="\/shop\/"/);
 assert.doesNotMatch(footer, /Scenic 30A Resources/);
@@ -111,6 +124,9 @@ assert.equal(isImpactRedirect(impact), true);
 assert.equal(isImpactRedirect(impactHtml), true);
 assert.doesNotMatch(header, /href="\/impact\/"/);
 assert.doesNotMatch(footer, /href="\/impact\/"/);
+assert.doesNotMatch(header, /href="\/get-involved\/"/);
+assert.doesNotMatch(header, />Get Involved</);
+assert.match(header, /href="\/membership\/">Membership</);
 assert.match(header, /href="\/our-work\/">Our Work</);
 assert.match(work, /<figcaption>Photo: Walton County Tourism<\/figcaption>/);
 assert.match(work, /id="current-projects"/);
@@ -164,7 +180,15 @@ assert.match(about, /alt="Sea oats on the dunes"/);
 assert.match(memberPage, /<figcaption>/);
 assert.match(memberPage, /Step 1\. Pay through Square/);
 assert.match(memberPage, /Step 2\. Submit your member details/);
-assert.match(involved, /30A’s Future Is Something We All Share[\s\S]*Become a Member[\s\S]*Donate/);
+assert.match(memberPage, /id="volunteer"/);
+assert.match(memberPage, /data-form="volunteer"/);
+assert.match(memberPage, /id="stay-informed"/);
+assert.match(memberPage, /data-form="updates"/);
+assert.match(memberPage, /There’s a Place for You in Our Mission/);
+assert.match(memberPage, /Find Friends of Scenic 30A merchandise in the official shop/);
+assert.equal(isGetInvolvedRedirect(involved), true);
+assert.doesNotMatch(memberPage, /\$25 annually/);
+assert.doesNotMatch(memberPage, /Join as an Individual/);
 const contact = readFileSync(join(root, "contact/index.html"), "utf8");
 assert.match(contact, /877 N County Hwy 393/);
 assert.match(contact, /Say Hello/);
@@ -193,6 +217,7 @@ assert.match(css, /\.quote \{[^}]*clamp\(1\.6rem, 2\.5vw, 2\.15rem\)/);
 assert.match(css, /h1, h2, h3, h4 \{[^}]*font-weight: 600/);
 
 const membership = readFileSync(join(root, "membership/index.html"), "utf8");
+assert.match(header, /href="\/our-work\/">Our Work<\/a>\s*<a href="\/how-projects-get-funded\/">How Projects Get Funded<\/a>\s*<a href="\/gallery\/">Gallery<\/a>/);
 assert.match(header, /<a href="\/how-projects-get-funded\/">How Projects Get Funded<\/a>/);
 assert.match(header, /https:\/\/square\.link\/u\/Yzxyi16L/);
 assert.match(membership, /https:\/\/square\.link\/u\/GUdeODzg/);
@@ -238,7 +263,7 @@ assert.ok(funded.indexOf("State and Federal Funding") < funded.indexOf("Business
 assert.ok(funded.indexOf("Business and Community Partnerships") < funded.indexOf("A Project-by-Project Approach"));
 assert.ok(funded.indexOf("A Project-by-Project Approach") < funded.indexOf("Become a Member"));
 assert.match(membership, /https:\/\/square\.link\/u\/Yzxyi16L/);
-assert.match(involved, /https:\/\/checkout\.square\.site\/merchant\/MLC659T9BQY4F\/checkout\/Y6NHRE2EMR2YOKJIDEGOB3I7/);
+assert.match(membership, /href="https:\/\/shop\.friendsofscenic30a\.org\/" target="_blank" rel="noopener noreferrer">Shop/);
 
 const home = readFileSync(join(root, "index.html"), "utf8");
 const strip = home.match(/<div class="strip"[\s\S]*?<\/div>/)[0];
@@ -251,14 +276,21 @@ assert.match(home, /class="strip-scroller"/);
 assert.match(home, /aria-label="Previous photos" disabled/);
 assert.match(home, /aria-label="Next photos"/);
 assert.match(home, /id="corridor-strip"/);
-assert.match(home, /Organizations connected to the corridor[\s\S]*Sponsors of Friends of Scenic 30A/);
-const sponsors = home.match(/<ul class="partner-logos sponsor-logos">[\s\S]*?<\/ul>/);
+assert.match(home, /Organizations connected to the corridor/);
+assert.doesNotMatch(home, /Sponsors of Friends of Scenic 30A/);
+assert.doesNotMatch(home, /sponsor-logos/);
+assert.doesNotMatch(home, /your-brand-here/);
+assert.match(footer, /class="section section-sand footer-sponsors"/);
+assert.match(footer, /Sponsors of Friends of Scenic 30A/);
+const sponsors = footer.match(/<ul class="partner-logos sponsor-logos">[\s\S]*?<\/ul>/);
 assert.ok(sponsors, "sponsors list");
 assert.equal((sponsors[0].match(/\/images\/sponsors\/your-brand-here\.png/g) || []).length, 3);
 assert.equal((sponsors[0].match(/alt="Your brand here"/g) || []).length, 3);
 assert.doesNotMatch(sponsors[0], /<a\b/);
 assert.match(home, /class="partner-logos"><li><a href="https:\/\/30a\.com\//);
 assert.match(css, /\.partner-logos\.sponsor-logos img \{[^}]*filter: none/);
+assert.match(css, /\.footer-sponsors \{ color: var\(--ink\)/);
+assert.match(css, /\.site-footer \.footer-sponsors h2 \{[^}]*text-transform: none/);
 assert.match(css, /\.strip-nav/);
 assert.match(css, /\.strip-prev \{ left:/);
 assert.match(css, /\.strip-next \{ right:/);
@@ -268,11 +300,12 @@ assert.match(siteJs, /strip-next/);
 assert.match(siteJs, /ArrowLeft/);
 assert.match(siteJs, /ArrowRight/);
 const build = readFileSync(join(root, "scripts/build.py"), "utf8");
+assert.doesNotMatch(build, /sponsor-logos|your-brand-here|Sponsors of Friends of Scenic 30A/);
 assert.match(build, /Source\+Sans\+3/);
 assert.doesNotMatch(build, /Fraunces|Outfit|page-our-work/);
 for (const pagePath of pages) {
   const html = readFileSync(pagePath, "utf8");
-  if (isImpactRedirect(html) || isShopRedirect(html)) continue;
+  if (isImpactRedirect(html) || isShopRedirect(html) || isGetInvolvedRedirect(html)) continue;
   assert.match(html, /Source\+Sans\+3/, pagePath);
   assert.doesNotMatch(html, /Fraunces|Outfit|page-our-work/, pagePath);
 }
@@ -293,7 +326,7 @@ const robots = readFileSync(join(root, "robots.txt"), "utf8");
 const sitemap = readFileSync(join(root, "sitemap.xml"), "utf8");
 assert.match(robots, /^User-agent: \*/m);
 assert.match(robots, /Sitemap: https?:\/\/\S+\/sitemap\.xml/);
-for (const path of ["/", "/about/", "/our-work/", "/how-projects-get-funded/", "/gallery/", "/get-involved/", "/membership/", "/contact/", "/blog/", "/privacy-policy/", "/accessibility/", "/terms/"]) {
+for (const path of ["/", "/about/", "/our-work/", "/how-projects-get-funded/", "/gallery/", "/membership/", "/contact/", "/blog/", "/privacy-policy/", "/accessibility/", "/terms/"]) {
   assert.match(sitemap, new RegExp(path.replaceAll("/", "\\/") ));
 }
 
@@ -308,7 +341,6 @@ const publicPaths = [
   "/our-work/",
   "/how-projects-get-funded/",
   "/gallery/",
-  "/get-involved/",
   "/membership/",
   "/contact/",
   "/blog/",
@@ -487,13 +519,15 @@ assert.equal(llms.includes("/impact/"), false);
 assert.equal(sitemap.includes("/shop/"), false);
 assert.equal(llms.includes("/shop/"), false);
 assert.equal(llmsFull.includes("/shop/"), false);
+assert.equal(sitemap.includes("/get-involved/"), false);
+assert.equal(llms.includes("/get-involved/"), false);
+assert.equal(llmsFull.includes("/get-involved/"), false);
 
 const shopPage = readFileSync(join(root, "shop/index.html"), "utf8");
 assert.equal(isShopRedirect(shopPage), true);
 assert.match(home, /href="https:\/\/shop\.friendsofscenic30a\.org\/" target="_blank" rel="noopener noreferrer">Shop/);
-assert.match(involved, /href="https:\/\/shop\.friendsofscenic30a\.org\/" target="_blank" rel="noopener noreferrer">Shop/);
 assert.doesNotMatch(home, /href="\/shop\/"/);
-assert.doesNotMatch(involved, /href="\/shop\/"/);
+assert.doesNotMatch(membership, /href="\/shop\/"/);
 
 const redirects = readFileSync(join(root, "_redirects"), "utf8");
 for (const path of ["/impact", "/impact/", "/impact/index.html", "/impact.html"]) {
@@ -502,8 +536,12 @@ for (const path of ["/impact", "/impact/", "/impact/index.html", "/impact.html"]
 for (const path of ["/shop", "/shop/", "/shop/index.html"]) {
   assert.match(redirects, new RegExp(`${path.replaceAll("/", "\\/")} https://shop\\.friendsofscenic30a\\.org/ 301`));
 }
+for (const path of ["/get-involved", "/get-involved/", "/get-involved/index.html"]) {
+  assert.match(redirects, new RegExp(`${path.replaceAll("/", "\\/")} /membership/ 301`));
+}
 assert.match(wrangler, /\/impact\/index\.html/);
 assert.match(wrangler, /\/shop\/index\.html/);
+assert.match(wrangler, /\/get-involved\/index\.html/);
 
 const worker = await import("../src/worker.js");
 for (const path of ["/impact", "/impact/", "/impact/index.html", "/impact.html"]) {
@@ -515,6 +553,11 @@ for (const path of ["/shop", "/shop/", "/shop/index.html"]) {
   const response = await worker.default.fetch(new Request(`https://friendsofscenic30a.org${path}`), {});
   assert.equal(response.status, 301, path);
   assert.equal(response.headers.get("location"), "https://shop.friendsofscenic30a.org/", path);
+}
+for (const path of ["/get-involved", "/get-involved/", "/get-involved/index.html"]) {
+  const response = await worker.default.fetch(new Request(`https://friendsofscenic30a.org${path}`), {});
+  assert.equal(response.status, 301, path);
+  assert.equal(response.headers.get("location"), "/membership/", path);
 }
 const homeResponse = await worker.default.fetch(new Request("https://friendsofscenic30a.org/"), {});
 assert.equal(homeResponse.status, 404);

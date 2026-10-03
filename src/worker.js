@@ -19,6 +19,12 @@ const SHOP_PATHS = new Set([
   "/shop/index.html",
 ]);
 
+const GET_INVOLVED_PATHS = new Set([
+  "/get-involved",
+  "/get-involved/",
+  "/get-involved/index.html",
+]);
+
 function impactRedirect() {
   return new Response(null, {
     status: 301,
@@ -33,6 +39,13 @@ function shopRedirect() {
   });
 }
 
+function getInvolvedRedirect() {
+  return new Response(null, {
+    status: 301,
+    headers: { Location: "/membership/" },
+  });
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -44,6 +57,9 @@ export default {
     }
     if (SHOP_PATHS.has(url.pathname)) {
       return shopRedirect();
+    }
+    if (GET_INVOLVED_PATHS.has(url.pathname)) {
+      return getInvolvedRedirect();
     }
 
     if (!env || !env.ASSETS || typeof env.ASSETS.fetch !== "function") {
