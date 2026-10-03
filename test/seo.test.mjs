@@ -288,6 +288,17 @@ assert.equal((sponsors[0].match(/\/images\/sponsors\/your-brand-here\.png/g) || 
 assert.equal((sponsors[0].match(/alt="Your brand here"/g) || []).length, 3);
 assert.doesNotMatch(sponsors[0], /<a\b/);
 assert.match(home, /class="partner-logos"><li><a href="https:\/\/30a\.com\//);
+const avatar = home.match(/<div class="hero-avatar">[\s\S]*?<\/div>/);
+assert.ok(avatar, "hero avatar");
+assert.match(avatar[0], /alt="Video"/);
+assert.match(avatar[0], /aria-label="Play video"/);
+assert.match(avatar[0], /poster="\/images\/hero-avatar-poster\.jpg"/);
+assert.match(avatar[0], /src="\/images\/hero-avatar\.mp4"/);
+assert.doesNotMatch(avatar[0], /autoplay|loop|figcaption|caption/);
+for (const pagePath of pages) {
+  if (pagePath === join(root, "index.html")) continue;
+  assert.equal(readFileSync(pagePath, "utf8").includes("hero-avatar"), false, pagePath);
+}
 assert.match(css, /\.partner-logos\.sponsor-logos img \{[^}]*filter: none/);
 assert.match(css, /\.footer-sponsors \{ color: var\(--ink\)/);
 assert.match(css, /\.site-footer \.footer-sponsors h2 \{[^}]*text-transform: none/);
@@ -295,6 +306,9 @@ assert.match(css, /\.strip-nav/);
 assert.match(css, /\.strip-prev \{ left:/);
 assert.match(css, /\.strip-next \{ right:/);
 const siteJs = readFileSync(join(root, "site.js"), "utf8");
+assert.match(siteJs, /bindHeroAvatar/);
+assert.match(siteJs, /Play video/);
+assert.match(siteJs, /Stop video/);
 assert.match(siteJs, /strip-prev/);
 assert.match(siteJs, /strip-next/);
 assert.match(siteJs, /ArrowLeft/);
