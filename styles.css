@@ -129,8 +129,10 @@ main { display: block; }
 
 .hero {
   --avatar-size: clamp(8.5rem, 15vw, 15rem);
+  --avatar-offset: clamp(0.65rem, 1.6vw, 1.35rem);
+  --scenic-logo-gap: 0.7rem;
   position: relative;
-  min-height: 78vh;
+  min-height: max(78vh, calc(var(--avatar-size) * (16 / 9 + 1009 / 1065) + var(--avatar-offset) + var(--scenic-logo-gap) + 1.75rem));
   color: white;
   display: grid;
   align-items: end;
@@ -179,11 +181,20 @@ main { display: block; }
 }
 .hero-actions, .button-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.3rem; }
 
+.hero-scenic-logo {
+  position: absolute;
+  z-index: 2;
+  right: clamp(0.65rem, 1.6vw, 1.5rem);
+  bottom: calc(var(--avatar-offset) + (var(--avatar-size) * 16 / 9) + var(--scenic-logo-gap));
+  width: var(--avatar-size);
+  height: auto;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.32));
+}
 .hero-avatar {
   position: absolute;
   z-index: 2;
   right: clamp(0.65rem, 1.6vw, 1.5rem);
-  bottom: clamp(0.65rem, 1.6vw, 1.35rem);
+  bottom: var(--avatar-offset);
   width: var(--avatar-size);
   aspect-ratio: 9 / 16;
   border-radius: 0.85rem;
@@ -1125,7 +1136,7 @@ textarea { min-height: 8rem; resize: vertical; }
   .funding-grid { grid-template-columns: 1fr 1fr; }
   .impact-grid, .involve-grid, .price-grid { grid-template-columns: repeat(3, 1fr); }
   .price-grid > :last-child:nth-child(odd) { grid-column: auto; }
-  .hero { min-height: 86vh; }
+  .hero { min-height: max(86vh, calc(var(--avatar-size) * (16 / 9 + 1009 / 1065) + var(--avatar-offset) + var(--scenic-logo-gap) + 1.75rem)); }
 }
 
 @media (max-width: 900px) {

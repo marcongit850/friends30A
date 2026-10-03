@@ -295,9 +295,17 @@ assert.match(avatar[0], /aria-label="Play video"/);
 assert.match(avatar[0], /poster="\/images\/hero-avatar-poster\.jpg"/);
 assert.match(avatar[0], /src="\/images\/hero-avatar\.mp4"/);
 assert.doesNotMatch(avatar[0], /autoplay|loop|figcaption|caption/);
+assert.match(home, /class="hero-scenic-logo" src="\/images\/hero-florida-scenic-highway\.png" alt="Florida Scenic Highway, South Walton's Scenic 30-A"/);
+assert.doesNotMatch(home, /[—–]/);
+const scenicLogoAt = home.indexOf('class="hero-scenic-logo"');
+const avatarAt = home.indexOf('class="hero-avatar"');
+assert.ok(scenicLogoAt > -1 && scenicLogoAt < avatarAt);
 for (const pagePath of pages) {
   if (pagePath === join(root, "index.html")) continue;
-  assert.equal(readFileSync(pagePath, "utf8").includes("hero-avatar"), false, pagePath);
+  const pageHtml = readFileSync(pagePath, "utf8");
+  assert.equal(pageHtml.includes("hero-avatar"), false, pagePath);
+  assert.equal(pageHtml.includes("hero-scenic-logo"), false, pagePath);
+  assert.equal(pageHtml.includes("hero-florida-scenic-highway.png"), false, pagePath);
 }
 assert.match(css, /\.partner-logos\.sponsor-logos img \{[^}]*filter: none/);
 assert.match(css, /\.footer-sponsors \{ color: var\(--ink\)/);
