@@ -468,10 +468,6 @@ def home():
         f'<img src="{src}" alt="{esc(name)}" width="{width}" height="{height}"></a></li>'
         for name, url, src, width, height in resources
     )
-    sponsor_html = "\n".join(
-        '<li><img src="/images/sponsors/your-brand-here.png" alt="Your brand here" width="2000" height="381"></li>'
-        for _ in range(3)
-    )
     body = f"""
     <section class="hero">
       <div class="hero-inner">
@@ -563,12 +559,6 @@ def home():
         <h2>Organizations connected to the corridor</h2>
         <p class="subhead">Explore organizations and resources connected to Scenic 30A, South Walton and Florida's scenic highway community.</p>
         <ul class="partner-logos">{resource_html}</ul>
-      </div>
-    </section>
-    <section class="section section-sand">
-      <div class="wrap">
-        <h2>Sponsors of Friends of Scenic 30A</h2>
-        <ul class="partner-logos sponsor-logos">{sponsor_html}</ul>
       </div>
     </section>
     """
