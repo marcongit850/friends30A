@@ -480,6 +480,16 @@ def home():
           <a class="btn btn-ghost" href="/our-work/">Our Work</a>
         </div>
       </div>
+      <div class="hero-avatar">
+        <video class="hero-avatar-video" poster="/images/hero-avatar-poster.jpg" playsinline preload="none" aria-hidden="true">
+          <source src="/images/hero-avatar.mp4" type="video/mp4">
+        </video>
+        <img class="hero-avatar-poster" src="/images/hero-avatar-poster.jpg" alt="Video">
+        <button type="button" class="hero-avatar-toggle" aria-label="Play video">
+          <svg class="hero-avatar-icon hero-avatar-icon-play" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M9 6.2v11.6L18.5 12z"/></svg>
+          <svg class="hero-avatar-icon hero-avatar-icon-stop" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="6.5" y="6.5" width="11" height="11" rx="1.2" fill="currentColor"/></svg>
+        </button>
+      </div>
     </section>
     <section class="section section-sand">
       <div class="wrap">

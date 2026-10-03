@@ -128,11 +128,13 @@ p { margin: 0 0 1rem; }
 main { display: block; }
 
 .hero {
+  --avatar-size: clamp(8.5rem, 15vw, 15rem);
   position: relative;
   min-height: 78vh;
   color: white;
   display: grid;
   align-items: end;
+  overflow: hidden;
   background: #083238 url("/images/hero.jpg") center 62%/cover no-repeat;
 }
 .hero::after {
@@ -176,6 +178,59 @@ main { display: block; }
   color: rgba(255, 253, 249, 0.92);
 }
 .hero-actions, .button-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.3rem; }
+
+.hero-avatar {
+  position: absolute;
+  z-index: 2;
+  right: clamp(0.65rem, 1.6vw, 1.5rem);
+  bottom: clamp(0.65rem, 1.6vw, 1.35rem);
+  width: var(--avatar-size);
+  aspect-ratio: 9 / 16;
+  border-radius: 0.85rem;
+  overflow: hidden;
+  background: #083238;
+  border: 2px solid rgba(255, 253, 249, 0.88);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.38);
+}
+.hero-avatar-video,
+.hero-avatar-poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  display: block;
+  background: #083238;
+}
+.hero-avatar-poster { z-index: 1; }
+.hero-avatar.is-playing .hero-avatar-poster { visibility: hidden; }
+.hero-avatar-toggle {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: 0.55rem;
+  transform: translateX(-50%);
+  width: 2.75rem;
+  height: 2.75rem;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 253, 249, 0.95);
+  color: var(--gulf-deep);
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.32);
+}
+.hero-avatar-toggle:hover { background: white; }
+.hero-avatar-toggle:focus-visible {
+  outline: 2px solid #f0d7a8;
+  outline-offset: 3px;
+}
+.hero-avatar-icon-stop { display: none; }
+.hero-avatar.is-playing .hero-avatar-icon-play { display: none; }
+.hero-avatar.is-playing .hero-avatar-icon-stop { display: block; }
 
 .btn {
   display: inline-flex;
@@ -1071,6 +1126,17 @@ textarea { min-height: 8rem; resize: vertical; }
   .impact-grid, .involve-grid, .price-grid { grid-template-columns: repeat(3, 1fr); }
   .price-grid > :last-child:nth-child(odd) { grid-column: auto; }
   .hero { min-height: 86vh; }
+}
+
+@media (max-width: 900px) {
+  .hero { --avatar-size: clamp(5rem, 24vw, 7.25rem); }
+  .hero-inner { padding-right: calc(var(--avatar-size) + 1.4rem); }
+  .hero-avatar-toggle { width: 2.35rem; height: 2.35rem; bottom: 0.4rem; }
+}
+
+@media (max-width: 900px) and (max-height: 680px) {
+  .hero { --avatar-size: 4.25rem; }
+  .hero-avatar-toggle { width: 2rem; height: 2rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

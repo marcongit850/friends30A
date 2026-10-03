@@ -132,4 +132,62 @@
       });
     });
   });
+
+  function bindHeroAvatar() {
+    var root = document.querySelector(".hero-avatar");
+    if (!root || root.dataset.bound === "true") return;
+    var video = root.querySelector("video");
+    var button = root.querySelector(".hero-avatar-toggle");
+    if (!video || !button) return;
+    root.dataset.bound = "true";
+    var playToken = 0;
+
+    function showPoster() {
+      root.classList.remove("is-playing");
+      button.setAttribute("aria-label", "Play video");
+    }
+
+    function showPlaying() {
+      root.classList.add("is-playing");
+      button.setAttribute("aria-label", "Stop video");
+    }
+
+    function stop() {
+      playToken += 1;
+      video.pause();
+      try {
+        if (video.currentTime) video.currentTime = 0;
+      } catch (error) {}
+      showPoster();
+    }
+
+    button.addEventListener("click", function () {
+      if (root.classList.contains("is-playing")) {
+        stop();
+        return;
+      }
+      var token = ++playToken;
+      video.muted = false;
+      video.volume = 1;
+      var pending = video.play();
+      if (pending && typeof pending.then === "function") {
+        pending.then(function () {
+          if (token !== playToken) return;
+          showPlaying();
+        }).catch(function () {
+          if (token !== playToken) return;
+          stop();
+        });
+      } else if (token === playToken) {
+        showPlaying();
+      }
+    });
+
+    video.addEventListener("playing", function () {
+      if (!video.paused && !video.ended) showPlaying();
+    });
+    video.addEventListener("ended", stop);
+  }
+
+  bindHeroAvatar();
 })();
