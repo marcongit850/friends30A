@@ -104,9 +104,13 @@
         }
       });
       data.kind = form.getAttribute("data-form");
-      if (form.getAttribute("data-form") === "volunteer" && !form.querySelector("input[name=interests]:checked")) {
-        if (status) status.textContent = "Choose at least one area of interest.";
-        return;
+      var requestBoxes = form.querySelectorAll("input[name=requests]");
+      if (requestBoxes.length) {
+        var chosen = [];
+        requestBoxes.forEach(function (input) {
+          if (input.checked) chosen.push(input.value);
+        });
+        data.requests = chosen;
       }
       if (button) button.disabled = true;
       if (status) status.textContent = "Sending…";

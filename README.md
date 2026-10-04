@@ -2,7 +2,7 @@
 
 Preview hosting is the Cloudflare Worker named `friends30a`. This workspace has no Cloudflare API token, so the workers.dev address is created when Workers Builds runs `npx wrangler deploy`. Do not attach a custom domain. Vanity DNS stays deferred.
 
-A static rebuild of the Friends of Scenic 30A website. The pages follow the public copy and structure of [the previous Wix site](https://marc12345678.wixsite.com/friends30a): home, about, our work, impact, gallery, blog, membership, and contact, plus privacy, accessibility, and terms. Get Involved now lives on the Membership page.
+A static rebuild of the Friends of Scenic 30A website. The pages follow the public copy and structure of [the previous Wix site](https://marc12345678.wixsite.com/friends30a): home, about, our work, impact, gallery, blog, membership, and contact, plus privacy, accessibility, and terms. Paid membership stays on the Membership page. Contact, volunteering, and updates share one form on the Contact page.
 
 The Worker name is **`friends30a`**. Leave that name in `wrangler.jsonc`. Do not attach a custom domain. A public vanity name and its DNS are deferred until someone chooses a domain later.
 
@@ -33,6 +33,8 @@ Cloudflare Workers Builds deploys this repository with `npx wrangler deploy`, us
 
 `CONTACT_EMAIL` and `RESEND_API_KEY` are Worker variables or secrets. Do not commit them. Mail goes out through the Resend HTTP API. The From address is Resend's free onboarding sender, `Friends of Scenic 30A <onboarding@resend.dev>`, which can deliver only to the email address on the Resend account until a domain is verified. Keep `CONTACT_EMAIL` set to that same address. After a domain is verified, change `FROM` in `src/message.js`.
 
+`GOOGLE_SHEETS_WEBHOOK_URL` and `GOOGLE_SHEETS_WEBHOOK_TOKEN` are Worker secrets, the same names used by Eating on 30A and Eating in Destin. Do not commit the URL or the token. After Resend accepts the message, the Worker POSTs a JSON row to that webhook. Every row includes token, kind, name, email, phone, and message. Contact rows also include contact, volunteer, and updates as Yes or blank. Membership rows also include address, city, state, zip, and membership. Kind is contact for the combined contact form, even when Volunteer or Get updates is checked. Kind is membership only for the membership form. If either secret is missing, or the webhook fails, the form still succeeds when the email went out. The email is sent before the sheet request starts.
+
 Until those values are set, `POST /api/message` returns HTTP 503 and the form explains that messages can be mailed to Friends of Scenic 30A, 877 N County Hwy 393, Santa Rosa Beach, FL 32459. The pages still display.
 
 ## Pages
@@ -45,8 +47,8 @@ Until those values are set, `POST /api/message` returns HTTP 503 and the form ex
 - `/blog/` and the posts from the Wix site
 - `/get-involved/` redirects to `/membership/`
 - `/shop/` redirects to the official shop. The header and footer Shop links go there directly
-- `/membership/` with the live Square payment links, plus volunteering, email updates, and the shop
-- `/contact/`
+- `/membership/` with the live Square payment links and the shop. Volunteering and updates point to the contact form
+- `/contact/` with one form to contact Friends, volunteer, and get updates
 - `/privacy-policy/`, `/accessibility/`, and `/terms/`
 
 Donate: https://square.link/u/Yzxyi16L
