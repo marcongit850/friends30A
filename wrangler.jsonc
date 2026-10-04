@@ -3,6 +3,10 @@
   // Do not attach a vanity domain in this file. DNS for a public name is deferred.
   // An assets-only Worker cannot store variables, so main exists so
   // CONTACT_EMAIL and RESEND_API_KEY can be set later. Do not put those values here.
+  // After Resend accepts a form email, a row is appended when both
+  // GOOGLE_SHEETS_WEBHOOK_URL and GOOGLE_SHEETS_WEBHOOK_TOKEN are set.
+  // Those are Worker secrets, same as the food sites. Do not put the values here.
+  // A sheet miss does not change the email result.
   "name": "friends30a",
   "main": "src/worker.js",
   "compatibility_date": "2026-09-28",

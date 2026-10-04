@@ -33,6 +33,8 @@ Cloudflare Workers Builds deploys this repository with `npx wrangler deploy`, us
 
 `CONTACT_EMAIL` and `RESEND_API_KEY` are Worker variables or secrets. Do not commit them. Mail goes out through the Resend HTTP API. The From address is Resend's free onboarding sender, `Friends of Scenic 30A <onboarding@resend.dev>`, which can deliver only to the email address on the Resend account until a domain is verified. Keep `CONTACT_EMAIL` set to that same address. After a domain is verified, change `FROM` in `src/message.js`.
 
+`GOOGLE_SHEETS_WEBHOOK_URL` and `GOOGLE_SHEETS_WEBHOOK_TOKEN` are Worker secrets, the same names used by Eating on 30A and Eating in Destin. Do not commit the URL or the token. After Resend accepts the message, the Worker POSTs a JSON row to that webhook. Every row includes token, kind, name, email, phone, and message. Contact rows also include contact, volunteer, and updates as Yes or blank. Membership rows also include address, city, state, zip, and membership. Kind is contact for the combined contact form, even when Volunteer or Get updates is checked. Kind is membership only for the membership form. If either secret is missing, or the webhook fails, the form still succeeds when the email went out. The email is sent before the sheet request starts.
+
 Until those values are set, `POST /api/message` returns HTTP 503 and the form explains that messages can be mailed to Friends of Scenic 30A, 877 N County Hwy 393, Santa Rosa Beach, FL 32459. The pages still display.
 
 ## Pages

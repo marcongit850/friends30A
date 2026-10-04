@@ -47,10 +47,10 @@ function getInvolvedRedirect() {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (isMessagePath(url.pathname)) {
-      return handleMessage(request, env);
+      return handleMessage(request, env, ctx);
     }
     if (IMPACT_PATHS.has(url.pathname)) {
       return impactRedirect();

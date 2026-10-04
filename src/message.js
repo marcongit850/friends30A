@@ -60,7 +60,59 @@ function checkedLine(data) {
   return `Checked: ${checked || "none"}`;
 }
 
-export async function handleMessage(request, env) {
+function sheetKind(kind) {
+  return kind === "membership" ? "membership" : "contact";
+}
+
+function checkedLabels(value) {
+  const items = Array.isArray(value) ? value : textValue(value) ? [value] : [];
+  return new Set(items.map((item) => textValue(item).toLowerCase()));
+}
+
+function marked(labels, label) {
+  return labels.has(label) ? "Yes" : "";
+}
+
+function sheetRow(data, kind, email, name) {
+  const rowKind = sheetKind(kind);
+  const row = {
+    kind: rowKind,
+    name,
+    email,
+    phone: textValue(data.phone),
+    message: textValue(data.message),
+  };
+  if (rowKind === "membership") {
+    row.address = textValue(data.address);
+    row.city = textValue(data.city);
+    row.state = textValue(data.state);
+    row.zip = textValue(data.zip);
+    row.membership = textValue(data.membership);
+    return row;
+  }
+  const labels = checkedLabels(data.requests);
+  row.contact = marked(labels, "contact friends");
+  row.volunteer = marked(labels, "volunteer");
+  row.updates = marked(labels, "get updates");
+  return row;
+}
+
+async function recordSheet(env, row) {
+  const url = env && String(env.GOOGLE_SHEETS_WEBHOOK_URL || "").trim();
+  const token = env && String(env.GOOGLE_SHEETS_WEBHOOK_TOKEN || "").trim();
+  if (!url || !token) return;
+  try {
+    await fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ token, ...row }),
+    });
+  } catch {
+    // The email already went out. A sheet miss must not change that result.
+  }
+}
+
+export async function handleMessage(request, env, ctx) {
   if (request.method !== "POST") {
     return json({ error: "Method not allowed" }, 405);
   }
@@ -127,6 +179,10 @@ export async function handleMessage(request, env) {
   if (!response.ok) {
     return json({ error: "The message could not be delivered. Please try again later." }, 502);
   }
+
+  const sheetWrite = recordSheet(env, sheetRow(data, kind, email, name));
+  if (ctx && typeof ctx.waitUntil === "function") ctx.waitUntil(sheetWrite);
+  else await sheetWrite;
 
   return json({ ok: true }, 200);
 }
