@@ -1099,7 +1099,7 @@ def gallery():
         <div class="prose">
           <h2>Protect What You See</h2>
           <p>Friends of Scenic 30A helps protect the natural beauty and coastal ecosystems you've just explored. Join us in preserving this extraordinary corridor for generations to come.</p>
-          <p class="button-row"><a class="btn btn-gulf" href="/membership/">Become a Member</a> <a class="btn btn-line" href="/membership/#volunteer">Support our work</a></p>
+          <p class="button-row"><a class="btn btn-gulf" href="/membership/">Become a Member</a> <a class="btn btn-line" href="/contact/#contact-form">Support our work</a></p>
         </div>
       </div>
     </section>
@@ -1317,46 +1317,11 @@ def membership():
       <div class="wrap">
         <h2>There’s a Place for You in Our Mission</h2>
         <p class="lede">Friends of Scenic 30A is a volunteer-driven community organization. Whether you live here, own a business, visit regularly, or simply love 30A, your involvement helps strengthen our voice and support our work.</p>
-        <div class="split">
-          <form class="form" data-form="volunteer">
-            <h2>Volunteer</h2>
-            <p>Put your passion for 30A to work. Tell us how you would like to help, and we’ll keep you informed about opportunities to participate.</p>
-            <div class="split">
-              <label>First name *<input name="first" required autocomplete="given-name"></label>
-              <label>Last name *<input name="last" required autocomplete="family-name"></label>
-            </div>
-            <label>Email *<input type="email" name="email" required autocomplete="email"></label>
-            <label>Phone number<input type="tel" name="phone" autocomplete="tel"></label>
-            <fieldset class="checks">
-              <legend>Areas of interest *</legend>
-              <label><input type="checkbox" name="interests" value="Natural Resources"> Natural Resources</label>
-              <label><input type="checkbox" name="interests" value="Trails"> Trails</label>
-              <label><input type="checkbox" name="interests" value="Community Outreach"> Community Outreach</label>
-              <label><input type="checkbox" name="interests" value="Events"> Events</label>
-              <label><input type="checkbox" name="interests" value="Communications"> Communications</label>
-              <label><input type="checkbox" name="interests" value="Photography"> Photography</label>
-              <label><input type="checkbox" name="interests" value="Other"> Other</label>
-            </fieldset>
-            <label>Message<textarea name="message"></textarea></label>
-            <label class="hp">Company<input name="company" tabindex="-1" autocomplete="off"></label>
-            <button class="btn btn-gulf" type="submit">I'd Like to Help</button>
-            <p class="form-status" role="status"></p>
-          </form>
-          <div>
-            <form class="form" id="stay-informed" data-form="updates">
-              <h2>Stay Informed</h2>
-              <p>Know what’s happening along Scenic 30A. Stay informed about Friends projects, community issues, upcoming meetings and opportunities to help protect and enhance Scenic 30A.</p>
-              <label>Email address *<input type="email" name="email" required autocomplete="email"></label>
-              <label class="hp">Company<input name="company" tabindex="-1" autocomplete="off"></label>
-              <button class="btn btn-gulf" type="submit">Stay Informed</button>
-              <p class="form-status" role="status"></p>
-            </form>
-            <div class="prose">
-              <h2>Shop</h2>
-              <p>Find Friends of Scenic 30A merchandise in the official shop.</p>
-              <p><a class="btn btn-line" href="{SHOP_STOREFRONT}" target="_blank" rel="noopener noreferrer">Shop</a></p>
-            </div>
-          </div>
+        <p id="stay-informed">To contact Friends, volunteer, or get updates, use the <a href="/contact/#contact-form">contact form</a>.</p>
+        <div class="prose">
+          <h2>Shop</h2>
+          <p>Find Friends of Scenic 30A merchandise in the official shop.</p>
+          <p><a class="btn btn-line" href="{SHOP_STOREFRONT}" target="_blank" rel="noopener noreferrer">Shop</a></p>
         </div>
       </div>
     </section>
@@ -1375,12 +1340,18 @@ def contact():
     body = page_hero(
         "Contact",
         "Say Hello",
-        "Questions, ideas, and partnership notes are welcome. Friends of Scenic 30A reads every message.",
+        "Questions, ideas, and partnership notes are welcome. You can also volunteer or get updates. Friends of Scenic 30A reads every message.",
         "/images/gallery/10-sandy-scrub-path.jpg",
     ) + """
     <section class="section section-sand">
       <div class="wrap split">
-        <form class="form" data-form="contact">
+        <form class="form" id="contact-form" data-form="contact">
+          <fieldset class="checks">
+            <legend>Choose any that apply</legend>
+            <label><input type="checkbox" name="requests" value="Contact Friends"> Contact Friends</label>
+            <label><input type="checkbox" name="requests" value="Volunteer"> Volunteer</label>
+            <label><input type="checkbox" name="requests" value="Get updates"> Get updates</label>
+          </fieldset>
           <div class="split">
             <label>First name *<input name="first" required autocomplete="given-name"></label>
             <label>Last name *<input name="last" required autocomplete="family-name"></label>
@@ -1395,7 +1366,7 @@ def contact():
         <div class="prose">
           <h2>Friends of Scenic 30A</h2>
           <p><a href="https://www.google.com/maps/search/?api=1&query=877+N+County+Hwy+393,+Santa+Rosa+Beach,+FL+32459">877 N County Hwy 393<br>Santa Rosa Beach, FL 32459</a></p>
-          <p><a href="/membership/#volunteer">Get involved</a> or <a href="/membership/">become a member</a>.</p>
+          <p><a href="#contact-form">Get involved</a> or <a href="/membership/">become a member</a>.</p>
         </div>
       </div>
     </section>
@@ -1403,7 +1374,7 @@ def contact():
     write_page(
         "/contact/",
         "Contact Friends of Scenic 30A",
-        "Contact Friends of Scenic 30A with questions, ideas, or partnership notes. The office is at 877 N County Hwy 393, Santa Rosa Beach, FL 32459.",
+        "Contact Friends of Scenic 30A, volunteer, or get updates from one form. The office is at 877 N County Hwy 393, Santa Rosa Beach, FL 32459.",
         body,
         "/images/gallery/10-sandy-scrub-path.jpg",
         kind="ContactPage",

@@ -78,8 +78,44 @@ try {
     assert.equal(mail.subject, `Friends of Scenic 30A — ${kind}`);
     assert.equal(mail.reply_to, "neighbor@example.com");
     assert.match(mail.text, new RegExp(`Form: ${kind}`));
+    assert.equal(mail.text.includes("Checked:"), false);
     if (kind === "volunteer") assert.match(mail.text, /Interests: Trails, Events/);
   }
+
+  sent.length = 0;
+  const checked = await handleMessage(post({
+    kind: "contact",
+    email: "neighbor@example.com",
+    first: "Ada",
+    last: "Lovelace",
+    message: "Hello from 30A",
+    requests: ["Contact Friends", "Get updates"],
+  }, "198.51.100.30"), env);
+  assert.equal(checked.status, 200);
+  const checkedMail = JSON.parse(sent[0].init.body);
+  assert.match(checkedMail.text, /Checked: Contact Friends, Get updates/);
+  assert.equal(checkedMail.subject, "Friends of Scenic 30A — contact");
+
+  sent.length = 0;
+  const noneChecked = await handleMessage(post({
+    kind: "contact",
+    email: "neighbor@example.com",
+    message: "Hello",
+    requests: [],
+  }, "198.51.100.31"), env);
+  assert.equal(noneChecked.status, 200);
+  const noneMail = JSON.parse(sent[0].init.body);
+  assert.match(noneMail.text, /Checked: none/);
+
+  sent.length = 0;
+  const oneChecked = await handleMessage(post({
+    kind: "contact",
+    email: "neighbor@example.com",
+    requests: "Volunteer",
+  }, "198.51.100.32"), env);
+  assert.equal(oneChecked.status, 200);
+  const oneMail = JSON.parse(sent[0].init.body);
+  assert.match(oneMail.text, /Checked: Volunteer/);
 
   sent.length = 0;
   const injected = await handleMessage(post({

@@ -2,7 +2,7 @@
 
 Preview hosting is the Cloudflare Worker named `friends30a`. This workspace has no Cloudflare API token, so the workers.dev address is created when Workers Builds runs `npx wrangler deploy`. Do not attach a custom domain. Vanity DNS stays deferred.
 
-A static rebuild of the Friends of Scenic 30A website. The pages follow the public copy and structure of [the previous Wix site](https://marc12345678.wixsite.com/friends30a): home, about, our work, impact, gallery, blog, membership, and contact, plus privacy, accessibility, and terms. Get Involved now lives on the Membership page.
+A static rebuild of the Friends of Scenic 30A website. The pages follow the public copy and structure of [the previous Wix site](https://marc12345678.wixsite.com/friends30a): home, about, our work, impact, gallery, blog, membership, and contact, plus privacy, accessibility, and terms. Paid membership stays on the Membership page. Contact, volunteering, and updates share one form on the Contact page.
 
 The Worker name is **`friends30a`**. Leave that name in `wrangler.jsonc`. Do not attach a custom domain. A public vanity name and its DNS are deferred until someone chooses a domain later.
 
@@ -45,8 +45,8 @@ Until those values are set, `POST /api/message` returns HTTP 503 and the form ex
 - `/blog/` and the posts from the Wix site
 - `/get-involved/` redirects to `/membership/`
 - `/shop/` redirects to the official shop. The header and footer Shop links go there directly
-- `/membership/` with the live Square payment links, plus volunteering, email updates, and the shop
-- `/contact/`
+- `/membership/` with the live Square payment links and the shop. Volunteering and updates point to the contact form
+- `/contact/` with one form to contact Friends, volunteer, and get updates
 - `/privacy-policy/`, `/accessibility/`, and `/terms/`
 
 Donate: https://square.link/u/Yzxyi16L

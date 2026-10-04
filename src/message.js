@@ -54,6 +54,12 @@ function formKind(value) {
   return FORM_KINDS.has(kind) ? kind : "message";
 }
 
+function checkedLine(data) {
+  if (!Object.prototype.hasOwnProperty.call(data, "requests")) return "";
+  const checked = textValue(data.requests).replace(/[\r\n\t]+/g, " ").replace(/\s+/g, " ").trim();
+  return `Checked: ${checked || "none"}`;
+}
+
 export async function handleMessage(request, env) {
   if (request.method !== "POST") {
     return json({ error: "Method not allowed" }, 405);
@@ -89,6 +95,7 @@ export async function handleMessage(request, env) {
 
   const lines = [
     `Form: ${kind}`,
+    checkedLine(data),
     name ? `Name: ${name}` : "",
     `Email: ${email}`,
     textValue(data.phone) ? `Phone: ${textValue(data.phone)}` : "",
