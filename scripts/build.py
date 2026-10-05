@@ -24,6 +24,19 @@ MEMBERSHIP_DESCRIPTION = (
 SHOP_STOREFRONT = "https://shop.friendsofscenic30a.org/"
 PAGES = []
 FONT = "https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap"
+GA_MEASUREMENT_ID = "G-98P1HEEQLJ"
+GA_INLINE_SCRIPT = (
+    "window.dataLayer = window.dataLayer || [];\n"
+    "function gtag(){dataLayer.push(arguments);}\n"
+    "gtag('js', new Date());\n"
+    f"gtag('config', '{GA_MEASUREMENT_ID}');"
+)
+GA_SNIPPET = (
+    f'  <script async src="https://www.googletagmanager.com/gtag/js?id={GA_MEASUREMENT_ID}"></script>\n'
+    "  <script>\n"
+    + "".join(f"    {line}\n" for line in GA_INLINE_SCRIPT.split("\n"))
+    + "  </script>\n"
+)
 
 GALLERY = [
     ("/images/gallery/01-boardwalk-sea-oats.jpg", "Boardwalk through sea oats toward the Gulf"),
@@ -343,7 +356,7 @@ def layout(title, description, path, body, image="/images/hero.jpg", image_alt=N
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+{GA_SNIPPET}  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{esc(full_title)}</title>
   <meta name="description" content="{esc(description)}">
@@ -995,7 +1008,7 @@ IMPACT_REDIRECT_TARGET = "/our-work/#past-accomplishments"
 IMPACT_REDIRECT_DOC = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+{GA_SNIPPET}  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Past accomplishments | Friends of Scenic 30A</title>
   <meta name="description" content="Past accomplishments of Friends of Scenic 30A now live on the Our Work page.">
@@ -1015,7 +1028,7 @@ IMPACT_REDIRECT_DOC = f"""<!DOCTYPE html>
 SHOP_REDIRECT_DOC = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+{GA_SNIPPET}  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Shop | Friends of Scenic 30A</title>
   <meta name="description" content="Find Friends of Scenic 30A merchandise in the official shop.">
@@ -1036,7 +1049,7 @@ GET_INVOLVED_REDIRECT_TARGET = "/membership/"
 GET_INVOLVED_REDIRECT_DOC = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+{GA_SNIPPET}  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Membership | Friends of Scenic 30A</title>
   <meta name="description" content="Membership, volunteering, and updates for Friends of Scenic 30A now live on the Membership page.">

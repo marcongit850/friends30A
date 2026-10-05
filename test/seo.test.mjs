@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
@@ -17,6 +18,23 @@ function walk(dir, found = []) {
 const pages = walk(root);
 assert.ok(pages.length >= 15, `expected the rebuilt site, found ${pages.length} html files`);
 
+const GA_ID = "G-98P1HEEQLJ";
+const GA_SRC = `<script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>`;
+const GA_INLINE = `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GA_ID}');`;
+
+function gtagBlocks(html) {
+  return [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)]
+    .map((match) => match[1])
+    .filter((source) => source.includes("gtag("));
+}
+
+function scriptText(source) {
+  return source.split("\n").map((line) => line.trim()).filter(Boolean).join("\n");
+}
+
 function isImpactRedirect(html) {
   return /http-equiv="refresh"/.test(html) && /\/our-work\/#past-accomplishments/.test(html);
 }
@@ -31,6 +49,11 @@ function isGetInvolvedRedirect(html) {
 
 for (const page of pages) {
   const html = readFileSync(page, "utf8");
+  const blocks = gtagBlocks(html);
+  assert.equal(blocks.length, 1, page);
+  assert.equal(scriptText(blocks[0]), GA_INLINE, page);
+  assert.equal(html.split(GA_SRC).length - 1, 1, page);
+  assert.equal(html.split(GA_ID).length - 1, 2, page);
   if (isImpactRedirect(html)) {
     assert.match(html, /<title>[^<]+<\/title>/, page);
     assert.match(html, /name="robots" content="noindex"/, page);
@@ -622,5 +645,16 @@ assert.match(headers, /style-src 'self' 'unsafe-inline' https:\/\/fonts\.googlea
 assert.match(headers, /font-src 'self' https:\/\/fonts\.gstatic\.com/);
 assert.match(headers, /frame-src https:\/\/www\.youtube-nocookie\.com https:\/\/www\.youtube\.com/);
 assert.match(headers, /connect-src 'self' https:\/\/fonts\.googleapis\.com https:\/\/fonts\.gstatic\.com/);
+const gaHosts = "https://www.googletagmanager.com https://\\*.google-analytics.com https://\\*.analytics.google.com";
+assert.match(headers, new RegExp(`script-src 'self' 'sha256-[A-Za-z0-9+/=]+' ${gaHosts}`));
+assert.match(headers, new RegExp(`img-src 'self' ${gaHosts}`));
+assert.match(headers, new RegExp(`connect-src 'self' https://fonts\\.googleapis\\.com https://fonts\\.gstatic\\.com ${gaHosts}`));
+const sampleBlocks = gtagBlocks(readFileSync(pages[0], "utf8"));
+const gaHash = createHash("sha256").update(sampleBlocks[0]).digest("base64");
+assert.match(headers, new RegExp(`'sha256-${gaHash.replace(/[+/]/g, "\\$&")}'`));
+for (const page of pages) {
+  const blocks = gtagBlocks(readFileSync(page, "utf8"));
+  assert.equal(createHash("sha256").update(blocks[0]).digest("base64"), gaHash, page);
+}
 
 console.log(`seo ok (${pages.length} pages)`);
