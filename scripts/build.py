@@ -1236,6 +1236,12 @@ def how_projects_get_funded():
       <div class="wrap">
         <h2>Become a Member</h2>
 {membership_price_grid()}
+        <article class="transparency-teaser" id="financial-transparency">
+          <p class="eyebrow">Transparency</p>
+          <h3>Financial Transparency</h3>
+          <p>Friends of Scenic 30A believes the community should be able to see how funds are received and used. The board is 100% volunteer, with no salaries or administrative overhead. The latest figures are a static snapshot we update periodically.</p>
+          <a class="btn btn-gulf" href="/financial-transparency/">View Financial Transparency</a>
+        </article>
       </div>
     </section>
     """
@@ -1246,6 +1252,105 @@ def how_projects_get_funded():
         body,
         "/images/gallery/06-aerial-gulf-and-lake.jpg",
         crumbs=[("Home", "/"), ("How Projects Get Funded", "/how-projects-get-funded/")],
+    )
+
+
+def financial_transparency():
+    body = page_hero(
+        "Transparency",
+        "Financial Transparency",
+        "Simple finances. Clear reporting. Community-focused.",
+        "/images/gallery/02-gulf-sea-oats.jpg",
+    ) + """
+    <section class="section section-white">
+      <div class="wrap prose">
+        <p>Friends of Scenic 30A believes the community should be able to see how funds are received and used.</p>
+        <p>Our board is 100% volunteer, with no salaries or compensation paid to board members. Board and volunteer time is donated, meeting and office space is donated, and the organization currently has no administrative overhead. Our goal is to direct available funds toward projects and initiatives that benefit Scenic Highway 30A.</p>
+      </div>
+    </section>
+    <section class="section section-sand">
+      <div class="wrap">
+        <h2>Financial Summary</h2>
+        <p class="finance-asof">As of September 30, 2026</p>
+        <div class="finance-summary">
+          <article class="finance-card">
+            <p class="finance-amount">$1,175.94</p>
+            <h3>Bank Balance</h3>
+          </article>
+          <article class="finance-card">
+            <p class="finance-amount">$190.51</p>
+            <h3>Deposits &amp; Other Credits</h3>
+          </article>
+          <article class="finance-card">
+            <p class="finance-amount">$0.00</p>
+            <h3>Project Expenditures</h3>
+          </article>
+          <article class="finance-card">
+            <p class="finance-amount">$2.00</p>
+            <h3>Bank Fees</h3>
+          </article>
+        </div>
+        <p class="finance-note">Financial summary reflects the most recent bank statement available through September 25, 2026.</p>
+      </div>
+    </section>
+    <section class="section section-gulf">
+      <div class="wrap">
+        <h2>Volunteer Organization</h2>
+        <ul class="volunteer-stats">
+          <li><strong>100%</strong><span>Volunteer Board</span></li>
+          <li><strong>$0</strong><span>Salaries</span></li>
+          <li><strong>$0</strong><span>Board Compensation</span></li>
+          <li><strong>$0</strong><span>Administrative Overhead</span></li>
+        </ul>
+        <p>Friends of Scenic 30A is operated entirely by volunteers. Board and volunteer time is donated, meeting and office space is donated, and no salaries, board compensation, rent, or administrative overhead are paid by the organization.</p>
+        <p class="finance-aside">The $2 expense shown in the financial summary was a bank service charge, not administrative overhead.</p>
+      </div>
+    </section>
+    <section class="section section-white">
+      <div class="wrap">
+        <h2>How Funds Are Used</h2>
+        <p class="subhead">Funds are held for projects and initiatives that preserve, enhance, and improve Scenic Highway 30A. As projects move forward, financial summaries will be updated so the community can see how funds are being used.</p>
+        <p class="finance-note">Community Projects, Project Planning, and Grants &amp; Partnerships are potential uses. They are not expenses already incurred.</p>
+        <div class="use-grid">
+          <article class="use-card">
+            <p class="use-kicker">Potential use</p>
+            <h3>Community Projects</h3>
+            <p>Beautification, landscaping, preservation, and improvements along the Scenic 30A corridor.</p>
+          </article>
+          <article class="use-card">
+            <p class="use-kicker">Potential use</p>
+            <h3>Project Planning</h3>
+            <p>Planning, design, engineering, permitting, and other project-specific expenses when needed.</p>
+          </article>
+          <article class="use-card">
+            <p class="use-kicker">Potential use</p>
+            <h3>Grants &amp; Partnerships</h3>
+            <p>Funds may be combined with grants, sponsorships, donations, or public partnerships to help move projects forward.</p>
+          </article>
+          <article class="use-card">
+            <p class="use-kicker">Current practice</p>
+            <h3>Zero Administrative Overhead</h3>
+            <p>Friends of Scenic 30A is operated entirely by volunteers. Board and volunteer time is donated, meeting and office space is donated, and no salaries, board compensation, rent, or administrative overhead are paid by the organization.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+    <section class="section section-sand">
+      <div class="wrap prose">
+        <h2>Our Commitment to Transparency</h2>
+        <p>Friends of Scenic 30A believes supporters should be able to understand the organization's financial position and how community funds are being managed.</p>
+        <p>This page will be updated periodically as financial activity changes and projects move forward.</p>
+        <p class="finance-snapshot">Financial Snapshot: September 30, 2026</p>
+      </div>
+    </section>
+    """
+    write_page(
+        "/financial-transparency/",
+        "Financial Transparency",
+        "Static snapshot of Friends of Scenic 30A finances as of September 30, 2026, with bank balance, deposits and other credits, expenditures, and fees.",
+        body,
+        "/images/gallery/02-gulf-sea-oats.jpg",
+        crumbs=[("Home", "/"), ("Financial Transparency", "/financial-transparency/")],
     )
 
 
@@ -1787,6 +1892,7 @@ def main():
     about()
     our_work()
     how_projects_get_funded()
+    financial_transparency()
     write_impact_redirect()
     gallery()
     membership()

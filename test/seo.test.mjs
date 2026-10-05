@@ -305,6 +305,28 @@ assert.ok(funded.indexOf("Walton County and TDC Partnerships") < funded.indexOf(
 assert.ok(funded.indexOf("State and Federal Funding") < funded.indexOf("Business and Community Partnerships"));
 assert.ok(funded.indexOf("Business and Community Partnerships") < funded.indexOf("A Project-by-Project Approach"));
 assert.ok(funded.indexOf("A Project-by-Project Approach") < funded.indexOf("Become a Member"));
+assert.ok(funded.indexOf(">Become a Member<") < funded.indexOf('href="/financial-transparency/"'));
+assert.match(funded, /id="financial-transparency"/);
+assert.match(funded, /View Financial Transparency/);
+assert.doesNotMatch(funded, /\$1,175\.94|\$190\.51/);
+const finances = readFileSync(join(root, "financial-transparency/index.html"), "utf8");
+assert.match(finances, /<h1>Financial Transparency<\/h1>/);
+assert.match(finances, /Simple finances\. Clear reporting\. Community-focused\./);
+assert.match(finances, /Deposits &amp; Other Credits/);
+assert.match(finances, /\$1,175\.94/);
+assert.match(finances, /\$190\.51/);
+assert.match(finances, /\$0\.00/);
+assert.match(finances, /\$2\.00/);
+assert.match(finances, /As of September 30, 2026/);
+assert.match(finances, /Financial summary reflects the most recent bank statement available through September 25, 2026\./);
+assert.match(finances, /The \$2 expense shown in the financial summary was a bank service charge, not administrative overhead\./);
+assert.match(finances, /Potential use/);
+assert.match(finances, /They are not expenses already incurred\./);
+assert.match(finances, /Financial Snapshot: September 30, 2026/);
+assert.doesNotMatch(finances, /[—–]/);
+assert.doesNotMatch(finances, /\$190\.51[\s\S]{0,80}[Dd]onation/);
+assert.doesNotMatch(finances, /[Dd]onation[\s\S]{0,40}\$190\.51/);
+assert.match(footer, /href="\/financial-transparency\/">Financial Transparency<\/a>/);
 assert.match(membership, /https:\/\/square\.link\/u\/Yzxyi16L/);
 assert.match(membership, /href="https:\/\/shop\.friendsofscenic30a\.org\/" target="_blank" rel="noopener noreferrer">Shop/);
 
@@ -391,7 +413,7 @@ const robots = readFileSync(join(root, "robots.txt"), "utf8");
 const sitemap = readFileSync(join(root, "sitemap.xml"), "utf8");
 assert.match(robots, /^User-agent: \*/m);
 assert.match(robots, /Sitemap: https?:\/\/\S+\/sitemap\.xml/);
-for (const path of ["/", "/about/", "/our-work/", "/how-projects-get-funded/", "/gallery/", "/membership/", "/contact/", "/blog/", "/privacy-policy/", "/accessibility/", "/terms/"]) {
+for (const path of ["/", "/about/", "/our-work/", "/how-projects-get-funded/", "/financial-transparency/", "/gallery/", "/membership/", "/contact/", "/blog/", "/privacy-policy/", "/accessibility/", "/terms/"]) {
   assert.match(sitemap, new RegExp(path.replaceAll("/", "\\/") ));
 }
 
@@ -405,6 +427,7 @@ const publicPaths = [
   "/about/",
   "/our-work/",
   "/how-projects-get-funded/",
+  "/financial-transparency/",
   "/gallery/",
   "/membership/",
   "/contact/",
