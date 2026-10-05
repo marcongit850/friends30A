@@ -874,6 +874,108 @@ dialog.lightbox button {
 }
 .funding-card p:last-child { margin-bottom: 0; }
 
+.finance-asof {
+  color: var(--muted);
+  margin: -0.15rem 0 0;
+}
+.finance-summary, .use-grid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.3rem;
+}
+.finance-card, .use-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 1.2rem;
+  padding: 1.35rem 1.25rem 1.45rem;
+  box-shadow: var(--shadow);
+}
+.finance-amount {
+  margin: 0 0 0.35rem;
+  font-family: var(--serif);
+  font-size: clamp(1.85rem, 3vw, 2.35rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--gulf-deep);
+}
+.finance-card h3, .use-card h3 {
+  font-size: 1.15rem;
+  margin: 0;
+}
+.finance-card h3 { color: var(--muted); font-weight: 600; }
+.use-card p:last-child { margin: 0; color: var(--muted); }
+.use-kicker {
+  margin: 0 0 0.45rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--oat);
+}
+.finance-note {
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin: 1rem 0 0;
+}
+.volunteer-stats {
+  display: grid;
+  gap: 0.75rem;
+  list-style: none;
+  margin: 0 0 1.3rem;
+  padding: 0;
+}
+.volunteer-stats li {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 1rem;
+  padding: 1rem 0.85rem;
+  text-align: center;
+}
+.volunteer-stats strong {
+  display: block;
+  font-family: var(--serif);
+  font-size: clamp(1.45rem, 2.4vw, 1.85rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+.volunteer-stats span {
+  display: block;
+  margin-top: 0.25rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.section-gulf .finance-aside {
+  color: rgba(255, 253, 249, 0.78);
+  font-size: 0.95rem;
+  margin-bottom: 0;
+}
+.finance-snapshot {
+  display: inline-block;
+  margin: 0.4rem 0 0;
+  padding: 0.55rem 0.95rem;
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--gulf-deep);
+  font-weight: 600;
+}
+.transparency-teaser {
+  margin-top: 1.6rem;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 1.2rem;
+  padding: 1.5rem 1.4rem 1.6rem;
+  box-shadow: var(--shadow);
+}
+.transparency-teaser h3 {
+  font-size: clamp(1.6rem, 2.4vw, 2rem);
+}
+.transparency-teaser p:not(.eyebrow) {
+  color: var(--muted);
+  max-width: 42rem;
+}
+
 form.form {
   display: grid;
   gap: 0.8rem;
@@ -1073,7 +1175,7 @@ textarea { min-height: 8rem; resize: vertical; }
 }
 
 @media (min-width: 720px) {
-  .pillars, .impact-grid, .involve-grid, .matter, .price-grid, .posts, .topic-grid, .milestone-grid, .funding-grid { grid-template-columns: 1fr 1fr; }
+  .pillars, .impact-grid, .involve-grid, .matter, .price-grid, .posts, .topic-grid, .milestone-grid, .funding-grid, .finance-summary, .use-grid, .volunteer-stats { grid-template-columns: 1fr 1fr; }
   .price-grid > :last-child:nth-child(odd) { grid-column: 1 / -1; }
   .gallery { grid-template-columns: 1fr 1fr 1fr; }
   .partner-logos {
@@ -1149,6 +1251,7 @@ textarea { min-height: 8rem; resize: vertical; }
   .milestone-grid.thirds { grid-template-columns: repeat(3, 1fr); }
   .mission-band, .lead-split, .work-block { grid-template-columns: 1.15fr 0.85fr; }
   .funding-grid { grid-template-columns: 1fr 1fr; }
+  .finance-summary, .volunteer-stats { grid-template-columns: repeat(4, 1fr); }
   .impact-grid, .involve-grid, .price-grid { grid-template-columns: repeat(3, 1fr); }
   .price-grid > :last-child:nth-child(odd) { grid-column: auto; }
   .hero { min-height: max(86vh, calc(var(--avatar-size) * (16 / 9 + 1009 / 1065) + var(--avatar-offset) + var(--scenic-logo-gap) + 1.75rem)); }
