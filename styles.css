@@ -78,9 +78,10 @@ p { margin: 0 0 1rem; }
   line-height: 0;
 }
 .brand img {
-  width: 196px;
+  width: 68px;
   max-width: 100%;
   height: auto;
+  aspect-ratio: 1 / 1;
   object-fit: contain;
 }
 .nav-toggle {
@@ -1224,7 +1225,7 @@ textarea { min-height: 8rem; resize: vertical; }
 }
 @media (min-width: 980px) {
   .brand { max-width: none; }
-  .brand img { width: 228px; }
+  .brand img { width: 76px; }
   .nav-toggle { display: none; }
   .site-nav {
     display: flex;
